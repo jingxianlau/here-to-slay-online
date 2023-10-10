@@ -1,5 +1,7 @@
 import { Server } from 'socket.io';
 import express from 'express';
+import cors from 'cors';
+import { v4 as uuid } from 'uuid';
 import { GameState } from './types';
 import { initialState } from './cards/cards';
 import { random } from './functions/helpers';
@@ -9,6 +11,11 @@ const rooms: {
 } = {};
 
 const app = express();
+app.use(
+  cors({
+    origin: 'http://localhost:3000'
+  })
+);
 app.get('/getRooms', (req, res) => {
   let updatedRooms: { [key: string]: number } = {};
 
@@ -20,54 +27,62 @@ app.get('/getRooms', (req, res) => {
 
   res.json(JSON.stringify(updatedRooms));
 });
+app.listen(4500, () => console.log('express server on port 4500'));
 
-app.listen(5000, () => console.log('express server on port 5000'));
-
-const io = new Server();
+const io = new Server({ cors: { origin: 'http://localhost:3000' } });
 io.on('connection', socket => {
   console.log(`connected to: ${socket.id}`);
 
   socket.on(
     'create-room',
     (
-      roomId: string | null,
+      roomId: string,
       isPrivate: boolean,
-      cb: (successful: boolean) => void
+      cb: (successful: boolean, res: string) => void
     ) => {
-      if (Object.keys(rooms).length === 900000) cb(false);
+      if (Object.keys(rooms).length === 900000) cb(false, 'Invalid ID');
+      const userId = uuid();
 
       let id;
-      if (!roomId) {
+      if (roomId === '') {
         id = 0;
-        while (rooms.hasOwnProperty(id) && id > 99999 && id < 1000000) {
+        while (rooms[id] !== undefined || id <= 99999 || id >= 1000000) {
           id = random(100000, 999999);
         }
 
         socket.join(String(id));
       } else {
         id = roomId;
-        socket.join(id);
+
+        if (rooms[id] === undefined) {
+          socket.join(id);
+        } else {
+          cb(false, 'ID already taken');
+        }
       }
 
       // setup match
       rooms[id] = { numPlayers: 1, state: initialState, private: isPrivate };
-      rooms[id].state.match.players[1] = socket.id;
+      rooms[id].state.match.players[1] = userId;
+      cb(true, userId);
     }
   );
 
   socket.on(
     'join-room',
-    (roomId: string, cb: (successful: boolean) => void) => {
+    (roomId: string, cb: (successful: boolean, res: string) => void) => {
       const room = rooms[roomId];
+      const userId = uuid();
 
       if (room) {
         socket.join(roomId);
-        cb(true);
-      } else cb(false);
+        cb(true, userId);
+      } else cb(false, 'Room could not be found');
 
       room.numPlayers++;
-      room.state.match.players[room.numPlayers] = socket.id;
+      room.state.match.players[room.numPlayers] = userId;
       room.state.players[room.numPlayers] = { hand: [] };
+      cb(true, userId);
     }
   );
 });
