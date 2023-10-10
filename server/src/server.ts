@@ -1,18 +1,39 @@
 import { Server } from 'socket.io';
+import express from 'express';
 import { GameState } from './types';
 import { initialState } from './cards/cards';
 import { random } from './functions/helpers';
 
+const rooms: {
+  [key: string]: { numPlayers: number; state: GameState; private: boolean };
+} = {};
+
+const app = express();
+app.get('/getRooms', (req, res) => {
+  let updatedRooms: { [key: string]: number } = {};
+
+  for (const key of Object.keys(rooms)) {
+    if (!rooms[key].private) {
+      updatedRooms[key] = rooms[key].numPlayers;
+    }
+  }
+
+  res.json(JSON.stringify(updatedRooms));
+});
+
+app.listen(5000, () => console.log('express server on port 5000'));
+
 const io = new Server();
-
-const rooms: { [key: string]: { numPlayers: number; state: GameState } } = {};
-
 io.on('connection', socket => {
   console.log(`connected to: ${socket.id}`);
 
   socket.on(
     'create-room',
-    (roomId: string | null, cb: (successful: boolean) => void) => {
+    (
+      roomId: string | null,
+      isPrivate: boolean,
+      cb: (successful: boolean) => void
+    ) => {
       if (Object.keys(rooms).length === 900000) cb(false);
 
       let id;
@@ -29,7 +50,7 @@ io.on('connection', socket => {
       }
 
       // setup match
-      rooms[id] = { numPlayers: 1, state: initialState };
+      rooms[id] = { numPlayers: 1, state: initialState, private: isPrivate };
       rooms[id].state.match.players[1] = socket.id;
     }
   );
@@ -52,3 +73,4 @@ io.on('connection', socket => {
 });
 
 io.listen(4000);
+console.log('socketio server on port 4000');
