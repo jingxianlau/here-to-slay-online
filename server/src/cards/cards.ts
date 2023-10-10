@@ -686,7 +686,9 @@ export const initialState: GameState = {
   // PRIVATE
   secret: {
     deck: deck,
-    leaderPile: leaderPile
+    leaderPile: leaderPile,
+    discardPile: [],
+    monsterPile: monsterPile
   },
   players: {
     1: { hand: [] }
@@ -705,9 +707,7 @@ export const initialState: GameState = {
     }
   },
   mainDeck: {
-    discardPile: [],
-    monsterPile: monsterPile,
-    monsters: null,
+    monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
     preparedCard: null
   },
 

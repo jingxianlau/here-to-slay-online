@@ -65,6 +65,8 @@ export interface GameState {
   secret: {
     deck: AnyCard[];
     leaderPile: LeaderCard[];
+    discardPile: AnyCard[];
+    monsterPile: AnyCard[];
   };
   players: {
     // private hand of each player
@@ -89,9 +91,7 @@ export interface GameState {
     };
   };
   mainDeck: {
-    discardPile: AnyCard[];
-    monsterPile: AnyCard[];
-    monsters: [MonsterCard, MonsterCard, MonsterCard] | null;
+    monsters: [MonsterCard, MonsterCard, MonsterCard];
 
     // window for challenging
     preparedCard?: {
@@ -104,6 +104,57 @@ export interface GameState {
   match: {
     gameStarted: boolean;
     players: { [key: number]: string };
+    player: number;
+    turnsLeft: 1 | 2 | 3;
+    phase: 'draw' | 'play' | 'attack' | 'challenge';
+    isRolling: boolean;
+  };
+}
+
+export interface privateState {
+  // PRIVATE
+  secret: {
+    deck: AnyCard[] | null;
+    leaderPile: LeaderCard[] | null;
+    discardPile: AnyCard[] | null;
+    monsterPile: AnyCard[] | null;
+  } | null;
+  players: {
+    // private hand of each player
+    [key: number]: { hand: AnyCard[] } | null;
+  };
+
+  // PUBLIC
+  dice: {
+    main: { roll: [number, number]; modifier: number };
+
+    // for challenging
+    defend: { roll: [number, number]; modifer: number } | null;
+  };
+  board: {
+    [key: number]: {
+      // for win condition (6 diff classes)
+      classes: HeroClass[];
+
+      // players' public board
+      heroCards: HeroCard[];
+      largeCards: LargeCard[];
+    };
+  };
+  mainDeck: {
+    monsters: [MonsterCard, MonsterCard, MonsterCard];
+
+    // window for challenging
+    preparedCard?: {
+      card: HeroCard | MagicCard | ItemCard;
+      successful: null | boolean;
+    } | null;
+  };
+
+  // MATCH VARIABLES
+  match: {
+    gameStarted: boolean;
+    players: { [key: number]: string } | null;
     player: number;
     turnsLeft: 1 | 2 | 3;
     phase: 'draw' | 'play' | 'attack' | 'challenge';
