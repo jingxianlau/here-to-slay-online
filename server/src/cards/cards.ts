@@ -8,7 +8,8 @@ import {
   MonsterCard,
   CardType,
   HeroClass,
-  AnyCard
+  AnyCard,
+  GameState
 } from '../types';
 import { v4 as UUID } from 'uuid';
 
@@ -680,3 +681,43 @@ export const deck: AnyCard[] = [
 export const leaderPile: LeaderCard[] = [...leaderCards];
 
 export const monsterPile: MonsterCard[] = [...monsterCards];
+
+export const initialState: GameState = {
+  // PRIVATE
+  secret: {
+    deck: deck,
+    leaderPile: leaderPile
+  },
+  players: {
+    1: { hand: [] }
+  },
+
+  // PUBLIC
+  dice: {
+    main: { roll: [0, 0], modifier: 0 },
+    defend: null
+  },
+  board: {
+    1: {
+      classes: [],
+      heroCards: [],
+      largeCards: []
+    }
+  },
+  mainDeck: {
+    discardPile: [],
+    monsterPile: monsterPile,
+    monsters: null,
+    preparedCard: null
+  },
+
+  // MATCH VARIABLES
+  match: {
+    gameStarted: false,
+    players: { 1: '' },
+    player: 0,
+    turnsLeft: 3,
+    phase: 'draw',
+    isRolling: false
+  }
+};
