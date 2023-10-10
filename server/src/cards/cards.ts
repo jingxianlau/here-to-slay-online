@@ -13,7 +13,7 @@ import {
 import { v4 as UUID } from 'uuid';
 
 // ALL CARDS (BASE GAME)
-export const leaderCards: LeaderCard[] = [
+const leaderCards: LeaderCard[] = [
   {
     name: 'The Charismatic Song',
     class: HeroClass.Bard,
@@ -52,7 +52,7 @@ export const leaderCards: LeaderCard[] = [
   }
 ];
 
-export const monsterCards: MonsterCard[] = [
+const monsterCards: MonsterCard[] = [
   {
     name: 'Anuran Cauldron',
     type: CardType.Large
@@ -115,7 +115,7 @@ export const monsterCards: MonsterCard[] = [
   }
 ];
 
-export const heroCards: HeroCard[] = [
+const heroCards: HeroCard[] = [
   // Bards
   {
     name: 'Dodgy Dealer',
@@ -364,7 +364,7 @@ export const heroCards: HeroCard[] = [
   }
 ];
 
-export const itemCards: ItemCard[] = [
+const itemCards: ItemCard[] = [
   {
     name: 'Bard Mask',
     type: CardType.Item
@@ -427,7 +427,7 @@ export const itemCards: ItemCard[] = [
   }
 ];
 
-export const modifierCards: ModifierCard[] = [
+const modifierCards: ModifierCard[] = [
   {
     name: 'modifier',
     modifier: [+1, -3],
@@ -555,7 +555,7 @@ export const modifierCards: ModifierCard[] = [
   }
 ];
 
-export const challengeCard: ChallengeCard[] = [
+const challengeCard: ChallengeCard[] = [
   {
     name: 'challenge',
     type: CardType.Challenge
@@ -614,7 +614,7 @@ export const challengeCard: ChallengeCard[] = [
   }
 ];
 
-export const magicCards: MagicCard[] = [
+const magicCards: MagicCard[] = [
   {
     name: 'Call to the Fallen',
     type: CardType.Magic

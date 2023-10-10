@@ -73,23 +73,15 @@ export interface GameState {
 
   // PUBLIC
   dice: {
-    main: {
-      1: { roll: [number, number] };
-      2: { roll: [number, number] };
-      modifer: number;
-    };
+    main: { roll: [number, number]; modifier: number };
 
     // for challenging
-    defend: {
-      1: { roll: [number, number] };
-      2: { roll: [number, number] };
-      modifer: number;
-    } | null;
+    defend: { roll: [number, number]; modifer: number } | null;
   };
   board: {
     [key: number]: {
       // for win condition (6 diff classes)
-      classes: CardType[];
+      classes: HeroClass[];
 
       // players' public board
       heroCards: HeroCard[];
@@ -99,12 +91,22 @@ export interface GameState {
   mainDeck: {
     discardPile: AnyCard[];
     monsterPile: AnyCard[];
-    monsters: [MonsterCard, MonsterCard, MonsterCard];
+    monsters: [MonsterCard, MonsterCard, MonsterCard] | null;
 
     // window for challenging
     preparedCard?: {
       card: HeroCard | MagicCard | ItemCard;
       successful: null | boolean;
-    };
+    } | null;
+  };
+
+  // MATCH VARIABLES
+  match: {
+    gameStarted: boolean;
+    players: { [key: number]: string };
+    player: number;
+    turnsLeft: 1 | 2 | 3;
+    phase: 'draw' | 'play' | 'attack' | 'challenge';
+    isRolling: boolean;
   };
 }
