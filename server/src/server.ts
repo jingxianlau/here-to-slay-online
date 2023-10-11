@@ -3,20 +3,22 @@ import express from 'express';
 import cors from 'cors';
 import { v4 as uuid } from 'uuid';
 import { GameState } from './types';
-import { initialState } from './cards/cards';
 import { random } from './functions/helpers';
+import { initialState } from './cards/cards';
 
 const rooms: {
   [key: string]: { numPlayers: number; state: GameState; private: boolean };
 } = {};
 
 const app = express();
+
 app.use(
   cors({
     origin: 'http://localhost:3000'
   })
 );
-app.get('/getRooms', (req, res) => {
+app.use(express.json());
+app.get('/get-rooms', (req, res) => {
   let updatedRooms: { [key: string]: number } = {};
 
   for (const key of Object.keys(rooms)) {
@@ -25,8 +27,53 @@ app.get('/getRooms', (req, res) => {
     }
   }
 
-  res.json(JSON.stringify(updatedRooms));
+  res.json(updatedRooms);
 });
+app.post('/create-room', (req, res) => {
+  console.log(req.body);
+  const { roomId, isPrivate } = req.body;
+
+  if (Object.keys(rooms).length === 900000)
+    res.status(400).json({ successful: false, res: 'Invalid ID' });
+  const userId = uuid();
+
+  let id;
+  if (roomId === '') {
+    id = 0;
+    while (rooms[id] !== undefined || id <= 99999 || id >= 1000000) {
+      id = random(100000, 999999);
+    }
+
+    return res.status(400).json({ successful: false, res: 'Invalid ID' });
+  } else {
+    id = roomId;
+
+    if (rooms[id] !== undefined) {
+      return res.status(400).json({ successful: false, res: 'ID taken' });
+    }
+  }
+
+  // setup match
+  rooms[id] = { numPlayers: 1, state: initialState, private: isPrivate };
+  rooms[id].state.match.players[1] = userId;
+  return res.json({ successful: true, res: userId });
+});
+app.post('/join-room', (req, res) => {
+  const room = rooms[req.body.roomId];
+  const userId = uuid();
+
+  if (room) {
+    room.numPlayers++;
+    room.state.match.players[room.numPlayers] = userId;
+    room.state.players[room.numPlayers] = { hand: [] };
+    return res.json({ successful: true, res: userId });
+  } else {
+    return res
+      .status(400)
+      .json({ successful: false, res: 'Room could not be found' });
+  }
+});
+
 app.listen(4500, () => console.log('express server on port 4500'));
 
 const io = new Server({ cors: { origin: 'http://localhost:3000' } });
@@ -34,56 +81,8 @@ io.on('connection', socket => {
   console.log(`connected to: ${socket.id}`);
 
   socket.on(
-    'create-room',
-    (
-      roomId: string,
-      isPrivate: boolean,
-      cb: (successful: boolean, res: string) => void
-    ) => {
-      if (Object.keys(rooms).length === 900000) cb(false, 'Invalid ID');
-      const userId = uuid();
-
-      let id;
-      if (roomId === '') {
-        id = 0;
-        while (rooms[id] !== undefined || id <= 99999 || id >= 1000000) {
-          id = random(100000, 999999);
-        }
-
-        socket.join(String(id));
-      } else {
-        id = roomId;
-
-        if (rooms[id] === undefined) {
-          socket.join(id);
-        } else {
-          cb(false, 'ID already taken');
-        }
-      }
-
-      // setup match
-      rooms[id] = { numPlayers: 1, state: initialState, private: isPrivate };
-      rooms[id].state.match.players[1] = userId;
-      cb(true, userId);
-    }
-  );
-
-  socket.on(
-    'join-room',
-    (roomId: string, cb: (successful: boolean, res: string) => void) => {
-      const room = rooms[roomId];
-      const userId = uuid();
-
-      if (room) {
-        socket.join(roomId);
-        cb(true, userId);
-      } else cb(false, 'Room could not be found');
-
-      room.numPlayers++;
-      room.state.match.players[room.numPlayers] = userId;
-      room.state.players[room.numPlayers] = { hand: [] };
-      cb(true, userId);
-    }
+    'enter-match',
+    (roomId: string, userId: string, username: string) => {}
   );
 });
 
