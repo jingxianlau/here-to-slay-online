@@ -104,6 +104,9 @@ export interface GameState {
     turnsLeft: 1 | 2 | 3;
     phase: 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
+
+    // Match Start
+    isReady: boolean[];
   };
 }
 
@@ -146,10 +149,13 @@ export interface privateState {
   // MATCH VARIABLES
   match: {
     gameStarted: boolean;
-    players: string[] | null;
+    players: string[];
     player: number;
     turnsLeft: 1 | 2 | 3;
     phase: 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
+
+    // Match Start
+    isReady: boolean[];
   };
 }

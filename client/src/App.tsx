@@ -20,6 +20,8 @@ function App() {
     }
 
     loadRooms();
+
+    setInterval(loadRooms, 3000);
   }, []);
 
   function changeUsername(name: string) {

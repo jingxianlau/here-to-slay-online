@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { GameState } from './types';
 import { random } from './functions/helpers';
 import { initialState } from './cards/cards';
+import { instrument } from '@socket.io/admin-ui';
 
 const rooms: {
   [key: string]: { numPlayers: number; state: GameState; private: boolean };
@@ -60,15 +61,21 @@ app.post('/create-room', (req, res) => {
   return res.json({ successful: true, res: userId });
 });
 app.post('/join-room', (req, res) => {
+  const { roomId, username } = req.body;
   const room = rooms[req.body.roomId];
   const userId = uuid();
 
   if (room) {
+    if (rooms[roomId].state.match.players.includes(username)) {
+      return res.json({ successful: false, res: 'Username taken' });
+    }
+
     room.numPlayers++;
     room.state.secret.playerIds.push(userId);
-    room.state.match.players.push(req.body.username);
+    room.state.match.players.push(username);
     room.state.players.push({ hand: [] });
     room.state.board.push({ classes: [], heroCards: [], largeCards: [] });
+    room.state.match.isReady.push(false);
     return res.json({ successful: true, res: userId });
   } else {
     return res
@@ -79,29 +86,32 @@ app.post('/join-room', (req, res) => {
 app.listen(4500, () => console.log('express server on port 4500'));
 
 // SOCKET-IO SERVER
-const io = new Server({ cors: { origin: 'http://localhost:3000' } });
+const io = new Server({
+  cors: {
+    origin: true,
+    credentials: true
+  }
+});
 io.on('connection', socket => {
-  console.log(`connected to: ${socket.id}`);
-
   socket.on(
     'enter-match',
     (
       roomId: string,
       userId: string,
       username: string,
-      cb: (successful: boolean) => void
+      cb: (successful: boolean, playerNum: number | null) => void
     ) => {
       if (!rooms[roomId]) {
-        cb(false);
+        cb(false, null);
         socket.disconnect();
         return;
       }
 
       const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
 
-      if (!playerNum) {
+      if (playerNum === -1) {
+        cb(false, null);
         socket.disconnect();
-        cb(false);
       }
 
       if (rooms[roomId].state.match.players[playerNum] === '') {
@@ -116,19 +126,24 @@ io.on('connection', socket => {
             `Anonymous ${playerNum}`)
       ) {
         socket.join(roomId);
-        cb(true);
+        io.in(roomId).emit('state', rooms[roomId].state);
+        cb(true, playerNum);
       } else {
         rooms[roomId].state.secret.playerIds.splice(playerNum, 1);
         rooms[roomId].state.match.players.splice(playerNum, 1);
 
+        cb(false, null);
         socket.disconnect();
-        cb(false);
       }
-
-      console.log(rooms[roomId].state);
     }
   );
+
+  socket.on('ready', (roomId: string, userId: string) => {});
+
+  socket.on('start-match', (roomId: string) => {});
 });
 
 io.listen(4000);
 console.log('socketio server on port 4000');
+
+instrument(io, { auth: false, mode: 'development' });

@@ -717,6 +717,7 @@ export const initialState: GameState = {
     player: 0,
     turnsLeft: 3,
     phase: 'draw',
-    isRolling: false
+    isRolling: false,
+    isReady: [false]
   }
 };
