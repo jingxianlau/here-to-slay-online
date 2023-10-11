@@ -688,24 +688,23 @@ export const initialState: GameState = {
     deck: deck,
     leaderPile: leaderPile,
     discardPile: [],
-    monsterPile: monsterPile
+    monsterPile: monsterPile,
+    playerIds: []
   },
-  players: {
-    1: { hand: [] }
-  },
+  players: [{ hand: [] }],
 
   // PUBLIC
   dice: {
     main: { roll: [0, 0], modifier: 0 },
     defend: null
   },
-  board: {
-    1: {
+  board: [
+    {
       classes: [],
       heroCards: [],
       largeCards: []
     }
-  },
+  ],
   mainDeck: {
     monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
     preparedCard: null
@@ -714,7 +713,7 @@ export const initialState: GameState = {
   // MATCH VARIABLES
   match: {
     gameStarted: false,
-    players: { 1: '' },
+    players: [],
     player: 0,
     turnsLeft: 3,
     phase: 'draw',

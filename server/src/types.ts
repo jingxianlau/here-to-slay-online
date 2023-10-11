@@ -67,11 +67,9 @@ export interface GameState {
     leaderPile: LeaderCard[];
     discardPile: AnyCard[];
     monsterPile: AnyCard[];
+    playerIds: string[];
   };
-  players: {
-    // private hand of each player
-    [key: number]: { hand: AnyCard[] };
-  };
+  players: { hand: AnyCard[] }[];
 
   // PUBLIC
   dice: {
@@ -81,15 +79,13 @@ export interface GameState {
     defend: { roll: [number, number]; modifer: number } | null;
   };
   board: {
-    [key: number]: {
-      // for win condition (6 diff classes)
-      classes: HeroClass[];
+    // for win condition (6 diff classes)
+    classes: HeroClass[];
 
-      // players' public board
-      heroCards: HeroCard[];
-      largeCards: LargeCard[];
-    };
-  };
+    // players' public board
+    heroCards: HeroCard[];
+    largeCards: LargeCard[];
+  }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
 
@@ -103,7 +99,7 @@ export interface GameState {
   // MATCH VARIABLES
   match: {
     gameStarted: boolean;
-    players: { [key: number]: string };
+    players: string[];
     player: number;
     turnsLeft: 1 | 2 | 3;
     phase: 'draw' | 'play' | 'attack' | 'challenge';
@@ -118,11 +114,9 @@ export interface privateState {
     leaderPile: LeaderCard[] | null;
     discardPile: AnyCard[] | null;
     monsterPile: AnyCard[] | null;
+    playerIds: string[] | null;
   } | null;
-  players: {
-    // private hand of each player
-    [key: number]: { hand: AnyCard[] } | null;
-  };
+  players: ({ hand: AnyCard[] } | null)[];
 
   // PUBLIC
   dice: {
@@ -132,15 +126,13 @@ export interface privateState {
     defend: { roll: [number, number]; modifer: number } | null;
   };
   board: {
-    [key: number]: {
-      // for win condition (6 diff classes)
-      classes: HeroClass[];
+    // for win condition (6 diff classes)
+    classes: HeroClass[];
 
-      // players' public board
-      heroCards: HeroCard[];
-      largeCards: LargeCard[];
-    };
-  };
+    // players' public board
+    heroCards: HeroCard[];
+    largeCards: LargeCard[];
+  }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
 
@@ -154,7 +146,7 @@ export interface privateState {
   // MATCH VARIABLES
   match: {
     gameStarted: boolean;
-    players: { [key: number]: string } | null;
+    players: string[] | null;
     player: number;
     turnsLeft: 1 | 2 | 3;
     phase: 'draw' | 'play' | 'attack' | 'challenge';

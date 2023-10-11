@@ -1,14 +1,31 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const navigate = useNavigate();
+
   const [rooms, setRooms] = useState<{ [key: string]: number }>({});
   const [roomId, setRoomId] = useState('');
   const [username, setUsername] = useState('');
   const [isPrivate, setIsPrivate] = useState(true);
 
   useEffect(() => {
+    const uname = localStorage.getItem('username');
+    if (uname) {
+      setUsername(uname);
+    }
+    const credentials = localStorage.getItem('credentials');
+    if (credentials) {
+      navigate('/lobby');
+    }
+
     loadRooms();
   }, []);
+
+  function changeUsername(name: string) {
+    setUsername(name);
+    localStorage.setItem('username', name);
+  }
 
   async function loadRooms() {
     const response = await fetch('http://localhost:4500/get-rooms');
@@ -16,15 +33,10 @@ function App() {
     setRooms(json);
   }
 
-  function changeUsername(name: string) {
-    setUsername(name);
-    localStorage.setItem('username', name);
-  }
-
   async function joinRoom(id?: string) {
     const res = await fetch('http://localhost:4500/join-room', {
       method: 'POST',
-      body: JSON.stringify({ roomId: id ? id : roomId }),
+      body: JSON.stringify({ roomId: id ? id : roomId, username: username }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -34,9 +46,12 @@ function App() {
     if (json.successful) {
       localStorage.setItem(
         'credentials',
-        JSON.stringify({ roomId: id ? id : roomId, userId: json.res })
+        JSON.stringify({
+          roomId: id ? id : roomId,
+          userId: json.res
+        })
       );
-      alert('success');
+      navigate('/lobby');
     } else {
       alert(json.res);
     }
@@ -51,7 +66,11 @@ function App() {
     } else {
       const res = await fetch('http://localhost:4500/create-room', {
         method: 'POST',
-        body: JSON.stringify({ roomId: roomId, isPrivate: isPrivate }),
+        body: JSON.stringify({
+          roomId: roomId,
+          isPrivate: isPrivate,
+          username: username
+        }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -63,7 +82,7 @@ function App() {
           'credentials',
           JSON.stringify({ roomId: roomId, userId: json.res })
         );
-        alert('success');
+        navigate('/lobby');
       } else {
         alert(json.res);
       }
