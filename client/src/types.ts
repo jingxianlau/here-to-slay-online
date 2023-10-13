@@ -74,7 +74,6 @@ export interface GameState {
     leaderPile: LeaderCard[] | null;
     discardPile: AnyCard[] | null;
     monsterPile: AnyCard[] | null;
-    playerIds: string[] | null;
   } | null;
   players: ({ hand: AnyCard[] } | null)[];
 
@@ -87,7 +86,14 @@ export interface GameState {
   };
   board: {
     // for win condition (6 diff classes)
-    classes: HeroClass[];
+    classes: {
+      FIGHTER: number;
+      BARD: number;
+      GUARDIAN: number;
+      RANGER: number;
+      THIEF: number;
+      WIZARD: number;
+    };
 
     // players' public board
     heroCards: HeroCard[];
@@ -109,7 +115,7 @@ export interface GameState {
     players: string[];
     player: number;
     turnsLeft: 1 | 2 | 3;
-    phase: 'draw' | 'play' | 'attack' | 'challenge';
+    phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
 
     // Match Start

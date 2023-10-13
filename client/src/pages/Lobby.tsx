@@ -3,13 +3,11 @@ import { Socket, io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { Credentials, GameState } from '../types';
 import { getJSON } from '../helpers/getJSON';
-import useSocketContext from '../hooks/useSocketContext';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { setSocket } = useSocketContext();
 
-  const [socket, setLocalSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
   const [playerNum, setPlayerNum] = useState(-1);
   const [isReady, setIsReady] = useState(false);
@@ -31,7 +29,6 @@ const Lobby: React.FC = () => {
       socket.on('connect', () => {});
 
       setSocket(socket);
-      setLocalSocket(socket);
 
       socket.emit(
         'enter-match',
@@ -53,8 +50,15 @@ const Lobby: React.FC = () => {
         }
       );
 
-      socket.on('state', (state: GameState) => {
-        setMatchState(state.match);
+      socket.on('state', (state: GameState['match']) => {
+        setMatchState(state);
+        if (state.gameStarted) {
+          navigate('/game');
+        }
+      });
+
+      socket.on('start-match', () => {
+        navigate('/game');
       });
 
       return () => {

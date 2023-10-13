@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Lobby from './pages/Lobby';
-import { SocketContextProvider } from './context/SocketContext';
+import Game from './pages/Game';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,12 +12,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <SocketContextProvider>
-        <Routes>
-          <Route path='/' element={<App />} />
-          <Route path='/lobby' element={<Lobby />} />
-        </Routes>
-      </SocketContextProvider>
+      <Routes>
+        <Route path='/' element={<App />} />
+        <Route path='/lobby' element={<Lobby />} />
+        <Route path='/game' element={<Game />} />
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>
 );

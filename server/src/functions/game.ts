@@ -1,4 +1,4 @@
-import { GameState, privateState } from '../types';
+import { AnyCard, GameState, privateState } from '../types';
 
 export const parseState = (userId: string, state: GameState): privateState => {
   let copy: GameState = JSON.parse(JSON.stringify(state));
@@ -16,4 +16,21 @@ export const parseState = (userId: string, state: GameState): privateState => {
   }
 
   return newState;
+};
+
+export const shuffle = (arr: AnyCard[]): AnyCard[] => {
+  let currentIndex = arr.length;
+  let randomIndex;
+
+  while (currentIndex > 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [arr[currentIndex], arr[randomIndex]] = [
+      arr[randomIndex],
+      arr[currentIndex]
+    ];
+  }
+
+  return arr;
 };

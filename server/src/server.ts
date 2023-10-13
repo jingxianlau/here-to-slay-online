@@ -2,10 +2,18 @@ import { Server } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import { v4 as uuid } from 'uuid';
-import { GameState } from './types';
+import {
+  AnyCard,
+  GameState,
+  LeaderCard,
+  MonsterCard,
+  privateState
+} from './types';
 import { random, removePlayer } from './functions/helpers';
-import { initialState } from './cards/cards';
+import { initialState, monsterPile } from './cards/cards';
 import { instrument } from '@socket.io/admin-ui';
+import { parseState, shuffle } from './functions/game';
+import cloneDeep from 'lodash.clonedeep';
 
 const rooms: {
   [key: string]: { numPlayers: number; state: GameState; private: boolean };
@@ -53,11 +61,12 @@ app.post('/create-room', (req, res) => {
     }
   }
 
+  let gameState = cloneDeep(initialState);
+
   // setup match
-  rooms[id] = { numPlayers: 1, state: initialState, private: isPrivate };
+  rooms[id] = { numPlayers: 1, state: gameState, private: isPrivate };
   rooms[id].state.secret.playerIds[0] = userId;
   rooms[id].state.match.players[0] = username;
-  rooms[id].state.board[0] = { classes: [], heroCards: [], largeCards: [] };
   return res.json({ successful: true, res: userId });
 });
 app.post('/join-room', (req, res) => {
@@ -74,7 +83,18 @@ app.post('/join-room', (req, res) => {
     room.state.secret.playerIds.push(userId);
     room.state.match.players.push(username);
     room.state.players.push({ hand: [] });
-    room.state.board.push({ classes: [], heroCards: [], largeCards: [] });
+    room.state.board.push({
+      classes: {
+        FIGHTER: 0,
+        BARD: 0,
+        GUARDIAN: 0,
+        RANGER: 0,
+        THIEF: 0,
+        WIZARD: 0
+      },
+      heroCards: [],
+      largeCards: []
+    });
     room.state.match.isReady.push(false);
     return res.json({ successful: true, res: userId });
   } else {
@@ -85,7 +105,17 @@ app.post('/join-room', (req, res) => {
 });
 app.listen(4500, () => console.log('express server on port 4500'));
 
-// SOCKET.IO SERVER
+/*
+
+     BELOW
+SOCKET.IO SERVER
+
+ Lobby System 
+      &
+Game Management
+
+*/
+
 const io = new Server({
   cors: {
     origin: true,
@@ -96,6 +126,7 @@ const io = new Server({
 io.on('connection', socket => {
   console.log(`connected to ${socket.id}`);
 
+  // LOBBY SYSTEM
   socket.on(
     'enter-match',
     (
@@ -112,7 +143,10 @@ io.on('connection', socket => {
         return;
       }
 
-      if (rooms[roomId].state.match.players[playerNum] === '') {
+      if (
+        rooms[roomId].state.match.players[playerNum] === '' &&
+        !rooms[roomId].state.match.gameStarted
+      ) {
         // fill username
         rooms[roomId].state.match.players[playerNum] = `Anonymous ${
           playerNum + 1
@@ -129,7 +163,9 @@ io.on('connection', socket => {
       ) {
         socket.join(roomId);
 
-        sendState(roomId);
+        if (!rooms[roomId].state.match.gameStarted) {
+          sendState(roomId);
+        }
         cb(true, playerNum);
       } else {
         removePlayer(rooms[roomId].state, playerNum);
@@ -159,13 +195,67 @@ io.on('connection', socket => {
       sendState(roomId);
       cb(true);
 
-      setTimeout(() => {
-        io.in(roomId).emit('game-started');
-      }, 500);
+      if (
+        rooms[roomId].state.match.isReady.every(val => val === true) &&
+        rooms[roomId].numPlayers >= 3
+      ) {
+        setTimeout(() => {
+          io.in(roomId).emit('start-match');
+        }, 500);
+      }
     }
   );
 
-  socket.on('start-match', (roomId: string) => {});
+  // GET SOCKET IDS & DISTRIBUTE CARDS
+  socket.on('start-match', (roomId: string, playerId: string) => {
+    const state = rooms[roomId].state;
+    const numPlayers = rooms[roomId].numPlayers;
+
+    const playerNum = state.secret.playerIds.indexOf(playerId);
+    state.secret.playerSocketIds[playerNum] = socket.id;
+
+    if (rooms[roomId].state.match.gameStarted) {
+      sendGameState(roomId);
+      return;
+    }
+
+    if (
+      numPlayers >= 3 &&
+      io.sockets.adapter.rooms.get(roomId)?.size === numPlayers &&
+      state.secret.playerSocketIds.every(val => Boolean(val))
+    ) {
+      state.match.gameStarted = true;
+
+      // distribute cards
+      state.secret.deck = shuffle(state.secret.deck);
+      state.secret.leaderPile = shuffle(
+        state.secret.leaderPile
+      ) as LeaderCard[];
+      state.secret.monsterPile = shuffle(
+        state.secret.monsterPile
+      ) as MonsterCard[];
+
+      state.mainDeck.monsters = [
+        monsterPile.pop() as MonsterCard,
+        monsterPile.pop() as MonsterCard,
+        monsterPile.pop() as MonsterCard
+      ];
+      for (let i = 0; i < numPlayers; i++) {
+        for (let _ = 0; _ < 7; _++) {
+          state.players[i].hand.push(state.secret.deck.pop() as AnyCard);
+        }
+
+        let leader = state.secret.leaderPile.pop() as LeaderCard;
+        state.board[i].classes[leader.class]++;
+        state.board[i].largeCards.push(leader);
+      }
+
+      state.match.phase = 'start-roll';
+
+      // send setup state
+      sendGameState(roomId);
+    }
+  });
 });
 
 io.listen(4000);
@@ -187,5 +277,14 @@ function checkCredentials(roomId: string, userId: string): number {
 }
 
 function sendState(roomId: string) {
-  io.in(roomId).emit('state', rooms[roomId].state);
+  io.in(roomId).emit('state', rooms[roomId].state.match);
+}
+
+function sendGameState(roomId: string) {
+  const state = rooms[roomId].state;
+
+  for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+    const privateState = parseState(state.secret.playerIds[i], state);
+    io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
+  }
 }

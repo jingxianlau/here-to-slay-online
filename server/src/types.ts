@@ -20,34 +20,41 @@ interface Card {
   player?: number;
   name: string;
   type: CardType;
-  id?: string;
+  id: string;
 }
 export interface HeroCard extends Card {
   type: CardType.Hero;
   class: HeroClass;
   items?: ItemCard[];
+  id: string;
 }
 export interface ChallengeCard extends Card {
   type: CardType.Challenge;
+  id: string;
 }
 export interface ModifierCard extends Card {
   type: CardType.Modifier;
   modifier: [number, number] | [number];
   diceId?: 1 | 2;
+  id: string;
 }
 export interface ItemCard extends Card {
   type: CardType.Item;
   heroId?: number;
+  id: string;
 }
 export interface MagicCard extends Card {
   type: CardType.Magic;
+  id: string;
 }
 export interface MonsterCard extends Card {
   type: CardType.Large;
+  id: string;
 }
 export interface LeaderCard extends MonsterCard {
   type: CardType.Large;
   class: HeroClass;
+  id: string;
 }
 export type AnyCard =
   | HeroCard
@@ -66,8 +73,9 @@ export interface GameState {
     deck: AnyCard[];
     leaderPile: LeaderCard[];
     discardPile: AnyCard[];
-    monsterPile: AnyCard[];
+    monsterPile: MonsterCard[];
     playerIds: string[];
+    playerSocketIds: string[];
   };
   players: { hand: AnyCard[] }[];
 
@@ -80,7 +88,14 @@ export interface GameState {
   };
   board: {
     // for win condition (6 diff classes)
-    classes: HeroClass[];
+    classes: {
+      FIGHTER: number;
+      BARD: number;
+      GUARDIAN: number;
+      RANGER: number;
+      THIEF: number;
+      WIZARD: number;
+    };
 
     // players' public board
     heroCards: HeroCard[];
@@ -102,7 +117,7 @@ export interface GameState {
     players: string[];
     player: number;
     turnsLeft: 1 | 2 | 3;
-    phase: 'draw' | 'play' | 'attack' | 'challenge';
+    phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
 
     // Match Start
@@ -117,7 +132,6 @@ export interface privateState {
     leaderPile: LeaderCard[] | null;
     discardPile: AnyCard[] | null;
     monsterPile: AnyCard[] | null;
-    playerIds: string[] | null;
   } | null;
   players: ({ hand: AnyCard[] } | null)[];
 
@@ -130,7 +144,14 @@ export interface privateState {
   };
   board: {
     // for win condition (6 diff classes)
-    classes: HeroClass[];
+    classes: {
+      FIGHTER: number;
+      BARD: number;
+      GUARDIAN: number;
+      RANGER: number;
+      THIEF: number;
+      WIZARD: number;
+    };
 
     // players' public board
     heroCards: HeroCard[];
@@ -152,7 +173,7 @@ export interface privateState {
     players: string[];
     player: number;
     turnsLeft: 1 | 2 | 3;
-    phase: 'draw' | 'play' | 'attack' | 'challenge';
+    phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
 
     // Match Start
