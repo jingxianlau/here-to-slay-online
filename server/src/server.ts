@@ -107,12 +107,12 @@ app.listen(4500, () => console.log('express server on port 4500'));
 
 /*
 
-     BELOW
-SOCKET.IO SERVER
+      BELOW
+SOCKET.IO  SERVER
 
- Lobby System 
-      &
-Game Management
+  Lobby  System
+        &
+ Game  Management
 
 */
 
@@ -162,18 +162,36 @@ io.on('connection', socket => {
             `Anonymous ${playerNum + 1}`)
       ) {
         socket.join(roomId);
-
-        if (!rooms[roomId].state.match.gameStarted) {
-          sendState(roomId);
-        }
+        sendState(roomId);
         cb(true, playerNum);
       } else {
-        removePlayer(rooms[roomId].state, playerNum);
+        removePlayer(rooms[roomId], playerNum);
         cb(false, null);
+        sendState(roomId);
         socket.disconnect();
       }
     }
   );
+
+  socket.on('leave-match', (roomId: string, userId: string, cb: () => void) => {
+    const playerNum = checkCredentials(roomId, userId);
+    if (playerNum === -1) {
+      socket.disconnect();
+      return;
+    }
+
+    if (rooms[roomId].numPlayers === 1) {
+      delete rooms[roomId];
+      cb();
+      socket.disconnect();
+      return;
+    }
+
+    removePlayer(rooms[roomId], playerNum);
+    cb();
+    sendState(roomId);
+    socket.disconnect();
+  });
 
   socket.on(
     'ready',

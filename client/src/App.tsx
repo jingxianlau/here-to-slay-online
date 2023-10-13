@@ -21,10 +21,14 @@ function App() {
 
     loadRooms();
 
-    setInterval(loadRooms, 3000);
+    setInterval(loadRooms, 200);
   }, []);
 
   function changeUsername(name: string) {
+    if (name.length > 15) {
+      alert('Username max 15 characters');
+      return;
+    }
     setUsername(name);
     localStorage.setItem('username', name);
   }
@@ -92,7 +96,7 @@ function App() {
   }
 
   return (
-    <div className='App'>
+    <div className='App' style={{ margin: '25px' }}>
       <h1>Here to Slay</h1>
       <form>
         <label>Username: </label>

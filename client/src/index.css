@@ -42,3 +42,25 @@ code {
 .rooms .room:nth-child(even) {
   background-color: #ddd;
 }
+
+.lobby {
+  margin: 25px;
+}
+
+.lobby-id {
+  margin-left: 12px;
+  margin-top: 12px;
+}
+
+.lobby .details h2 {
+  margin-top: -15px;
+}
+
+.player-list {
+  width: 230px;
+}
+
+.player-list .player {
+  display: flex;
+  justify-content: space-between;
+}
