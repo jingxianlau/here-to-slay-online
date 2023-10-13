@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { v4 as uuid } from 'uuid';
 import { GameState } from './types';
-import { random } from './functions/helpers';
+import { random, removePlayer } from './functions/helpers';
 import { initialState } from './cards/cards';
 import { instrument } from '@socket.io/admin-ui';
 
@@ -85,14 +85,17 @@ app.post('/join-room', (req, res) => {
 });
 app.listen(4500, () => console.log('express server on port 4500'));
 
-// SOCKET-IO SERVER
+// SOCKET.IO SERVER
 const io = new Server({
   cors: {
     origin: true,
     credentials: true
   }
 });
+
 io.on('connection', socket => {
+  console.log(`connected to ${socket.id}`);
+
   socket.on(
     'enter-match',
     (
@@ -101,44 +104,66 @@ io.on('connection', socket => {
       username: string,
       cb: (successful: boolean, playerNum: number | null) => void
     ) => {
-      if (!rooms[roomId]) {
+      // check credentials
+      const playerNum = checkCredentials(roomId, userId);
+      if (playerNum === -1) {
         cb(false, null);
         socket.disconnect();
         return;
       }
 
-      const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
-
-      if (playerNum === -1) {
-        cb(false, null);
-        socket.disconnect();
-      }
-
       if (rooms[roomId].state.match.players[playerNum] === '') {
-        rooms[roomId].state.match.players[playerNum] = `Anonymous ${playerNum}`;
+        // fill username
+        rooms[roomId].state.match.players[playerNum] = `Anonymous ${
+          playerNum + 1
+        }`;
       }
 
+      // JOIN ROOM
       if (
-        rooms[roomId] &&
+        // valid credentials check
         rooms[roomId].state.secret.playerIds[playerNum] === userId &&
         (rooms[roomId].state.match.players[playerNum] === username ||
           rooms[roomId].state.match.players[playerNum] ===
-            `Anonymous ${playerNum}`)
+            `Anonymous ${playerNum + 1}`)
       ) {
         socket.join(roomId);
-        io.in(roomId).emit('state', rooms[roomId].state);
+
+        sendState(roomId);
         cb(true, playerNum);
       } else {
-        rooms[roomId].state.secret.playerIds.splice(playerNum, 1);
-        rooms[roomId].state.match.players.splice(playerNum, 1);
-
+        removePlayer(rooms[roomId].state, playerNum);
         cb(false, null);
         socket.disconnect();
       }
     }
   );
 
-  socket.on('ready', (roomId: string, userId: string) => {});
+  socket.on(
+    'ready',
+    (
+      roomId: string,
+      userId: string,
+      ready: boolean,
+      cb: (successful: boolean) => void
+    ) => {
+      const playerNum = checkCredentials(roomId, userId);
+      if (playerNum === -1) {
+        cb(false);
+        socket.disconnect();
+        return;
+      }
+
+      rooms[roomId].state.match.isReady[playerNum] = ready;
+
+      sendState(roomId);
+      cb(true);
+
+      setTimeout(() => {
+        io.in(roomId).emit('game-started');
+      }, 500);
+    }
+  );
 
   socket.on('start-match', (roomId: string) => {});
 });
@@ -147,3 +172,20 @@ io.listen(4000);
 console.log('socketio server on port 4000');
 
 instrument(io, { auth: false, mode: 'development' });
+
+// HELPER FUNCTIONS
+function checkCredentials(roomId: string, userId: string): number {
+  if (!rooms[roomId]) return -1;
+
+  const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
+
+  if (playerNum === -1) {
+    return -1;
+  } else {
+    return playerNum;
+  }
+}
+
+function sendState(roomId: string) {
+  io.in(roomId).emit('state', rooms[roomId].state);
+}
