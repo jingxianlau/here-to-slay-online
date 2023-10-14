@@ -1,0 +1,49 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+header p {
+  margin: 8px;
+  display: inline-block;
+}
+
+header img {
+  width: 85px;
+}
+
+.game {
+  text-align: center;
+  margin: auto;
+}
+
+.dice {
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+}
+.die {
+  display: inline-block;
+  font-size: 30px;
+}
+
+.die.total {
+  font-size: 40px;
+}
+
+.start-roll_summary {
+  display: flex;
+}
+
+.start-roll_summary {
+  display: flex;
+  margin-left: auto;
+}
+.summary-player {
+  margin-left: 20px;
+}
+.summary-player span {
+  font-weight: 400;
+}

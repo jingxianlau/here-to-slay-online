@@ -2,22 +2,22 @@ import { Server } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import { v4 as uuid } from 'uuid';
-import {
-  AnyCard,
-  GameState,
-  LeaderCard,
-  MonsterCard,
-  privateState
-} from './types';
+import { AnyCard, GameState, LeaderCard, MonsterCard } from './types';
 import { random, removePlayer } from './functions/helpers';
 import { initialState, monsterPile } from './cards/cards';
 import { instrument } from '@socket.io/admin-ui';
-import { parseState, shuffle } from './functions/game';
+import { distributeCards, parseState, shuffle } from './functions/game';
 import cloneDeep from 'lodash.clonedeep';
 
 const rooms: {
-  [key: string]: { numPlayers: number; state: GameState; private: boolean };
-} = {};
+  [key: string]: {
+    numPlayers: number;
+    state: GameState;
+    private: boolean;
+  };
+} = {
+  '999999': { numPlayers: 0, state: cloneDeep(initialState), private: false }
+};
 
 // EXPRESS SERVER
 const app = express();
@@ -62,11 +62,34 @@ app.post('/create-room', (req, res) => {
   }
 
   let gameState = cloneDeep(initialState);
+  let room = rooms[id];
 
   // setup match
-  rooms[id] = { numPlayers: 1, state: gameState, private: isPrivate };
-  rooms[id].state.secret.playerIds[0] = userId;
-  rooms[id].state.match.players[0] = username;
+  rooms[id] = {
+    numPlayers: 1,
+    state: gameState,
+    private: isPrivate
+  };
+  room.state.secret.playerIds.push(userId);
+  room.state.match.players.push(username);
+  room.state.players.push({ hand: [] });
+  room.state.board.push({
+    classes: {
+      FIGHTER: 0,
+      BARD: 0,
+      GUARDIAN: 0,
+      RANGER: 0,
+      THIEF: 0,
+      WIZARD: 0
+    },
+    heroCards: [],
+    largeCards: []
+  });
+
+  // for dev v
+  room.state.match.isReady.push(true);
+  // for dev ^
+
   return res.json({ successful: true, res: userId });
 });
 app.post('/join-room', (req, res) => {
@@ -95,7 +118,11 @@ app.post('/join-room', (req, res) => {
       heroCards: [],
       largeCards: []
     });
-    room.state.match.isReady.push(false);
+
+    // for dev v
+    room.state.match.isReady.push(true);
+    // for dev ^
+
     return res.json({ successful: true, res: userId });
   } else {
     return res
@@ -224,7 +251,7 @@ io.on('connection', socket => {
     }
   );
 
-  // GET SOCKET IDS & DISTRIBUTE CARDS
+  // GET SOCKET IDS
   socket.on('start-match', (roomId: string, playerId: string) => {
     const state = rooms[roomId].state;
     const numPlayers = rooms[roomId].numPlayers;
@@ -243,35 +270,78 @@ io.on('connection', socket => {
       state.secret.playerSocketIds.every(val => Boolean(val))
     ) {
       state.match.gameStarted = true;
+      state.turn.phase = 'start-roll';
 
-      // distribute cards
-      state.secret.deck = shuffle(state.secret.deck);
-      state.secret.leaderPile = shuffle(
-        state.secret.leaderPile
-      ) as LeaderCard[];
-      state.secret.monsterPile = shuffle(
-        state.secret.monsterPile
-      ) as MonsterCard[];
-
-      state.mainDeck.monsters = [
-        monsterPile.pop() as MonsterCard,
-        monsterPile.pop() as MonsterCard,
-        monsterPile.pop() as MonsterCard
-      ];
       for (let i = 0; i < numPlayers; i++) {
-        for (let _ = 0; _ < 7; _++) {
-          state.players[i].hand.push(state.secret.deck.pop() as AnyCard);
-        }
-
-        let leader = state.secret.leaderPile.pop() as LeaderCard;
-        state.board[i].classes[leader.class]++;
-        state.board[i].largeCards.push(leader);
+        // starting roll
+        state.match.startRolls.inList.push(i);
+        state.match.startRolls.rolls.push(0);
       }
 
-      state.match.phase = 'start-roll';
-
-      // send setup state
       sendGameState(roomId);
+    }
+  });
+
+  /* 
+  
+  GAME
+  - 'roll'
+
+
+
+  */
+
+  socket.on('roll', (roomId: string, userId: string) => {
+    const playerNum = validSender(roomId, userId);
+    if (playerNum === -1) {
+      return;
+    } else if (rooms[roomId].state.turn.phase === 'start-roll') {
+      // START ROLL
+      const startRolls = rooms[roomId].state.match.startRolls;
+
+      const roll = rollDice();
+      const val = roll[0] + roll[1];
+
+      rooms[roomId].state.dice.main.roll = roll;
+      rooms[roomId].state.dice.main.total = val;
+      startRolls.rolls[playerNum] = val;
+      startRolls.maxVal = Math.max(startRolls.maxVal, val);
+
+      // remove losing values
+      for (let i = 0; i < startRolls.inList.length; i++) {
+        if (
+          startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
+          startRolls.rolls[startRolls.rolls.length - 1] !== 0
+        ) {
+          startRolls.inList.splice(i--, 1);
+        }
+      }
+
+      // won
+      if (startRolls.inList.length === 1) {
+        sendGameState(roomId);
+        rooms[roomId].state.turn.player = startRolls.inList[0];
+        rooms[roomId].state.turn.phase = 'draw';
+        distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
+        setTimeout(() => sendGameState(roomId), 1000);
+        return;
+      } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+        // next round of rolls
+        startRolls.rolls = [];
+        for (let i = 0; i < startRolls.inList.length; i++) {
+          startRolls.rolls.push(0);
+        }
+        startRolls.maxVal = 0;
+      }
+
+      sendGameState(roomId);
+
+      // next player
+      const next =
+        (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
+      rooms[roomId].state.turn.player = startRolls.inList[next];
+
+      setTimeout(() => sendGameState(roomId), 1000);
     }
   });
 });
@@ -305,4 +375,26 @@ function sendGameState(roomId: string) {
     const privateState = parseState(state.secret.playerIds[i], state);
     io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
   }
+}
+
+function validSender(roomId: string, userId: string): number {
+  const playerNum = checkCredentials(roomId, userId);
+
+  if (
+    rooms[roomId].state.turn.player === playerNum &&
+    rooms[roomId].state.secret.playerIds[playerNum] === userId
+  ) {
+    return playerNum;
+  } else {
+    return -1;
+  }
+}
+
+function nextPlayer(roomId: string) {
+  let player = rooms[roomId].state.turn.player;
+  rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
+}
+
+function rollDice(): [number, number] {
+  return [random(1, 6), random(1, 6)];
 }

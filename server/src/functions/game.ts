@@ -1,4 +1,11 @@
-import { AnyCard, GameState, privateState } from '../types';
+import { monsterPile } from '../cards/cards';
+import {
+  AnyCard,
+  GameState,
+  LeaderCard,
+  MonsterCard,
+  privateState
+} from '../types';
 
 export const parseState = (userId: string, state: GameState): privateState => {
   let copy: GameState = JSON.parse(JSON.stringify(state));
@@ -33,4 +40,26 @@ export const shuffle = (arr: AnyCard[]): AnyCard[] => {
   }
 
   return arr;
+};
+
+export const distributeCards = (state: GameState, numPlayers: number) => {
+  // DISTRIBUTE CARDS
+  state.secret.deck = shuffle(state.secret.deck);
+  state.secret.leaderPile = shuffle(state.secret.leaderPile) as LeaderCard[];
+  state.secret.monsterPile = shuffle(state.secret.monsterPile) as MonsterCard[];
+
+  state.mainDeck.monsters = [
+    monsterPile.pop() as MonsterCard,
+    monsterPile.pop() as MonsterCard,
+    monsterPile.pop() as MonsterCard
+  ];
+  for (let i = 0; i < numPlayers; i++) {
+    for (let _ = 0; _ < 7; _++) {
+      state.players[i].hand.push(state.secret.deck.pop() as AnyCard);
+    }
+
+    let leader = state.secret.leaderPile.pop() as LeaderCard;
+    state.board[i].classes[leader.class]++;
+    state.board[i].largeCards.push(leader);
+  }
 };

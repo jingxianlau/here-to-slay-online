@@ -20,7 +20,6 @@ const Lobby: React.FC = () => {
       return;
     } else {
       // create socket connection
-      console.log('connected to server');
       let socket = io('http://localhost:4000');
       socket.on('connect', () => {});
 
@@ -72,7 +71,6 @@ const Lobby: React.FC = () => {
       (successful: boolean, playerNum: number) => {
         if (!successful) {
           localStorage.removeItem('credentials');
-          alert('could not connect to match');
           navigate('/');
         } else {
           if (playerNum !== -1) {
@@ -108,7 +106,7 @@ const Lobby: React.FC = () => {
         <h5 className='lobby-id'>Lobby ID: {credentials.roomId}</h5>
         <div className='lobby'>
           <div className='details'>
-            <h1>{username}</h1>
+            <h1>{matchState?.players[playerNum]}</h1>
             {matchState && (
               <h2
                 style={{
