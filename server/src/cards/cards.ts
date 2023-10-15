@@ -826,7 +826,7 @@ export const initialState: GameState = {
 
   // PUBLIC
   dice: {
-    main: { roll: [0, 0], modifier: 0, total: 0 },
+    main: { roll: [1, 1], modifier: 0, total: 0 },
     defend: null
   },
   board: [],
@@ -845,6 +845,7 @@ export const initialState: GameState = {
   turn: {
     player: 0,
     movesLeft: 3,
-    phase: 'start-roll'
+    phase: 'start-roll',
+    isRolling: false
   }
 };

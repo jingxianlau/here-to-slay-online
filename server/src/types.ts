@@ -122,6 +122,7 @@ export interface GameState {
     player: number;
     movesLeft: 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
+    isRolling: boolean;
   };
 }
 
@@ -178,5 +179,6 @@ export interface privateState {
     player: number;
     movesLeft: 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
+    isRolling: boolean;
   };
 }

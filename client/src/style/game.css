@@ -18,19 +18,10 @@ header img {
   margin: auto;
 }
 
-.dice {
-  width: 150px;
-  display: flex;
-  justify-content: space-between;
-  margin: auto;
-}
-.die {
-  display: inline-block;
-  font-size: 30px;
-}
-
-.die.total {
-  font-size: 40px;
+.dice-box {
+  position: relative;
+  width: auto;
+  height: 100%;
 }
 
 .start-roll_summary {

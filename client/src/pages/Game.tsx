@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 import { getJSON } from '../helpers/getJSON';
 import { GameState, Credentials } from '../types';
+import Dice from '../components/Dice';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,14 @@ const Game: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [state, setState] = useState<GameState | null>(null);
   const [phase, setPhase] = useState('start-roll');
+
+  const [showRoll, setShowRoll] = useState(false);
+  const [rollSummary, setRollSummary] = useState<
+    {
+      playerNum: number;
+      roll: number;
+    }[]
+  >([]);
 
   // credentials
   const [playerNum, setPlayerNum] = useState(-1);
@@ -54,8 +63,30 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
-        setPhase(state.turn.phase);
         console.log(state);
+
+        if (
+          phase === 'start-roll' &&
+          state.match.startRolls.rolls[state.turn.player] !== 0
+        ) {
+          setPhase(state.turn.phase);
+          setTimeout(() => {
+            setShowRoll(true);
+            setRollSummary([]);
+            state.match.startRolls.inList.map(playerNum => {
+              if (state.match.startRolls.rolls[playerNum] !== 0) {
+                setRollSummary(e => [
+                  ...e,
+                  {
+                    playerNum: playerNum,
+                    roll: state.match.startRolls.rolls[playerNum]
+                  }
+                ]);
+              }
+            });
+          }, 1000);
+          setTimeout(() => setShowRoll(false), 3000);
+        } else setPhase(state.turn.phase);
       });
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
@@ -83,7 +114,7 @@ const Game: React.FC = () => {
   return (
     credentials &&
     state && (
-      <div>
+      <div onClick={state.turn.isRolling ? roll : () => {}}>
         <header>
           <img src='HTS_logo.png' />
           <p>{state?.match.players[playerNum]}</p>
@@ -94,12 +125,14 @@ const Game: React.FC = () => {
           <div className='summary'>
             {phase === 'start-roll' && (
               <div className='start-roll_summary'>
-                {state.match.startRolls.inList.map(playerNum => (
-                  <h4 className='summary-player' key={playerNum}>
-                    {state.match.players[playerNum]}:{' '}
-                    <span>{state.match.startRolls.rolls[playerNum]}</span>
-                  </h4>
-                ))}
+                {rollSummary.map(
+                  ({ playerNum, roll }) =>
+                    state.match.startRolls.rolls[playerNum] !== 0 && (
+                      <h4 className='summary-player' key={playerNum}>
+                        {state.match.players[playerNum]}: <span>{roll}</span>
+                      </h4>
+                    )
+                )}
               </div>
             )}
           </div>
@@ -117,21 +150,18 @@ const Game: React.FC = () => {
           <br />
 
           <div className='content'>
-            {phase === 'start-roll' && (
+            {phase === 'start-roll' && state.turn.isRolling && (
               <>
-                <div className='dice'>
-                  <div className='die'>{state.dice.main.roll[0]}</div>
-                  <div className='die'>{state.dice.main.roll[1]}</div>
+                <div className='dice-box'>
+                  <Dice
+                    roll1={state.dice.main.roll[0]}
+                    roll2={state.dice.main.roll[1]}
+                  />
                 </div>
-                <div className='die total'>
-                  {state?.dice.main.total && state.dice.main.total}
-                </div>
-                <br />
-                <br />
-                {state.turn.player === playerNum && (
-                  <button onClick={roll}>Roll!</button>
-                )}
-                <h1>{phase}</h1>
+                <h3>
+                  {showRoll &&
+                    state.dice.main.roll[0] + state.dice.main.roll[1]}
+                </h3>
               </>
             )}
           </div>

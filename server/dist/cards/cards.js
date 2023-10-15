@@ -796,7 +796,7 @@ exports.initialState = {
     },
     players: [],
     dice: {
-        main: { roll: [0, 0], modifier: 0, total: 0 },
+        main: { roll: [1, 1], modifier: 0, total: 0 },
         defend: null
     },
     board: [],
@@ -813,7 +813,8 @@ exports.initialState = {
     turn: {
         player: 0,
         movesLeft: 3,
-        phase: 'start-roll'
+        phase: 'start-roll',
+        isRolling: false
     }
 };
 //# sourceMappingURL=cards.js.map

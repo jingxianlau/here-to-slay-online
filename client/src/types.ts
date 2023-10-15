@@ -120,5 +120,6 @@ export interface GameState {
     player: number;
     movesLeft: 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
+    isRolling: boolean;
   };
 }
