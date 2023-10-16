@@ -20,7 +20,7 @@ const StartRoll: React.FC<StartRollProps> = ({
       <div className='summary'>
         <div className='turn-order'>
           {state.match.startRolls.inList.map(num => (
-            <>
+            <div key={num}>
               <span
                 style={{
                   color: num === state.turn.player ? '#11b56b' : 'black'
@@ -31,7 +31,7 @@ const StartRoll: React.FC<StartRollProps> = ({
               {state.match.startRolls.inList[
                 state.match.startRolls.inList.length - 1
               ] !== num && ' → '}
-            </>
+            </div>
           ))}
         </div>
         <div className='start-roll_summary'>

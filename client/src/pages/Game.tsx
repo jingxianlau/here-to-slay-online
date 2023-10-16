@@ -5,7 +5,8 @@ import { Socket, io } from 'socket.io-client';
 import { getCredentials } from '../helpers/getJSON';
 import { GameState } from '../types';
 import StartRoll from '../components/StartRoll';
-import CenterBoard from '../components/CenterBoard';
+import MainBoard from '../components/MainBoard';
+import Hand from '../components/Hand';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -110,7 +111,10 @@ const Game: React.FC = () => {
               showRoll={showRoll}
             />
           ) : (
-            <CenterBoard />
+            <>
+              <MainBoard state={state} />
+              {/* <Hand state={state} playerNum={playerNum} /> */}
+            </>
           )}
         </div>
       </div>

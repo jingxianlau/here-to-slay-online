@@ -223,7 +223,7 @@ io.on('connection', socket => {
                 rooms[roomId].state.turn.isRolling = false;
                 rooms[roomId].state.dice.main.roll[0] = 1;
                 rooms[roomId].state.dice.main.roll[1] = 1;
-                (0, game_1.distributeCards)(rooms[roomId].state, rooms[roomId].numPlayers);
+                (0, game_1.distributeCards)(rooms[roomId].state, rooms[roomId].numPlayers, playerNum);
                 setTimeout(() => sendGameState(roomId), 3000);
                 return;
             }

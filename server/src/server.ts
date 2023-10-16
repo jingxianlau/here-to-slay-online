@@ -328,7 +328,11 @@ io.on('connection', socket => {
         rooms[roomId].state.dice.main.roll[0] = 1;
         rooms[roomId].state.dice.main.roll[1] = 1;
 
-        distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
+        distributeCards(
+          rooms[roomId].state,
+          rooms[roomId].numPlayers,
+          playerNum
+        );
 
         setTimeout(() => sendGameState(roomId), 3000);
         return;

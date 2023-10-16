@@ -13,6 +13,7 @@ header img {
   width: 85px;
 }
 
+/* GENERAL */
 .game {
   text-align: center;
   margin: auto;
@@ -28,14 +29,18 @@ header img {
   margin-top: 20px;
   font-weight: 300;
 }
+.turn-order div {
+  display: inline;
+}
 .turn-order span {
   font-weight: 700;
 }
 
+/* START ROLL */
+
 .start-roll_summary {
   display: flex;
 }
-
 .start-roll_summary {
   display: flex;
   margin-left: auto;
@@ -45,4 +50,62 @@ header img {
 }
 .summary-player span {
   font-weight: 400;
+}
+
+/* BOARD */
+.player-board {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 420.3px;
+}
+.player-board h4 {
+  margin: 3px 8px;
+}
+
+.player-board .mat {
+  padding: 20px 10px;
+  border: solid;
+  width: 420.3px;
+  height: 280px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.player-board .bottom-row {
+  display: flex;
+  justify-content: space-between;
+}
+.player-board .top-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.center-board .mat {
+  padding: 20px 0 20px 40px;
+  width: 450px;
+  border: 1px solid;
+  display: flex;
+  justify-content: space-between;
+}
+.center-board .small-cards {
+  display: flex;
+  justify-content: space-between;
+  rotate: 270deg;
+}
+.small-cards .small {
+  margin: 0 5px;
+}
+
+.mat .small {
+  border: 1px solid;
+  width: 75px;
+  height: 104.7px;
+}
+.mat .large {
+  border: 1px solid;
+  width: 83.3px;
+  height: 142.8px;
 }
