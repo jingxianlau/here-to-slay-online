@@ -1,29 +1,6 @@
 import { monsterPile } from '../cards/cards';
-import {
-  AnyCard,
-  GameState,
-  LeaderCard,
-  MonsterCard,
-  privateState
-} from '../types';
-
-export const parseState = (userId: string, state: GameState): privateState => {
-  let copy: GameState = JSON.parse(JSON.stringify(state));
-
-  const numPlayers = state.match.players.length;
-  const playerNum = state.secret.playerIds.indexOf(userId);
-
-  let newState: privateState = copy;
-
-  newState.secret = null;
-  for (let i = 0; i < numPlayers; i++) {
-    if (i !== playerNum) {
-      newState.players[i] = null;
-    }
-  }
-
-  return newState;
-};
+import { AnyCard, GameState, LeaderCard, MonsterCard, Room } from '../types';
+import { random } from './helpers';
 
 export const shuffle = (arr: AnyCard[]): AnyCard[] => {
   let currentIndex = arr.length;
@@ -63,3 +40,12 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
     state.board[i].largeCards.push(leader);
   }
 };
+
+export function nextPlayer(room: Room) {
+  let player = room.state.turn.player;
+  room.state.turn.player = (player + 1) % room.numPlayers;
+}
+
+export function rollDice(): [number, number] {
+  return [random(1, 6), random(1, 6)];
+}

@@ -1,21 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.distributeCards = exports.shuffle = exports.parseState = void 0;
+exports.rollDice = exports.nextPlayer = exports.distributeCards = exports.shuffle = void 0;
 const cards_1 = require("../cards/cards");
-const parseState = (userId, state) => {
-    let copy = JSON.parse(JSON.stringify(state));
-    const numPlayers = state.match.players.length;
-    const playerNum = state.secret.playerIds.indexOf(userId);
-    let newState = copy;
-    newState.secret = null;
-    for (let i = 0; i < numPlayers; i++) {
-        if (i !== playerNum) {
-            newState.players[i] = null;
-        }
-    }
-    return newState;
-};
-exports.parseState = parseState;
+const helpers_1 = require("./helpers");
 const shuffle = (arr) => {
     let currentIndex = arr.length;
     let randomIndex;
@@ -49,4 +36,13 @@ const distributeCards = (state, numPlayers) => {
     }
 };
 exports.distributeCards = distributeCards;
+function nextPlayer(room) {
+    let player = room.state.turn.player;
+    room.state.turn.player = (player + 1) % room.numPlayers;
+}
+exports.nextPlayer = nextPlayer;
+function rollDice() {
+    return [(0, helpers_1.random)(1, 6), (0, helpers_1.random)(1, 6)];
+}
+exports.rollDice = rollDice;
 //# sourceMappingURL=game.js.map

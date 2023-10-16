@@ -99,15 +99,8 @@ const Game: React.FC = () => {
 
   function roll() {
     if (!state || !socket) return;
-
-    switch (state.turn.phase) {
-      case 'start-roll':
-        if (state.turn.player === playerNum) {
-          socket.emit('roll', credentials.roomId, credentials.userId);
-        }
-        break;
-      default:
-        break;
+    if (state.turn.player === playerNum) {
+      socket.emit('roll', credentials.roomId, credentials.userId);
     }
   }
 
@@ -115,56 +108,55 @@ const Game: React.FC = () => {
     credentials &&
     state && (
       <div onClick={state.turn.isRolling ? roll : () => {}}>
-        <header>
-          <img src='HTS_logo.png' />
-          <p>{state?.match.players[playerNum]}</p>
-          <p>Game Code: {credentials.roomId}</p>
-        </header>
-
         <div className='game'>
-          <div className='summary'>
-            {phase === 'start-roll' && (
-              <div className='start-roll_summary'>
-                {rollSummary.map(
-                  ({ playerNum, roll }) =>
-                    state.match.startRolls.rolls[playerNum] !== 0 && (
-                      <h4 className='summary-player' key={playerNum}>
-                        {state.match.players[playerNum]}: <span>{roll}</span>
-                      </h4>
-                    )
+          {phase === 'start-roll' ? (
+            <>
+              <div className='summary'>
+                <div className='start-roll_summary'>
+                  {' '}
+                  {rollSummary.map(
+                    ({ playerNum, roll }) =>
+                      state.match.startRolls.rolls[playerNum] !== 0 && (
+                        <h4 className='summary-player' key={playerNum}>
+                          {state.match.players[playerNum]}: <span>{roll}</span>
+                        </h4>
+                      )
+                  )}
+                </div>
+              </div>
+
+              <div className='active-player'>
+                <h2
+                  style={{
+                    color: state.turn.player === playerNum ? '#11b56b' : 'black'
+                  }}
+                >
+                  {state.match.players[state?.turn.player]}
+                </h2>
+              </div>
+
+              <br />
+
+              <div className='content'>
+                {state.turn.isRolling && (
+                  <>
+                    <div className='dice-box'>
+                      <Dice
+                        roll1={state.dice.main.roll[0]}
+                        roll2={state.dice.main.roll[1]}
+                      />
+                    </div>
+                    <h3>
+                      {showRoll &&
+                        state.dice.main.roll[0] + state.dice.main.roll[1]}
+                    </h3>
+                  </>
                 )}
               </div>
-            )}
-          </div>
-
-          <div className='active-player'>
-            <h2
-              style={{
-                color: state.turn.player === playerNum ? '#11b56b' : 'black'
-              }}
-            >
-              {state.match.players[state?.turn.player]}
-            </h2>
-          </div>
-
-          <br />
-
-          <div className='content'>
-            {phase === 'start-roll' && state.turn.isRolling && (
-              <>
-                <div className='dice-box'>
-                  <Dice
-                    roll1={state.dice.main.roll[0]}
-                    roll2={state.dice.main.roll[1]}
-                  />
-                </div>
-                <h3>
-                  {showRoll &&
-                    state.dice.main.roll[0] + state.dice.main.roll[1]}
-                </h3>
-              </>
-            )}
-          </div>
+            </>
+          ) : (
+            <>{/* GAME BOARD */}</>
+          )}
         </div>
       </div>
     )

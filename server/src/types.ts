@@ -67,6 +67,12 @@ export type AnyCard =
 
 export type LargeCard = LeaderCard | MonsterCard;
 
+export interface Room {
+  numPlayers: number;
+  state: GameState;
+  private: boolean;
+}
+
 export interface GameState {
   // PRIVATE
   secret: {

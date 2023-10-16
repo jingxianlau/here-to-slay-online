@@ -2,20 +2,20 @@ import { Server } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import { v4 as uuid } from 'uuid';
-import { AnyCard, GameState, LeaderCard, MonsterCard } from './types';
-import { random, removePlayer } from './functions/helpers';
-import { initialState, monsterPile } from './cards/cards';
+import { Room } from './types';
+import {
+  checkCredentials,
+  random,
+  removePlayer,
+  validSender,
+  parseState
+} from './functions/helpers';
+import { initialState } from './cards/cards';
 import { instrument } from '@socket.io/admin-ui';
-import { distributeCards, parseState, shuffle } from './functions/game';
+import { distributeCards, rollDice } from './functions/game';
 import cloneDeep from 'lodash.clonedeep';
 
-const rooms: {
-  [key: string]: {
-    numPlayers: number;
-    state: GameState;
-    private: boolean;
-  };
-} = {
+const rooms: { [key: string]: Room } = {
   '999999': { numPlayers: 0, state: cloneDeep(initialState), private: false }
 };
 
@@ -151,8 +151,6 @@ const io = new Server({
 });
 
 io.on('connection', socket => {
-  console.log(`connected to ${socket.id}`);
-
   // LOBBY SYSTEM
   socket.on(
     'enter-match',
@@ -163,7 +161,7 @@ io.on('connection', socket => {
       cb: (successful: boolean, playerNum: number | null) => void
     ) => {
       // check credentials
-      const playerNum = checkCredentials(roomId, userId);
+      const playerNum = checkCredentials(rooms, roomId, userId);
       if (playerNum === -1) {
         cb(false, null);
         socket.disconnect();
@@ -180,7 +178,7 @@ io.on('connection', socket => {
         }`;
       }
 
-      // JOIN ROOM
+      // join
       if (
         // valid credentials check
         rooms[roomId].state.secret.playerIds[playerNum] === userId &&
@@ -201,7 +199,7 @@ io.on('connection', socket => {
   );
 
   socket.on('leave-match', (roomId: string, userId: string, cb: () => void) => {
-    const playerNum = checkCredentials(roomId, userId);
+    const playerNum = checkCredentials(rooms, roomId, userId);
     if (playerNum === -1) {
       socket.disconnect();
       return;
@@ -228,7 +226,7 @@ io.on('connection', socket => {
       ready: boolean,
       cb: (successful: boolean) => void
     ) => {
-      const playerNum = checkCredentials(roomId, userId);
+      const playerNum = checkCredentials(rooms, roomId, userId);
       if (playerNum === -1) {
         cb(false);
         socket.disconnect();
@@ -286,15 +284,16 @@ io.on('connection', socket => {
   /* 
   
   GAME
-  - 'roll'
+  - roll
 
 
 
   */
 
   socket.on('roll', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    if (playerNum === -1) {
+    const playerNum = validSender(rooms, roomId, userId);
+
+    if (playerNum === -1 || !rooms[roomId].state.turn.isRolling) {
       return;
     } else if (rooms[roomId].state.turn.phase === 'start-roll') {
       // START ROLL
@@ -310,7 +309,7 @@ io.on('connection', socket => {
 
       sendGameState(roomId);
 
-      // remove losing values
+      // REMOVE LOSING VALUES
       for (let i = 0; i < startRolls.inList.length; i++) {
         if (
           startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
@@ -320,27 +319,30 @@ io.on('connection', socket => {
         }
       }
 
-      // won
+      // IF PLAYER WON
       if (startRolls.inList.length === 1) {
+        // SETUP MATCH
         rooms[roomId].state.turn.player = startRolls.inList[0];
         rooms[roomId].state.turn.phase = 'draw';
-        distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
         rooms[roomId].state.turn.isRolling = false;
         rooms[roomId].state.dice.main.roll[0] = 1;
         rooms[roomId].state.dice.main.roll[1] = 1;
 
+        distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
+
         setTimeout(() => sendGameState(roomId), 3000);
         return;
+
+        // IF TIED (SETUP NEXT ROUND)
       } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
-        // next round of rolls
         startRolls.rolls = [];
-        for (let i = 0; i < startRolls.inList.length; i++) {
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
           startRolls.rolls.push(0);
         }
         startRolls.maxVal = 0;
       }
 
-      // next player
+      // RESET PLAYER & ROLL
       const next =
         (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
       rooms[roomId].state.turn.player = startRolls.inList[next];
@@ -348,6 +350,8 @@ io.on('connection', socket => {
       rooms[roomId].state.dice.main.roll[1] = 1;
 
       setTimeout(() => sendGameState(roomId), 3000);
+    } else {
+      // STANDARD ROLL
     }
   });
 });
@@ -357,18 +361,13 @@ console.log('socketio server on port 4000');
 
 instrument(io, { auth: false, mode: 'development' });
 
-// HELPER FUNCTIONS
-function checkCredentials(roomId: string, userId: string): number {
-  if (!rooms[roomId]) return -1;
+/* 
 
-  const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
+HELPER FUNCTIONS 
+- sendState (lobby)
+- sendGameState (in match)
 
-  if (playerNum === -1) {
-    return -1;
-  } else {
-    return playerNum;
-  }
-}
+*/
 
 function sendState(roomId: string) {
   io.in(roomId).emit('state', rooms[roomId].state.match);
@@ -381,26 +380,4 @@ function sendGameState(roomId: string) {
     const privateState = parseState(state.secret.playerIds[i], state);
     io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
   }
-}
-
-function validSender(roomId: string, userId: string): number {
-  const playerNum = checkCredentials(roomId, userId);
-
-  if (
-    rooms[roomId].state.turn.player === playerNum &&
-    rooms[roomId].state.secret.playerIds[playerNum] === userId
-  ) {
-    return playerNum;
-  } else {
-    return -1;
-  }
-}
-
-function nextPlayer(roomId: string) {
-  let player = rooms[roomId].state.turn.player;
-  rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
-}
-
-function rollDice(): [number, number] {
-  return [random(1, 6), random(1, 6)];
 }
