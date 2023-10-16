@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import '../style/game.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
-import { getJSON } from '../helpers/getJSON';
-import { GameState, Credentials } from '../types';
-import Dice from '../components/Dice';
+import { getCredentials } from '../helpers/getJSON';
+import { GameState } from '../types';
+import StartRoll from '../components/StartRoll';
+import CenterBoard from '../components/CenterBoard';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Game: React.FC = () => {
 
   // credentials
   const [playerNum, setPlayerNum] = useState(-1);
-  const credentials = getJSON('credentials');
+  const credentials = getCredentials();
   const username = localStorage.getItem('username') as string;
 
   useEffect(() => {
@@ -102,71 +103,14 @@ const Game: React.FC = () => {
       <div onClick={state.turn.isRolling ? roll : () => {}}>
         <div className='game'>
           {phase === 'start-roll' ? (
-            <>
-              <div className='summary'>
-                <div className='turn-order'>
-                  {state.match.startRolls.inList.map(num => (
-                    <>
-                      <span
-                        style={{
-                          color: num === state.turn.player ? '#11b56b' : 'black'
-                        }}
-                      >
-                        {state.match.players[num]}
-                      </span>
-                      {state.match.startRolls.inList[
-                        state.match.startRolls.inList.length - 1
-                      ] !== num && ' → '}
-                    </>
-                  ))}
-                </div>
-                <div className='start-roll_summary'>
-                  {rollSummary.length === 0 && <h4>ㅤ</h4>}
-                  {rollSummary.map(
-                    playerNum =>
-                      state.match.startRolls.rolls[playerNum] !== 0 && (
-                        <h4 className='summary-player' key={playerNum}>
-                          {state.match.players[playerNum]}:{' '}
-                          <span>{state.match.startRolls.rolls[playerNum]}</span>
-                        </h4>
-                      )
-                  )}
-                </div>
-              </div>
-
-              <div className='active-player'>
-                <h2
-                  style={{
-                    color:
-                      state.turn.player === playerNum ? '#11b56b' : 'black',
-                    fontWeight: state.turn.player === playerNum ? 800 : 500
-                  }}
-                >
-                  {state.match.players[state?.turn.player]}
-                </h2>
-              </div>
-
-              <br />
-
-              <div className='content'>
-                {state.turn.isRolling && (
-                  <>
-                    <div className='dice-box'>
-                      <Dice
-                        roll1={state.dice.main.roll[0]}
-                        roll2={state.dice.main.roll[1]}
-                      />
-                    </div>
-                    <h1>
-                      {showRoll &&
-                        state.dice.main.roll[0] + state.dice.main.roll[1]}
-                    </h1>
-                  </>
-                )}
-              </div>
-            </>
+            <StartRoll
+              state={state}
+              rollSummary={rollSummary}
+              playerNum={playerNum}
+              showRoll={showRoll}
+            />
           ) : (
-            <>{/* GAME BOARD */}</>
+            <CenterBoard />
           )}
         </div>
       </div>

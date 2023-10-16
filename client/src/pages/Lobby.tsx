@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
-import { Credentials, GameState } from '../types';
-import { getJSON } from '../helpers/getJSON';
+import { GameState } from '../types';
+import { getCredentials } from '../helpers/getJSON';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
@@ -11,8 +11,8 @@ const Lobby: React.FC = () => {
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
   const [playerNum, setPlayerNum] = useState(-1);
   const [isReady, setIsReady] = useState(false);
-  const [credentials] = useState<Credentials>(getJSON('credentials'));
-  const [username] = useState(localStorage.getItem('username') as string);
+  const credentials = getCredentials();
+  const username = localStorage.getItem('username') as string;
 
   useEffect(() => {
     if (!credentials) {

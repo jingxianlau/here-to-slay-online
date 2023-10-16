@@ -28,7 +28,6 @@ code {
 .room:hover {
   cursor: pointer;
   border: 2px solid lightskyblue;
-  font-weight: 750;
 }
 
 .room div {
