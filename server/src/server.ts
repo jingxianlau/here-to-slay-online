@@ -332,7 +332,6 @@ io.on('connection', socket => {
 
         setTimeout(() => sendGameState(roomId), 3000);
         return;
-
         // IF TIED (SETUP NEXT ROUND)
       } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
         startRolls.rolls = [];

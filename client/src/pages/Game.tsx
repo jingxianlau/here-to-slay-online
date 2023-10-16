@@ -15,21 +15,12 @@ const Game: React.FC = () => {
   const [phase, setPhase] = useState('start-roll');
 
   const [showRoll, setShowRoll] = useState(false);
-  const [rollSummary, setRollSummary] = useState<
-    {
-      playerNum: number;
-      roll: number;
-    }[]
-  >([]);
+  const [rollSummary, setRollSummary] = useState<number[]>([]);
 
   // credentials
   const [playerNum, setPlayerNum] = useState(-1);
-  const [credentials, setCredentials] = useState<Credentials>(
-    getJSON('credentials')
-  );
-  const [username, setUsername] = useState(
-    localStorage.getItem('username') as string
-  );
+  const credentials = getJSON('credentials');
+  const username = localStorage.getItem('username') as string;
 
   useEffect(() => {
     if (!credentials) {
@@ -39,9 +30,7 @@ const Game: React.FC = () => {
       // create socket connection
       let socket = io('http://localhost:4000');
       socket.on('connect', () => {});
-
       setSocket(socket);
-
       socket.emit(
         'enter-match',
         credentials.roomId,
@@ -63,34 +52,37 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
-        console.log(state);
 
+        /* PHASES */
         if (
           phase === 'start-roll' &&
           state.match.startRolls.rolls[state.turn.player] !== 0
         ) {
           setPhase(state.turn.phase);
           setTimeout(() => {
+            getRollData();
             setShowRoll(true);
-            setRollSummary([]);
-            state.match.startRolls.inList.map(playerNum => {
-              if (state.match.startRolls.rolls[playerNum] !== 0) {
-                setRollSummary(e => [
-                  ...e,
-                  {
-                    playerNum: playerNum,
-                    roll: state.match.startRolls.rolls[playerNum]
-                  }
-                ]);
-              }
-            });
           }, 1000);
           setTimeout(() => setShowRoll(false), 3000);
-        } else setPhase(state.turn.phase);
+        } else if (phase === 'start-roll') {
+          setPhase(state.turn.phase);
+          getRollData();
+        } else {
+          setPhase(state.turn.phase);
+        }
+
+        /* HELPER FUNCTIONS */
+        function getRollData() {
+          setRollSummary([]);
+          state.match.startRolls.inList.map(playerNum => {
+            if (state.match.startRolls.rolls[playerNum] !== 0) {
+              setRollSummary(e => [...e, playerNum]);
+            }
+          });
+        }
       });
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
-
       return () => {
         if (socket) socket.disconnect();
       };
@@ -112,13 +104,30 @@ const Game: React.FC = () => {
           {phase === 'start-roll' ? (
             <>
               <div className='summary'>
+                <div className='turn-order'>
+                  {state.match.startRolls.inList.map(num => (
+                    <>
+                      <span
+                        style={{
+                          color: num === state.turn.player ? '#11b56b' : 'black'
+                        }}
+                      >
+                        {state.match.players[num]}
+                      </span>
+                      {state.match.startRolls.inList[
+                        state.match.startRolls.inList.length - 1
+                      ] !== num && ' → '}
+                    </>
+                  ))}
+                </div>
                 <div className='start-roll_summary'>
-                  {' '}
+                  {rollSummary.length === 0 && <h4>ㅤ</h4>}
                   {rollSummary.map(
-                    ({ playerNum, roll }) =>
+                    playerNum =>
                       state.match.startRolls.rolls[playerNum] !== 0 && (
                         <h4 className='summary-player' key={playerNum}>
-                          {state.match.players[playerNum]}: <span>{roll}</span>
+                          {state.match.players[playerNum]}:{' '}
+                          <span>{state.match.startRolls.rolls[playerNum]}</span>
                         </h4>
                       )
                   )}
@@ -128,7 +137,9 @@ const Game: React.FC = () => {
               <div className='active-player'>
                 <h2
                   style={{
-                    color: state.turn.player === playerNum ? '#11b56b' : 'black'
+                    color:
+                      state.turn.player === playerNum ? '#11b56b' : 'black',
+                    fontWeight: state.turn.player === playerNum ? 800 : 500
                   }}
                 >
                   {state.match.players[state?.turn.player]}
@@ -146,10 +157,10 @@ const Game: React.FC = () => {
                         roll2={state.dice.main.roll[1]}
                       />
                     </div>
-                    <h3>
+                    <h1>
                       {showRoll &&
                         state.dice.main.roll[0] + state.dice.main.roll[1]}
-                    </h3>
+                    </h1>
                   </>
                 )}
               </div>

@@ -24,6 +24,14 @@ header img {
   height: 100%;
 }
 
+.turn-order {
+  margin-top: 20px;
+  font-weight: 300;
+}
+.turn-order span {
+  font-weight: 700;
+}
+
 .start-roll_summary {
   display: flex;
 }
