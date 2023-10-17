@@ -33,7 +33,7 @@ header img {
   display: inline;
 }
 .turn-order span {
-  font-weight: 700;
+  transition: 0.5s;
 }
 
 /* START ROLL */
@@ -64,14 +64,15 @@ header img {
 }
 
 .player-board .mat {
-  padding: 20px 10px;
+  padding: 30px 20px;
   border: solid;
-  width: 420.3px;
-  height: 280px;
+  width: 441px;
+  height: 304px;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border-radius: 20px;
 }
 
 .player-board .bottom-row {
@@ -84,28 +85,83 @@ header img {
 }
 
 .center-board .mat {
-  padding: 20px 0 20px 40px;
-  width: 450px;
+  padding: 30px 0 30px 35px;
+  width: 500px;
   border: 1px solid;
   display: flex;
   justify-content: space-between;
+  border-radius: 25px;
+  background-image: url('./assets/mats/central.png');
+  background-size: cover;
 }
 .center-board .small-cards {
   display: flex;
   justify-content: space-between;
   rotate: 270deg;
+  margin-left: -18px;
+  margin-right: -10px;
 }
 .small-cards .small {
   margin: 0 5px;
 }
 
 .mat .small {
-  border: 1px solid;
-  width: 75px;
-  height: 104.7px;
+  border: 1px solid #fff;
+  background-color: #11111133;
+  width: 81.9px;
+  height: 114.4px;
+  border-radius: 3px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .mat .large {
-  border: 1px solid;
-  width: 83.3px;
-  height: 142.8px;
+  border: 1px solid #fff;
+  background-color: #11111133;
+  width: 91px;
+  height: 156px;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat.bard {
+  background-image: url('./assets/mats/bard.png');
+  background-size: cover;
+}
+.mat.fighter {
+  background-image: url('./assets/mats/fighter.png');
+  background-size: cover;
+}
+.mat.guardian {
+  background-image: url('./assets/mats/guardian.png');
+  background-size: cover;
+}
+.mat.ranger {
+  background-image: url('./assets/mats/ranger.png');
+  background-size: cover;
+}
+.mat.thief {
+  background-image: url('./assets/mats/thief.png');
+  background-size: cover;
+}
+.mat.wizard {
+  background-image: url('./assets/mats/wizard.png');
+  background-size: cover;
+}
+
+img.small-card {
+  width: 81.9px;
+  height: 114.4px;
+  border-radius: 3px;
+  user-select: none;
+}
+img.large-card {
+  width: 92px;
+  height: 157px;
+  border-radius: 4px;
+  user-select: none;
 }

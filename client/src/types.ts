@@ -6,21 +6,21 @@ export interface Credentials {
 }
 
 export enum HeroClass {
-  Fighter = 'FIGHTER',
-  Bard = 'BARD',
-  Guardian = 'GUARDIAN',
-  Ranger = 'RANGER',
-  Thief = 'THIEF',
-  Wizard = 'WIZARD'
+  fighter = 'fighter',
+  bard = 'bard',
+  guardian = 'guardian',
+  ranger = 'ranger',
+  thief = 'thief',
+  wizard = 'wizard'
 }
 
 export enum CardType {
-  Modifier = 'MODIFIER',
-  Challenge = 'CHALLENGE',
-  Hero = 'HERO',
-  Large = 'LARGE',
-  Magic = 'MAGIC',
-  Item = 'ITEM'
+  modifier = 'modifier',
+  challenge = 'challenge',
+  hero = 'hero',
+  large = 'large',
+  magic = 'magic',
+  item = 'item'
 }
 
 interface Card {
@@ -30,30 +30,30 @@ interface Card {
   id?: string;
 }
 export interface HeroCard extends Card {
-  type: CardType.Hero;
+  type: CardType.hero;
   class: HeroClass;
   items?: ItemCard[];
 }
 export interface ChallengeCard extends Card {
-  type: CardType.Challenge;
+  type: CardType.challenge;
 }
 export interface ModifierCard extends Card {
-  type: CardType.Modifier;
+  type: CardType.modifier;
   modifier: [number, number] | [number];
   diceId?: 1 | 2;
 }
 export interface ItemCard extends Card {
-  type: CardType.Item;
+  type: CardType.item;
   heroId?: number;
 }
 export interface MagicCard extends Card {
-  type: CardType.Magic;
+  type: CardType.magic;
 }
 export interface MonsterCard extends Card {
-  type: CardType.Large;
+  type: CardType.large;
 }
 export interface LeaderCard extends MonsterCard {
-  type: CardType.Large;
+  type: CardType.large;
   class: HeroClass;
 }
 export type AnyCard =

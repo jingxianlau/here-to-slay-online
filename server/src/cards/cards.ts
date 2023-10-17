@@ -17,38 +17,38 @@ import { v4 as uuid } from 'uuid';
 const leaderCards: LeaderCard[] = [
   {
     name: 'The Charismatic Song',
-    class: HeroClass.Bard,
-    type: CardType.Large,
+    class: HeroClass.bard,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'The Cloaked Sage',
-    class: HeroClass.Wizard,
-    type: CardType.Large,
+    class: HeroClass.wizard,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'The Divine Arrow',
-    class: HeroClass.Ranger,
-    type: CardType.Large,
+    class: HeroClass.ranger,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'The Fist of Reason',
-    class: HeroClass.Fighter,
-    type: CardType.Large,
+    class: HeroClass.fighter,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'The Protecting Horn',
-    class: HeroClass.Guardian,
-    type: CardType.Large,
+    class: HeroClass.guardian,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'The Shadow Claw',
-    class: HeroClass.Thief,
-    type: CardType.Large,
+    class: HeroClass.thief,
+    type: CardType.large,
     id: uuid()
   }
 ];
@@ -56,77 +56,77 @@ const leaderCards: LeaderCard[] = [
 const monsterCards: MonsterCard[] = [
   {
     name: 'Anuran Cauldron',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Artic Aries',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Bloodwing',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Orthus',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Corrupted Sabretooth',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Crowned Serpent',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Abyss Queen',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Dracos',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Dark Dragon King',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Malamammoth',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Rex Major',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Terratuga',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Mega Slime',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Titan Wyvern',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   },
   {
     name: 'Warworn Owlbear',
-    type: CardType.Large,
+    type: CardType.large,
     id: uuid()
   }
 ];
@@ -135,373 +135,373 @@ const heroCards: HeroCard[] = [
   // Bards
   {
     name: 'Dodgy Dealer',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Fuzzy Cheeks',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Greedy Cheeks',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Lucky Buddy',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Mellow Dee',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Napping Nibbles',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Peanut',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Tipsy Tootie',
-    class: HeroClass.Bard,
-    type: CardType.Hero,
+    class: HeroClass.bard,
+    type: CardType.hero,
     id: uuid()
   },
-  // Fighters
+  // fighters
   {
     name: 'Bad Axe',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Bear Claw',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Beary Wise',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Fury Knuckle',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Heavy Bear',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Pan Chucks',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Qi Bear',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Tough Teddy',
-    class: HeroClass.Fighter,
-    type: CardType.Hero,
+    class: HeroClass.fighter,
+    type: CardType.hero,
     id: uuid()
   },
-  // Guardian
+  // guardian
   {
     name: 'Calming Voice',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Guiding Light',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Holy Curselifter',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Iron Resolve',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Might Blade',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Radiant Horn',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Vibrant Glow',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Wise Shield',
-    class: HeroClass.Guardian,
-    type: CardType.Hero,
+    class: HeroClass.guardian,
+    type: CardType.hero,
     id: uuid()
   },
-  // Rangers
+  // rangers
   {
     name: 'Bullseye',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Hook',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Lookie Rookie',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Quick Draw',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Serious Grey',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Sharp Fox',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Wildshot',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Wily Red',
-    class: HeroClass.Ranger,
-    type: CardType.Hero,
+    class: HeroClass.ranger,
+    type: CardType.hero,
     id: uuid()
   },
   // Thieves
   {
     name: 'Kit Napper',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Meowzio',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Plundering Puma',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Shuri Kitty',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Silent Shadow',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Slippery Paws',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Sly Pickings',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Smooth Mimimeow',
-    class: HeroClass.Thief,
-    type: CardType.Hero,
+    class: HeroClass.thief,
+    type: CardType.hero,
     id: uuid()
   },
-  // Wizard
+  // wizard
   {
     name: 'Bun Bun',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Buttons',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Fluffy',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Hopper',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Snowball',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Spooky',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Whiskers',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   },
   {
     name: 'Wiggles',
-    class: HeroClass.Wizard,
-    type: CardType.Hero,
+    class: HeroClass.wizard,
+    type: CardType.hero,
     id: uuid()
   }
 ];
 
 const itemCards: ItemCard[] = [
   {
-    name: 'Bard Mask',
-    type: CardType.Item,
+    name: 'bard Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Decoy Doll',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
-    name: 'Fighter Mask',
-    type: CardType.Item,
+    name: 'fighter Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
-    name: 'Guardian Mask',
-    type: CardType.Item,
-    id: uuid()
-  },
-  {
-    name: 'Particularly Rusty Coin',
-    type: CardType.Item,
+    name: 'guardian Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Particularly Rusty Coin',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
-    name: 'Ranger Mask',
-    type: CardType.Item,
+    name: 'Particularly Rusty Coin',
+    type: CardType.item,
+    id: uuid()
+  },
+  {
+    name: 'ranger Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Really Big Ring',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Really Big Ring',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
-    name: 'Thief Mask',
-    type: CardType.Item,
+    name: 'thief Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
-    name: 'Wizard Mask',
-    type: CardType.Item,
+    name: 'wizard Mask',
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Suspiciously Shiny Coin',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
     name: "Curse of the Snake's Eye",
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
     name: "Curse of the Snake's Eye",
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   },
   {
     name: 'Sealing Key',
-    type: CardType.Item,
+    type: CardType.item,
     id: uuid()
   }
 ];
@@ -510,151 +510,151 @@ const modifierCards: ModifierCard[] = [
   {
     name: 'modifier',
     modifier: [+1, -3],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [+1, -3],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [+1, -3],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [+1, -3],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [2, -2],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [3, -1],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [3, -1],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [3, -1],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [3, -1],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [-4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [-4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [-4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   },
   {
     name: 'modifier',
     modifier: [-4],
-    type: CardType.Modifier,
+    type: CardType.modifier,
     id: uuid()
   }
 ];
@@ -662,72 +662,72 @@ const modifierCards: ModifierCard[] = [
 const challengeCard: ChallengeCard[] = [
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   },
   {
     name: 'challenge',
-    type: CardType.Challenge,
+    type: CardType.challenge,
     id: uuid()
   }
 ];
@@ -735,67 +735,67 @@ const challengeCard: ChallengeCard[] = [
 const magicCards: MagicCard[] = [
   {
     name: 'Call to the Fallen',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Critical Boost',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Destructive Spell',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Enchanted Spell',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Entangling Trap',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Critical Boost',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Destructive Spell',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Enchanted Spell',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Entangling Trap',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Forced Exchange',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Forceful Winds',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Winds of Change',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   },
   {
     name: 'Winds of Change',
-    type: CardType.Magic,
+    type: CardType.magic,
     id: uuid()
   }
 ];

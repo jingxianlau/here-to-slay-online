@@ -15,7 +15,9 @@ const MainBoard: React.FC<MainBoardProps> = ({ state }) => {
           <div key={num}>
             <span
               style={{
-                color: num === state.turn.player ? '#11b56b' : 'black'
+                fontWeight: state.turn.player === num ? 700 : 500,
+                fontSize: state.turn.player === num ? '20px' : '16px',
+                color: state.turn.player === num ? 'black' : '#555'
               }}
             >
               {name}

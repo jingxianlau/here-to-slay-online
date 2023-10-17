@@ -1,4 +1,3 @@
-import { monsterPile } from '../cards/cards';
 import { AnyCard, GameState, LeaderCard, MonsterCard, Room } from '../types';
 import { random } from './helpers';
 

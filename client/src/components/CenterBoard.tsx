@@ -1,5 +1,6 @@
 import React from 'react';
 import { GameState } from '../types';
+import { getImage } from '../helpers/getImage';
 
 interface CenterBoardProps {
   state: GameState;
@@ -10,7 +11,11 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ state }) => {
     <div className='mat'>
       {state.mainDeck.monsters.map(card => (
         <div className='large' key={card.id}>
-          {card.name}
+          <img
+            src={getImage(card.name, card.type)}
+            alt={card.name}
+            className='large-card'
+          />
         </div>
       ))}
       {Array.from(Array(3 - state.mainDeck.monsters.length), (_, i) => (

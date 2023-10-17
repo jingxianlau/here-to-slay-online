@@ -1,19 +1,19 @@
 export enum HeroClass {
-  Fighter = 'FIGHTER',
-  Bard = 'BARD',
-  Guardian = 'GUARDIAN',
-  Ranger = 'RANGER',
-  Thief = 'THIEF',
-  Wizard = 'WIZARD'
+  fighter = 'fighter',
+  bard = 'bard',
+  guardian = 'guardian',
+  ranger = 'ranger',
+  thief = 'thief',
+  wizard = 'wizard'
 }
 
 export enum CardType {
-  Modifier = 'MODIFIER',
-  Challenge = 'CHALLENGE',
-  Hero = 'HERO',
-  Large = 'LARGE',
-  Magic = 'MAGIC',
-  Item = 'ITEM'
+  modifier = 'modifier',
+  challenge = 'challenge',
+  hero = 'hero',
+  large = 'large',
+  magic = 'magic',
+  item = 'item'
 }
 
 interface Card {
@@ -23,36 +23,36 @@ interface Card {
   id: string;
 }
 export interface HeroCard extends Card {
-  type: CardType.Hero;
+  type: CardType.hero;
   class: HeroClass;
   items?: ItemCard[];
   id: string;
 }
 export interface ChallengeCard extends Card {
-  type: CardType.Challenge;
+  type: CardType.challenge;
   id: string;
 }
 export interface ModifierCard extends Card {
-  type: CardType.Modifier;
+  type: CardType.modifier;
   modifier: [number, number] | [number];
   diceId?: 1 | 2;
   id: string;
 }
 export interface ItemCard extends Card {
-  type: CardType.Item;
+  type: CardType.item;
   heroId?: number;
   id: string;
 }
 export interface MagicCard extends Card {
-  type: CardType.Magic;
+  type: CardType.magic;
   id: string;
 }
 export interface MonsterCard extends Card {
-  type: CardType.Large;
+  type: CardType.large;
   id: string;
 }
 export interface LeaderCard extends MonsterCard {
-  type: CardType.Large;
+  type: CardType.large;
   class: HeroClass;
   id: string;
 }
@@ -95,12 +95,12 @@ export interface GameState {
   board: {
     // for win condition (6 diff classes)
     classes: {
-      FIGHTER: number;
-      BARD: number;
-      GUARDIAN: number;
-      RANGER: number;
-      THIEF: number;
-      WIZARD: number;
+      fighter: number;
+      bard: number;
+      guardian: number;
+      ranger: number;
+      thief: number;
+      wizard: number;
     };
 
     // players' public board

@@ -1,5 +1,6 @@
 import React from 'react';
-import { GameState } from '../types';
+import { GameState, LeaderCard } from '../types';
+import { getImage } from '../helpers/getImage';
 
 interface PlayerBoardProps {
   state: GameState;
@@ -7,12 +8,21 @@ interface PlayerBoardProps {
 }
 
 const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
-  return (
-    <div className='mat'>
+  console.log(state.board[playerNum].largeCards[0] as LeaderCard);
+  return state.board[playerNum].largeCards.length > 0 ? (
+    <div
+      className={`mat ${
+        (state.board[playerNum].largeCards[0] as LeaderCard).class
+      }`}
+    >
       <div className='top-row'>
         {state.board[playerNum].heroCards.map(card => (
           <div className='small' key={card.id}>
-            {card.name}
+            <img
+              src={getImage(card.name, card.type, card.class)}
+              alt={card.name}
+              className='small-card'
+            />
           </div>
         ))}
 
@@ -27,7 +37,11 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
       <div className='bottom-row'>
         {state.board[playerNum].largeCards.map(card => (
           <div className='large' key={card.id}>
-            {card.name}
+            <img
+              src={getImage(card.name, card.type)}
+              alt={card.name}
+              className='large-card'
+            />
           </div>
         ))}
 
@@ -39,6 +53,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
         )}
       </div>
     </div>
+  ) : (
+    <></>
   );
 };
 

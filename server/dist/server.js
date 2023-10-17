@@ -60,12 +60,12 @@ app.post('/create-room', (req, res) => {
     room.state.players.push({ hand: [] });
     room.state.board.push({
         classes: {
-            FIGHTER: 0,
-            BARD: 0,
-            GUARDIAN: 0,
-            RANGER: 0,
-            THIEF: 0,
-            WIZARD: 0
+            fighter: 0,
+            bard: 0,
+            guardian: 0,
+            ranger: 0,
+            thief: 0,
+            wizard: 0
         },
         heroCards: [],
         largeCards: []
@@ -87,12 +87,12 @@ app.post('/join-room', (req, res) => {
         room.state.players.push({ hand: [] });
         room.state.board.push({
             classes: {
-                FIGHTER: 0,
-                BARD: 0,
-                GUARDIAN: 0,
-                RANGER: 0,
-                THIEF: 0,
-                WIZARD: 0
+                fighter: 0,
+                bard: 0,
+                guardian: 0,
+                ranger: 0,
+                thief: 0,
+                wizard: 0
             },
             heroCards: [],
             largeCards: []
