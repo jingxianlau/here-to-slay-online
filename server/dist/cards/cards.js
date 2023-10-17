@@ -48,7 +48,7 @@ const monsterCards = [
         id: (0, uuid_1.v4)()
     },
     {
-        name: 'Artic Aries',
+        name: 'Arctic Aries',
         type: types_1.CardType.large,
         id: (0, uuid_1.v4)()
     },

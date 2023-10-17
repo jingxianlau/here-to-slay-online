@@ -152,12 +152,12 @@ export interface privateState {
   board: {
     // for win condition (6 diff classes)
     classes: {
-      FIGHTER: number;
-      BARD: number;
-      GUARDIAN: number;
-      RANGER: number;
-      THIEF: number;
-      WIZARD: number;
+      fighter: number;
+      bard: number;
+      guardian: number;
+      ranger: number;
+      thief: number;
+      wizard: number;
     };
 
     // players' public board
