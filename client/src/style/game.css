@@ -17,6 +17,7 @@ header img {
 .game {
   text-align: center;
   margin: auto;
+  font-size: 20px;
 }
 
 .dice-box {
@@ -26,7 +27,8 @@ header img {
 }
 
 .turn-order {
-  margin-top: 20px;
+  padding-top: 20px;
+  height: calc(10vh - 20px);
   font-weight: 300;
 }
 .turn-order div {
@@ -53,19 +55,28 @@ header img {
 }
 
 /* BOARD */
-.player-board {
+.content {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 420.3px;
+  justify-content: space-between;
+  align-items: center;
 }
+.col {
+  display: flex;
+  height: calc(90vh - 40px);
+  width: 55vh;
+  padding: 20px;
+
+  flex-direction: column;
+  align-items: center;
+}
+
 .player-board h4 {
   margin: 3px 8px;
 }
 
 .player-board .mat {
   padding: 30px 20px;
-  border: solid;
+  border: 1px solid;
   width: 441px;
   height: 304px;
 
@@ -75,13 +86,61 @@ header img {
   border-radius: 20px;
 }
 
-.player-board .bottom-row {
+.bottom-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
-.player-board .top-row {
+.top-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.own-board .mat {
+  padding: 45px 30px;
+  border: 2px solid;
+  width: 573px;
+  height: 395px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 30px;
+}
+.own-board .small {
+  border: 2px solid #fff;
+  background-color: #0000003a;
+  width: 106px;
+  height: 149px;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.own-board .large {
+  border: 2px solid #fff;
+  background-color: #0000003a;
+  width: 118px;
+  height: 203px;
+  border-radius: 8px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.own-board img.small-card {
+  width: 106px;
+  height: 149px;
+  border-radius: 5px;
+  user-select: none;
+}
+.own-board img.large-card {
+  width: 118px;
+  height: 203px;
+  border-radius: 8px;
+  user-select: none;
 }
 
 .center-board .mat {
@@ -105,9 +164,9 @@ header img {
   margin: 0 5px;
 }
 
-.mat .small {
+.small {
   border: 1px solid #fff;
-  background-color: #11111133;
+  background-color: #0000003a;
   width: 81.9px;
   height: 114.4px;
   border-radius: 3px;
@@ -115,17 +174,26 @@ header img {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: 0.15s;
 }
-.mat .large {
+.large {
   border: 1px solid #fff;
-  background-color: #11111133;
+  background-color: #0000003a;
   width: 91px;
-  height: 156px;
-  border-radius: 4px;
+  height: 157px;
+  border-radius: 5px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: 0.25s;
+}
+
+.small:hover {
+  border-color: #fc7c37;
+}
+.large:hover {
+  border-color: #fc7c37;
 }
 
 .mat.bard {
@@ -162,6 +230,6 @@ img.small-card {
 img.large-card {
   width: 92px;
   height: 157px;
-  border-radius: 4px;
+  border-radius: 5px;
   user-select: none;
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../style/game.css';
+import '../style/index.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 import { getCredentials } from '../helpers/getJSON';
@@ -112,7 +113,7 @@ const Game: React.FC = () => {
             />
           ) : (
             <>
-              <MainBoard state={state} />
+              <MainBoard state={state} playerNum={playerNum} />
               {/* <Hand state={state} playerNum={playerNum} /> */}
             </>
           )}

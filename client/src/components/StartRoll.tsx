@@ -25,7 +25,7 @@ const StartRoll: React.FC<StartRollProps> = ({
                 style={{
                   fontWeight: state.turn.player === num ? 700 : 500,
                   fontSize: state.turn.player === num ? '20px' : '16px',
-                  color: state.turn.player === num ? 'black' : '#555'
+                  color: state.turn.player === num ? 'white' : '#bbb'
                 }}
               >
                 {state.match.players[num]}
@@ -53,8 +53,8 @@ const StartRoll: React.FC<StartRollProps> = ({
       <div className='active-player'>
         <h2
           style={{
-            color: state.turn.player === playerNum ? '#11b56b' : 'black',
-            fontWeight: state.turn.player === playerNum ? 800 : 500
+            color: state.turn.player === playerNum ? '#27dd8b' : 'white',
+            fontWeight: state.turn.player === playerNum ? 800 : 600
           }}
         >
           {state.match.players[state?.turn.player]}

@@ -12,6 +12,49 @@ code {
     monospace;
 }
 
+/* DARK THEME */
+* {
+  font-family: 'Source Sans 3';
+  color: white;
+}
+body {
+  background-color: #2e2e2e;
+}
+label {
+  font-size: 18px;
+}
+input {
+  background-color: #555;
+  border-radius: 15px;
+  border: 2px solid #252525;
+  padding: 8px 15px;
+  font-size: 16px;
+}
+input:focus {
+  outline: none;
+  border-color: #fc7c37;
+}
+button {
+  background-color: #fc7c37;
+  border-radius: 15px;
+  padding: 9px 0;
+  width: 120px;
+  border: 3px solid #252525;
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.15s;
+}
+button:hover {
+  cursor: pointer;
+  box-shadow: #111 2px 2px 3px;
+  font-size: 24px;
+  padding: 6px 0;
+}
+
+/* HOMEPAGE */
 .rooms {
   border: 1px solid;
   width: 200px;
