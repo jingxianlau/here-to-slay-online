@@ -21,6 +21,7 @@ body {
   background-color: #2e2e2e;
 }
 label {
+  padding: 6px;
   font-size: 18px;
 }
 input {
@@ -28,7 +29,11 @@ input {
   border-radius: 15px;
   border: 2px solid #252525;
   padding: 8px 15px;
+  width: 270px;
   font-size: 16px;
+}
+.checkbox {
+  width: 20px;
 }
 input:focus {
   outline: none;
@@ -38,13 +43,9 @@ button {
   background-color: #fc7c37;
   border-radius: 15px;
   padding: 9px 0;
-  width: 120px;
+  width: 150px;
   border: 3px solid #252525;
   font-size: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: 0.15s;
 }
 button:hover {
@@ -55,9 +56,15 @@ button:hover {
 }
 
 /* HOMEPAGE */
+.App > h2 {
+  margin-bottom: 0;
+}
+
 .rooms {
+  border-radius: 15px;
+  font-size: 20px;
   border: 1px solid;
-  width: 200px;
+  width: 300px;
   margin-top: 10px;
   display: flex;
   flex-direction: column;
@@ -65,12 +72,13 @@ button:hover {
 }
 
 .room {
-  padding: 2px 6px;
+  padding: 4px 20px;
+  border-radius: 15px;
   border: 2px solid transparent;
 }
 .room:hover {
   cursor: pointer;
-  border: 2px solid lightskyblue;
+  border: 2px solid #fc7c37;
 }
 
 .room div {
@@ -78,7 +86,7 @@ button:hover {
 }
 .room div:nth-child(2) {
   position: absolute;
-  right: 6px;
+  right: 20px;
 }
 
 .rooms .room:nth-child(even) {

@@ -97,28 +97,35 @@ function App() {
 
   return (
     <div className='App' style={{ margin: '25px' }}>
-      <h1>Here to Slay</h1>
+      <img src='/HTS_title.png' alt='Here to Slay' width='300px' />
+      <br />
       <form>
-        <label>Username: </label>
+        <label>Username</label>
+        <br />
         <input
           type='text'
           value={username}
           onChange={e => changeUsername(e.target.value)}
         />
         <br />
-        <label>Room: </label>
+        <br />
+        <label>Room</label>
+        <br />
         <input
           type='text'
           value={roomId}
           onChange={e => setRoomId(e.target.value)}
         />
         <br />
+        <br />
         <label>Private: </label>
         <input
           type='checkbox'
           checked={isPrivate}
           onChange={_ => setIsPrivate(!isPrivate)}
+          className='checkbox'
         />
+        <br />
         <br />
         <button
           onClick={e => {
@@ -140,7 +147,6 @@ function App() {
 
       <br />
       <h2>Find Rooms: </h2>
-      <button onClick={loadRooms}>Reload</button>
       {Object.keys(rooms).length ? (
         <div className='rooms'>
           {Object.keys(rooms).map(id => (
