@@ -63,7 +63,7 @@ const StartRoll: React.FC<StartRollProps> = ({
 
       <br />
 
-      <div className='content'>
+      <div className='roll-content'>
         {state.turn.isRolling && (
           <>
             <div className='dice-box'>

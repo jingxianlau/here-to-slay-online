@@ -22,8 +22,7 @@ header img {
 
 .dice-box {
   position: relative;
-  width: auto;
-  height: 100%;
+  margin: auto;
 }
 
 .turn-order {
