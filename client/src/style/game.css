@@ -27,8 +27,8 @@ header img {
 }
 
 .turn-order {
-  padding-top: 20px;
-  height: calc(10vh - 20px);
+  padding-top: 2vh;
+  height: 8vh;
   font-weight: 300;
 }
 .turn-order div {
@@ -62,28 +62,28 @@ header img {
 }
 .col {
   display: flex;
-  height: calc(90vh - 40px);
+  height: 86vh;
   width: 55vh;
-  padding: 20px;
+  padding: 2vh;
 
   flex-direction: column;
   align-items: center;
 }
 
 .player-board h4 {
-  margin: 3px 8px;
+  margin: 0.3vh 0.8vh;
 }
 
 .player-board .mat {
-  padding: 30px 20px;
+  padding: 3vh 2vh;
   border: 1px solid;
-  width: 441px;
-  height: 304px;
+  width: 44.1vh;
+  height: 30.4vh;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-radius: 20px;
+  border-radius: 2vh;
 }
 
 .bottom-row {
@@ -98,58 +98,58 @@ header img {
 }
 
 .own-board .mat {
-  padding: 45px 30px;
+  padding: 4.5vh 3vh;
   border: 2px solid;
-  width: 573px;
-  height: 395px;
+  width: 57.3vh;
+  height: 39.5vh;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-radius: 30px;
+  border-radius: 3vh;
 }
 .own-board .small {
-  border: 2px solid #fff;
+  border: 0.25vh solid #fff;
   background-color: #0000003a;
-  width: 106px;
-  height: 149px;
-  border-radius: 5px;
+  width: 10.6vh;
+  height: 14.9vh;
+  border-radius: 0.5vh;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .own-board .large {
-  border: 2px solid #fff;
+  border: 0.25vh solid #fff;
   background-color: #0000003a;
-  width: 118px;
-  height: 203px;
-  border-radius: 8px;
+  width: 11.8vh;
+  height: 20.3vh;
+  border-radius: 0.8vh;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .own-board img.small-card {
-  width: 106px;
-  height: 149px;
-  border-radius: 5px;
+  width: 10.6vh;
+  height: 14.9vh;
+  border-radius: 0.5vh;
   user-select: none;
 }
 .own-board img.large-card {
-  width: 118px;
-  height: 203px;
-  border-radius: 8px;
+  width: 11.8vh;
+  height: 20.3vh;
+  border-radius: 0.8vh;
   user-select: none;
 }
 
 .center-board .mat {
-  padding: 30px 0 30px 35px;
-  width: 500px;
+  padding: 3vh 0 3vh 3.5vh;
+  width: 50vh;
   border: 1px solid;
   display: flex;
   justify-content: space-between;
-  border-radius: 25px;
+  border-radius: 2.5vh;
   background-image: url('./assets/mats/central.png');
   background-size: cover;
 }
@@ -157,19 +157,19 @@ header img {
   display: flex;
   justify-content: space-between;
   rotate: 270deg;
-  margin-left: -18px;
-  margin-right: -10px;
+  margin-left: -1.8vh;
+  margin-right: -1vh;
 }
 .small-cards .small {
-  margin: 0 5px;
+  margin: 0 0.5vh;
 }
 
 .small {
-  border: 1px solid #fff;
+  border: 0.15vh solid #fff;
   background-color: #0000003a;
-  width: 81.9px;
-  height: 114.4px;
-  border-radius: 3px;
+  width: 8.19vh;
+  height: 11.44vh;
+  border-radius: 0.3vh;
 
   display: flex;
   justify-content: center;
@@ -177,11 +177,11 @@ header img {
   transition: 0.15s;
 }
 .large {
-  border: 1px solid #fff;
+  border: 0.15vh solid #fff;
   background-color: #0000003a;
-  width: 91px;
-  height: 157px;
-  border-radius: 5px;
+  width: 9.1vh;
+  height: 15.7vh;
+  border-radius: 0.5vh;
 
   display: flex;
   justify-content: center;
@@ -222,14 +222,14 @@ header img {
 }
 
 img.small-card {
-  width: 81.9px;
-  height: 114.4px;
-  border-radius: 3px;
+  width: 8.19vh;
+  height: 11.44vh;
+  border-radius: 0.3vh;
   user-select: none;
 }
 img.large-card {
-  width: 92px;
-  height: 157px;
-  border-radius: 5px;
+  width: 9.2vh;
+  height: 15.7vh;
+  border-radius: 0.5vh;
   user-select: none;
 }
