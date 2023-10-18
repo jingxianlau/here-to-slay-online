@@ -430,7 +430,7 @@ const heroCards: HeroCard[] = [
 
 const itemCards: ItemCard[] = [
   {
-    name: 'bard Mask',
+    name: 'Bard Mask',
     type: CardType.item,
     id: uuid()
   },
@@ -508,151 +508,151 @@ const itemCards: ItemCard[] = [
 
 const modifierCards: ModifierCard[] = [
   {
-    name: 'modifier',
-    modifier: [+1, -3],
+    name: '1-3',
+    modifier: [1, -3],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
-    modifier: [+1, -3],
+    name: '1-3',
+    modifier: [1, -3],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
-    modifier: [+1, -3],
+    name: '1-3',
+    modifier: [1, -3],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
-    modifier: [+1, -3],
+    name: '1-3',
+    modifier: [1, -3],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '2-2',
     modifier: [2, -2],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '3-1',
     modifier: [3, -1],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '3-1',
     modifier: [3, -1],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '3-1',
     modifier: [3, -1],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '3-1',
     modifier: [3, -1],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '4-0',
     modifier: [4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '4-0',
     modifier: [4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '4-0',
     modifier: [4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '4-0',
     modifier: [4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '0-4',
     modifier: [-4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '0-4',
     modifier: [-4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '0-4',
     modifier: [-4],
     type: CardType.modifier,
     id: uuid()
   },
   {
-    name: 'modifier',
+    name: '0-4',
     modifier: [-4],
     type: CardType.modifier,
     id: uuid()
