@@ -5,19 +5,22 @@ import './style/index.css';
 import App from './App';
 import Lobby from './pages/Lobby';
 import Game from './pages/Game';
+import CardContextProvider from './context/CardContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<App />} />
-        <Route path='/lobby' element={<Lobby />} />
-        <Route path='/game' element={<Game />} />
-      </Routes>
-    </BrowserRouter>
+    <CardContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<App />} />
+          <Route path='/lobby' element={<Lobby />} />
+          <Route path='/game' element={<Game />} />
+        </Routes>
+      </BrowserRouter>
+    </CardContextProvider>
   </React.StrictMode>
 );
 

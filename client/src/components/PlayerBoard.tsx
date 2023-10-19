@@ -1,14 +1,17 @@
 import React from 'react';
 import { GameState, LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
+import useCardContext from '../hooks/useCardContext';
 
 interface PlayerBoardProps {
   state: GameState;
   playerNum: number;
+  col: number;
 }
 
-const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
-  console.log(state.board[playerNum].largeCards[0] as LeaderCard);
+const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum, col }) => {
+  const { setShownCard, setPos } = useCardContext();
+
   return state.board[playerNum].largeCards.length > 0 ? (
     <div
       className={`mat ${
@@ -17,7 +20,18 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
     >
       <div className='top-row'>
         {state.board[playerNum].heroCards.map(card => (
-          <div className='small' key={card.id}>
+          <div
+            className='small'
+            key={card.id}
+            onMouseEnter={() => {
+              setShownCard(card);
+              setPos(col === 0 ? 'right' : 'left');
+            }}
+            onMouseLeave={() => {
+              setShownCard(null);
+              setPos(null);
+            }}
+          >
             <img
               src={getImage(card.name, card.type, card.class)}
               alt={card.name}
@@ -36,7 +50,18 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum }) => {
 
       <div className='bottom-row'>
         {state.board[playerNum].largeCards.map(card => (
-          <div className='large' key={card.id}>
+          <div
+            className='large'
+            key={card.id}
+            onMouseEnter={() => {
+              setShownCard(card);
+              setPos(col === 0 ? 'right' : 'left');
+            }}
+            onMouseLeave={() => {
+              setShownCard(null);
+              setPos(null);
+            }}
+          >
             <img
               src={getImage(card.name, card.type)}
               alt={card.name}

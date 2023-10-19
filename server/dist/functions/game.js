@@ -9,7 +9,7 @@ const shuffle = (arr) => {
     }
 };
 exports.shuffle = shuffle;
-const distributeCards = (state, numPlayers, playerNum) => {
+const distributeCards = (state, numPlayers) => {
     (0, exports.shuffle)(state.secret.deck);
     (0, exports.shuffle)(state.secret.leaderPile);
     (0, exports.shuffle)(state.secret.monsterPile);
@@ -21,11 +21,11 @@ const distributeCards = (state, numPlayers, playerNum) => {
     for (let i = 0; i < numPlayers; i++) {
         for (let _ = 0; _ < 7; _++) {
             let card = state.secret.deck.pop();
-            card.player = playerNum;
+            card.player = i;
             state.players[i].hand.push(card);
         }
         let leader = state.secret.leaderPile.pop();
-        leader.player = playerNum;
+        leader.player = i;
         state.board[i].classes[leader.class]++;
         state.board[i].largeCards.push(leader);
     }

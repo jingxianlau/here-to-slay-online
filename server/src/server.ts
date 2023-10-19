@@ -277,7 +277,7 @@ io.on('connection', socket => {
         state.match.startRolls.rolls.push(0);
       }
 
-      distributeCards(rooms[roomId].state, rooms[roomId].numPlayers, playerNum);
+      distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
 
       sendGameState(roomId);
     }

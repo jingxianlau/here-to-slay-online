@@ -8,11 +8,7 @@ export const shuffle = (arr: AnyCard[]) => {
   }
 };
 
-export const distributeCards = (
-  state: GameState,
-  numPlayers: number,
-  playerNum: number
-) => {
+export const distributeCards = (state: GameState, numPlayers: number) => {
   // DISTRIBUTE CARDS
   shuffle(state.secret.deck);
   shuffle(state.secret.leaderPile);
@@ -26,12 +22,12 @@ export const distributeCards = (
   for (let i = 0; i < numPlayers; i++) {
     for (let _ = 0; _ < 7; _++) {
       let card = state.secret.deck.pop() as AnyCard;
-      card.player = playerNum;
+      card.player = i;
       state.players[i].hand.push(card);
     }
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;
-    leader.player = playerNum;
+    leader.player = i;
     state.board[i].classes[leader.class]++;
     state.board[i].largeCards.push(leader);
   }

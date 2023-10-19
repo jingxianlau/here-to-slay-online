@@ -123,3 +123,10 @@ export interface GameState {
     isRolling: boolean;
   };
 }
+
+export interface CardContextObj {
+  shownCard: AnyCard | null;
+  setShownCard: React.Dispatch<React.SetStateAction<AnyCard | null>>;
+  pos: 'left' | 'right' | null;
+  setPos: React.Dispatch<React.SetStateAction<'left' | 'right' | null>>;
+}

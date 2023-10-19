@@ -37,6 +37,51 @@ header img {
   transition: 0.5s;
 }
 
+.shown-card {
+  position: absolute;
+  height: 100vh;
+  width: 33vw;
+  background-color: #333;
+
+  display: flex;
+  align-items: center;
+}
+.shown-card.right {
+  top: 0;
+  right: 0;
+  background: linear-gradient(to right, transparent, #1e1e1e 5vw);
+}
+.shown-card.left {
+  top: 0;
+  left: 0;
+  background: linear-gradient(to left, transparent, #1e1e1e 5vw);
+}
+
+.shown-card .large-enlarged {
+  width: 46vh;
+  height: 78.5vh;
+  border-radius: 2vh;
+  user-select: none;
+}
+.shown-card.right .small-enlarged {
+  margin-left: 5vw;
+}
+.shown-card.right .large-enlarged {
+  margin-left: 5vw;
+}
+.shown-card .small-enlarged {
+  width: 40.95vh;
+  height: 57.2vh;
+  border-radius: 1vh;
+  user-select: none;
+}
+.shown-card.left .small-enlarged {
+  margin-left: 1.8vw;
+}
+.shown-card.left .large-enlarged {
+  margin-left: 1.8vw;
+}
+
 /* START ROLL */
 
 .start-roll_summary {
@@ -132,13 +177,13 @@ header img {
 .own-board img.small-card {
   width: 10.6vh;
   height: 14.9vh;
-  border-radius: 0.5vh;
+  border-radius: 0.4vh;
   user-select: none;
 }
 .own-board img.large-card {
   width: 11.8vh;
   height: 20.3vh;
-  border-radius: 0.8vh;
+  border-radius: 0.6vh;
   user-select: none;
 }
 
@@ -223,12 +268,12 @@ header img {
 img.small-card {
   width: 8.19vh;
   height: 11.44vh;
-  border-radius: 0.3vh;
+  border-radius: 0.2vh;
   user-select: none;
 }
 img.large-card {
   width: 9.2vh;
   height: 15.7vh;
-  border-radius: 0.5vh;
+  border-radius: 0.4vh;
   user-select: none;
 }

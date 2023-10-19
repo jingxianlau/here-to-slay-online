@@ -20,16 +20,6 @@
   background-color: #222;
   box-shadow: inset 2px 2px #222;
 }
-
-.dice-one {
-  left: 450px;
-}
-
-.dice-two {
-  left: 300px;
-  top: -200px;
-}
-
 .side {
   position: absolute;
   background-color: #fff;

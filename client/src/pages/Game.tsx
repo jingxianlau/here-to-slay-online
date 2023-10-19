@@ -4,13 +4,16 @@ import '../style/index.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 import { getCredentials } from '../helpers/getJSON';
-import { GameState } from '../types';
+import { GameState, HeroCard } from '../types';
 import StartRoll from '../components/StartRoll';
 import MainBoard from '../components/MainBoard';
 import Hand from '../components/Hand';
+import useCardContext from '../hooks/useCardContext';
+import { getImage } from '../helpers/getImage';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
+  const { shownCard, pos } = useCardContext();
 
   // variables
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -118,6 +121,25 @@ const Game: React.FC = () => {
             </>
           )}
         </div>
+        {shownCard && pos && (
+          <div className={`shown-card ${pos}`}>
+            <img
+              src={
+                shownCard.type === 'hero'
+                  ? getImage(
+                      shownCard.name,
+                      shownCard.type,
+                      (shownCard as HeroCard).class
+                    )
+                  : getImage(shownCard.name, shownCard.type)
+              }
+              alt={shownCard.name}
+              className={
+                shownCard.type === 'large' ? 'large-enlarged' : 'small-enlarged'
+              }
+            />
+          </div>
+        )}
       </div>
     )
   );
