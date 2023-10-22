@@ -109,6 +109,7 @@ export interface GameState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
+    discardTop: AnyCard | null;
 
     // window for challenging
     preparedCard?: {
@@ -166,10 +167,11 @@ export interface privateState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
+    discardTop: AnyCard | null;
 
     // window for challenging
     preparedCard?: {
-      card: HeroCard | MagicCard | ItemCard;
+      cardId: string;
       successful: null | boolean;
     } | null;
   };

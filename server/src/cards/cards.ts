@@ -832,6 +832,7 @@ export const initialState: GameState = {
   board: [],
   mainDeck: {
     monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
+    discardTop: null,
     preparedCard: null
   },
 

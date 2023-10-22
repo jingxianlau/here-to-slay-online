@@ -26,7 +26,7 @@ const Lobby: React.FC = () => {
       setSocket(socket);
 
       socket.emit(
-        'enter-match',
+        'enter-lobby',
         credentials.roomId,
         credentials.userId,
         username,
@@ -64,7 +64,7 @@ const Lobby: React.FC = () => {
 
   function getReady() {
     socket?.emit(
-      'enter-match',
+      'enter-lobby',
       credentials.roomId,
       credentials.userId,
       username,

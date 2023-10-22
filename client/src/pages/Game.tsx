@@ -105,9 +105,9 @@ const Game: React.FC = () => {
   }, [showHand]);
 
   const mouseMoveHandler = (e: MouseEvent) => {
-    if (showHand && window.innerHeight - e.clientY >= 180) {
+    if (showHand && window.innerHeight - e.clientY >= 160) {
       setShowHand(false);
-    } else if (!showHand && window.innerHeight - e.clientY <= 50) {
+    } else if (!showHand && window.innerHeight - e.clientY <= 80) {
       setShowHand(true);
     }
   };

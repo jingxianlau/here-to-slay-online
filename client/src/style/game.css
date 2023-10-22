@@ -68,7 +68,7 @@ header img {
   box-shadow: none;
 }
 .shown-card.top {
-  bottom: 32vh;
+  bottom: 33.5vh;
   left: calc(50vw - 20.475vh);
   margin: auto;
   display: flex;

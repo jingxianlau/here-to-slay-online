@@ -101,6 +101,7 @@ export interface GameState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
+    discardTop: AnyCard | null;
 
     // window for challenging
     preparedCard?: {

@@ -802,6 +802,7 @@ exports.initialState = {
     board: [],
     mainDeck: {
         monsters: [exports.monsterPile[0], exports.monsterPile[0], exports.monsterPile[0]],
+        discardTop: null,
         preparedCard: null
     },
     match: {

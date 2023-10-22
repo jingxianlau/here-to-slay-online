@@ -1,25 +1,19 @@
 import { Server } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
-import { v4 as uuid } from 'uuid';
-import { Room } from './types';
 import {
   checkCredentials,
-  random,
   removePlayer,
   validSender,
   parseState
 } from './functions/helpers';
-import { initialState } from './cards/cards';
 import { instrument } from '@socket.io/admin-ui';
 import { distributeCards, rollDice } from './functions/game';
-import cloneDeep from 'lodash.clonedeep';
+import { createRoom, getRooms, joinRoom } from './controllers/lobbyController';
+import { rooms } from './rooms';
+import { AnyCard } from './types';
 
-const rooms: { [key: string]: Room } = {
-  '999999': { numPlayers: 0, state: cloneDeep(initialState), private: false }
-};
-
-// EXPRESS SERVER
+/* EXPRESS SERVER */
 const app = express();
 app.use(
   cors({
@@ -27,121 +21,15 @@ app.use(
   })
 );
 app.use(express.json());
-app.get('/get-rooms', (req, res) => {
-  let updatedRooms: { [key: string]: number } = {};
+const router = express.Router();
 
-  for (const key of Object.keys(rooms)) {
-    if (!rooms[key].private) {
-      updatedRooms[key] = rooms[key].numPlayers;
-    }
-  }
+router.get('/get-rooms', getRooms);
+router.post('/create-room', createRoom);
+router.post('/join-room', joinRoom);
 
-  res.json(updatedRooms);
-});
-app.post('/create-room', (req, res) => {
-  const { roomId, isPrivate, username } = req.body;
-
-  if (Object.keys(rooms).length === 900000)
-    res.status(400).json({ successful: false, res: 'Invalid ID' });
-  const userId = uuid();
-
-  let id;
-  if (roomId === '') {
-    id = 0;
-    while (rooms[id] !== undefined || id <= 99999 || id >= 1000000) {
-      id = random(100000, 999999);
-    }
-
-    return res.status(400).json({ successful: false, res: 'Invalid ID' });
-  } else {
-    id = roomId;
-
-    if (rooms[id] !== undefined) {
-      return res.status(400).json({ successful: false, res: 'ID taken' });
-    }
-  }
-
-  let gameState = cloneDeep(initialState);
-  let room = rooms[id];
-
-  // setup match
-  rooms[id] = {
-    numPlayers: 1,
-    state: gameState,
-    private: isPrivate
-  };
-  room.state.secret.playerIds.push(userId);
-  room.state.match.players.push(username);
-  room.state.players.push({ hand: [] });
-  room.state.board.push({
-    classes: {
-      fighter: 0,
-      bard: 0,
-      guardian: 0,
-      ranger: 0,
-      thief: 0,
-      wizard: 0
-    },
-    heroCards: [],
-    largeCards: []
-  });
-
-  // for dev v
-  room.state.match.isReady.push(true);
-  // for dev ^
-
-  return res.json({ successful: true, res: userId });
-});
-app.post('/join-room', (req, res) => {
-  const { roomId, username } = req.body;
-  const room = rooms[req.body.roomId];
-  const userId = uuid();
-
-  if (room) {
-    if (rooms[roomId].state.match.players.includes(username)) {
-      return res.json({ successful: false, res: 'Username taken' });
-    }
-
-    room.numPlayers++;
-    room.state.secret.playerIds.push(userId);
-    room.state.match.players.push(username);
-    room.state.players.push({ hand: [] });
-    room.state.board.push({
-      classes: {
-        fighter: 0,
-        bard: 0,
-        guardian: 0,
-        ranger: 0,
-        thief: 0,
-        wizard: 0
-      },
-      heroCards: [],
-      largeCards: []
-    });
-
-    // for dev v
-    room.state.match.isReady.push(true);
-    // for dev ^
-
-    return res.json({ successful: true, res: userId });
-  } else {
-    return res
-      .status(400)
-      .json({ successful: false, res: 'Room could not be found' });
-  }
-});
 app.listen(4500, () => console.log('express server on port 4500'));
 
-/*
-
-      BELOW
-SOCKET.IO  SERVER
-
-  Lobby  System
-        &
- Game  Management
-
-*/
+/* SOCKET.IO  SERVER */
 
 const io = new Server({
   cors: {
@@ -151,9 +39,17 @@ const io = new Server({
 });
 
 io.on('connection', socket => {
-  // LOBBY SYSTEM
+  /*
+  
+  MATCH
+  - 'enter-lobby'
+  - 'leave-lobby'
+  - 'ready'
+  - 'start-match'
+
+  */
   socket.on(
-    'enter-match',
+    'enter-lobby',
     (
       roomId: string,
       userId: string,
@@ -161,7 +57,7 @@ io.on('connection', socket => {
       cb: (successful: boolean, playerNum: number | null) => void
     ) => {
       // check credentials
-      const playerNum = checkCredentials(rooms, roomId, userId);
+      const playerNum = checkCredentials(roomId, userId);
       if (playerNum === -1) {
         cb(false, null);
         socket.disconnect();
@@ -198,8 +94,8 @@ io.on('connection', socket => {
     }
   );
 
-  socket.on('leave-match', (roomId: string, userId: string, cb: () => void) => {
-    const playerNum = checkCredentials(rooms, roomId, userId);
+  socket.on('leave-lobby', (roomId: string, userId: string, cb: () => void) => {
+    const playerNum = checkCredentials(roomId, userId);
     if (playerNum === -1) {
       socket.disconnect();
       return;
@@ -226,7 +122,7 @@ io.on('connection', socket => {
       ready: boolean,
       cb: (successful: boolean) => void
     ) => {
-      const playerNum = checkCredentials(rooms, roomId, userId);
+      const playerNum = checkCredentials(roomId, userId);
       if (playerNum === -1) {
         cb(false);
         socket.disconnect();
@@ -249,7 +145,6 @@ io.on('connection', socket => {
     }
   );
 
-  // GET SOCKET IDS
   socket.on('start-match', (roomId: string, playerId: string) => {
     const state = rooms[roomId].state;
     const numPlayers = rooms[roomId].numPlayers;
@@ -286,6 +181,8 @@ io.on('connection', socket => {
   /* 
   
   GAME
+  - 'roll'
+  - 'play-card'
 
   */
 
@@ -350,6 +247,8 @@ io.on('connection', socket => {
       // STANDARD ROLL
     }
   });
+
+  socket.on('play-card', (roomId: string, userId: string, card: AnyCard) => {});
 });
 
 io.listen(4000);

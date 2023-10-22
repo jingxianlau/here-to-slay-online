@@ -1,4 +1,7 @@
+import cloneDeep from 'lodash.clonedeep';
 import { GameState, Room, privateState } from '../types';
+import { rooms } from '../rooms';
+import { initialState } from '../cards/cards';
 
 export const random = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -16,11 +19,7 @@ export const removePlayer = (
   room.numPlayers--;
 };
 
-export const checkCredentials = (
-  rooms: { [key: string]: Room },
-  roomId: string,
-  userId: string
-): number => {
+export const checkCredentials = (roomId: string, userId: string): number => {
   if (!rooms[roomId]) return -1;
 
   const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
@@ -37,7 +36,7 @@ export const validSender = (
   roomId: string,
   userId: string
 ): number => {
-  const playerNum = checkCredentials(rooms, roomId, userId);
+  const playerNum = checkCredentials(roomId, userId);
 
   if (
     rooms[roomId].state.turn.player === playerNum &&
@@ -49,13 +48,35 @@ export const validSender = (
   }
 };
 
+export const addPlayer = (roomId: string, userId: string, username: string) => {
+  let room = rooms[roomId];
+  room.numPlayers++;
+  room.state.secret.playerIds.push(userId);
+  room.state.match.players.push(username);
+  room.state.players.push({ hand: [] });
+  room.state.board.push({
+    classes: {
+      fighter: 0,
+      bard: 0,
+      guardian: 0,
+      ranger: 0,
+      thief: 0,
+      wizard: 0
+    },
+    heroCards: [],
+    largeCards: []
+  });
+
+  // for dev v
+  room.state.match.isReady.push(true);
+  // for dev ^
+};
+
 export const parseState = (userId: string, state: GameState): privateState => {
-  let copy: GameState = JSON.parse(JSON.stringify(state));
+  let newState: privateState = cloneDeep(state) as privateState;
 
   const numPlayers = state.match.players.length;
   const playerNum = state.secret.playerIds.indexOf(userId);
-
-  let newState: privateState = copy;
 
   newState.secret = null;
   for (let i = 0; i < numPlayers; i++) {
