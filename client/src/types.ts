@@ -127,6 +127,6 @@ export interface GameState {
 export interface CardContextObj {
   shownCard: AnyCard | null;
   setShownCard: React.Dispatch<React.SetStateAction<AnyCard | null>>;
-  pos: 'left' | 'right' | null;
-  setPos: React.Dispatch<React.SetStateAction<'left' | 'right' | null>>;
+  pos: 'left' | 'right' | 'top' | null;
+  setPos: React.Dispatch<React.SetStateAction<'left' | 'right' | 'top' | null>>;
 }

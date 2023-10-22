@@ -20,7 +20,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
     state.secret.monsterPile.pop() as MonsterCard
   ];
   for (let i = 0; i < numPlayers; i++) {
-    for (let _ = 0; _ < 7; _++) {
+    for (let _ = 0; _ < 5; _++) {
       let card = state.secret.deck.pop() as AnyCard;
       card.player = i;
       state.players[i].hand.push(card);

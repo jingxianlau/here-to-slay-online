@@ -7,7 +7,7 @@ export const getImage = (
 ) => {
   if (heroClass) {
     return `./assets/${type}/${heroClass}/${name
-      .replace(' ', '-')
+      .replaceAll(' ', '-')
       .toLowerCase()}.png`;
   } else {
     return `./assets/${type}/${name.replaceAll(' ', '-').toLowerCase()}.png`;

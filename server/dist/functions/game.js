@@ -19,7 +19,7 @@ const distributeCards = (state, numPlayers) => {
         state.secret.monsterPile.pop()
     ];
     for (let i = 0; i < numPlayers; i++) {
-        for (let _ = 0; _ < 7; _++) {
+        for (let _ = 0; _ < 5; _++) {
             let card = state.secret.deck.pop();
             card.player = i;
             state.players[i].hand.push(card);

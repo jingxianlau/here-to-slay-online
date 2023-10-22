@@ -4,12 +4,12 @@ import '../style/index.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 import { getCredentials } from '../helpers/getJSON';
-import { GameState, HeroCard } from '../types';
+import { GameState } from '../types';
 import StartRoll from '../components/StartRoll';
 import MainBoard from '../components/MainBoard';
 import Hand from '../components/Hand';
 import useCardContext from '../hooks/useCardContext';
-import { getImage } from '../helpers/getImage';
+import ShownCard from '../components/ShownCard';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +22,8 @@ const Game: React.FC = () => {
 
   const [showRoll, setShowRoll] = useState(false);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
+
+  const [showHand, setShowHand] = useState(false);
 
   // credentials
   const [playerNum, setPlayerNum] = useState(-1);
@@ -95,6 +97,21 @@ const Game: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    window.addEventListener('mousemove', mouseMoveHandler);
+    return () => {
+      window.removeEventListener('mousemove', mouseMoveHandler);
+    };
+  }, [showHand]);
+
+  const mouseMoveHandler = (e: MouseEvent) => {
+    if (showHand && window.innerHeight - e.clientY >= 180) {
+      setShowHand(false);
+    } else if (!showHand && window.innerHeight - e.clientY <= 50) {
+      setShowHand(true);
+    }
+  };
+
   function roll() {
     if (!state || !socket) return;
     if (state.turn.player === playerNum) {
@@ -117,29 +134,11 @@ const Game: React.FC = () => {
           ) : (
             <>
               <MainBoard state={state} playerNum={playerNum} />
-              {/* <Hand state={state} playerNum={playerNum} /> */}
+              <Hand state={state} playerNum={playerNum} show={showHand} />
             </>
           )}
         </div>
-        {shownCard && pos && (
-          <div className={`shown-card ${pos}`}>
-            <img
-              src={
-                shownCard.type === 'hero'
-                  ? getImage(
-                      shownCard.name,
-                      shownCard.type,
-                      (shownCard as HeroCard).class
-                    )
-                  : getImage(shownCard.name, shownCard.type)
-              }
-              alt={shownCard.name}
-              className={
-                shownCard.type === 'large' ? 'large-enlarged' : 'small-enlarged'
-              }
-            />
-          </div>
-        )}
+        {shownCard && pos && <ShownCard shownCard={shownCard} pos={pos} />}
       </div>
     )
   );

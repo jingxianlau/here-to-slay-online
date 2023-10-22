@@ -138,7 +138,7 @@ const heroCards = [
         id: (0, uuid_1.v4)()
     },
     {
-        name: 'Lucky Buddy',
+        name: 'Lucky Bucky',
         class: types_1.HeroClass.bard,
         type: types_1.CardType.hero,
         id: (0, uuid_1.v4)()
@@ -470,12 +470,12 @@ const itemCards = [
         id: (0, uuid_1.v4)()
     },
     {
-        name: "Curse of the Snake's Eye",
+        name: "Curse of the Snake's Eyes",
         type: types_1.CardType.item,
         id: (0, uuid_1.v4)()
     },
     {
-        name: "Curse of the Snake's Eye",
+        name: "Curse of the Snake's Eyes",
         type: types_1.CardType.item,
         id: (0, uuid_1.v4)()
     },

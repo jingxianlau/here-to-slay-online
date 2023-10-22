@@ -18,6 +18,10 @@ header img {
   text-align: center;
   margin: auto;
   font-size: 20px;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
 }
 
 .dice-box {
@@ -37,24 +41,42 @@ header img {
   transition: 0.5s;
 }
 
+/* SHOWN CARD */
 .shown-card {
   position: absolute;
-  height: 100vh;
-  width: 33vw;
   background-color: #333;
-
-  display: flex;
-  align-items: center;
 }
 .shown-card.right {
   top: 0;
   right: 0;
+  height: 100vh;
+  width: 33vw;
   background: linear-gradient(to right, transparent, #1e1e1e 5vw);
+  display: flex;
+  align-items: center;
 }
 .shown-card.left {
   top: 0;
   left: 0;
-  background: linear-gradient(to left, transparent, #1e1e1e 5vw);
+  height: 100vh;
+  width: 33vw;
+  background: linear-gradient(to left, #11111100, #1e1e1e 5vw);
+  display: flex;
+  align-items: center;
+}
+.shown-card.top img {
+  box-shadow: none;
+}
+.shown-card.top {
+  bottom: 32vh;
+  left: calc(50vw - 20.475vh);
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shown-card.top img {
+  box-shadow: #1e1e1e 0 0 25px 25px;
 }
 
 .shown-card .large-enlarged {
@@ -63,23 +85,48 @@ header img {
   border-radius: 2vh;
   user-select: none;
 }
-.shown-card.right .small-enlarged {
-  margin-left: 5vw;
-}
 .shown-card.right .large-enlarged {
-  margin-left: 5vw;
+  margin-left: 6vw;
 }
 .shown-card .small-enlarged {
   width: 40.95vh;
   height: 57.2vh;
-  border-radius: 1vh;
+  border-radius: 1.3vh;
   user-select: none;
 }
-.shown-card.left .small-enlarged {
-  margin-left: 1.8vw;
-}
 .shown-card.left .large-enlarged {
-  margin-left: 1.8vw;
+  margin-left: 1vw;
+}
+
+/* HAND */
+.bottomMenu {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 30vh;
+  width: 100vw;
+  background: linear-gradient(to bottom, transparent, #1e1e1e 8vh);
+  transition: ease-in-out 0.2s;
+}
+.hand {
+  display: flex;
+  align-items: flex-end;
+}
+.hand img.small-md {
+  margin: 0 3px;
+  width: 18.837vh;
+  height: 26.312vh;
+  border-radius: 0.5vh;
+  border: 0px solid #fc7c37;
+  user-select: none;
+  transition: ease-in-out 0.2s;
+}
+.hand img.small-md:hover {
+  margin: 8px;
+  border: 4px solid #fc7c37;
+  cursor: pointer;
 }
 
 /* START ROLL */
