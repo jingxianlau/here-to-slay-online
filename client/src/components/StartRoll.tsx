@@ -53,7 +53,7 @@ const StartRoll: React.FC<StartRollProps> = ({
       <div className='active-player'>
         <h2
           style={{
-            color: state.turn.player === playerNum ? '#27dd8b' : 'white',
+            color: state.turn.player === playerNum ? '#fc7c37' : 'white',
             fontWeight: state.turn.player === playerNum ? 800 : 600
           }}
         >

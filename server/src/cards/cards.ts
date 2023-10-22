@@ -256,7 +256,7 @@ const heroCards: HeroCard[] = [
     id: uuid()
   },
   {
-    name: 'Might Blade',
+    name: 'Mighty Blade',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid()
@@ -348,7 +348,7 @@ const heroCards: HeroCard[] = [
     id: uuid()
   },
   {
-    name: 'Shuri Kitty',
+    name: 'Shurikitty',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid()
@@ -440,17 +440,12 @@ const itemCards: ItemCard[] = [
     id: uuid()
   },
   {
-    name: 'fighter Mask',
+    name: 'Fighter Mask',
     type: CardType.item,
     id: uuid()
   },
   {
-    name: 'guardian Mask',
-    type: CardType.item,
-    id: uuid()
-  },
-  {
-    name: 'Particularly Rusty Coin',
+    name: 'Guardian Mask',
     type: CardType.item,
     id: uuid()
   },
@@ -460,7 +455,12 @@ const itemCards: ItemCard[] = [
     id: uuid()
   },
   {
-    name: 'ranger Mask',
+    name: 'Particularly Rusty Coin',
+    type: CardType.item,
+    id: uuid()
+  },
+  {
+    name: 'Ranger Mask',
     type: CardType.item,
     id: uuid()
   },
@@ -475,12 +475,12 @@ const itemCards: ItemCard[] = [
     id: uuid()
   },
   {
-    name: 'thief Mask',
+    name: 'Thief Mask',
     type: CardType.item,
     id: uuid()
   },
   {
-    name: 'wizard Mask',
+    name: 'Wizard Mask',
     type: CardType.item,
     id: uuid()
   },

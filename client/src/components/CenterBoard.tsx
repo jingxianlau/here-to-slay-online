@@ -1,14 +1,34 @@
 import React from 'react';
-import { GameState } from '../types';
+import { CardType, Credentials, GameState } from '../types';
 import { getImage } from '../helpers/getImage';
 import useCardContext from '../hooks/useCardContext';
+import { Socket } from 'socket.io-client';
 
 interface CenterBoardProps {
   state: GameState;
+  socket: Socket;
+  credentials: Credentials;
+  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
+  playerNum: number;
 }
 
-const CenterBoard: React.FC<CenterBoardProps> = ({ state }) => {
+const CenterBoard: React.FC<CenterBoardProps> = ({
+  state,
+  socket,
+  credentials,
+  setShowHand,
+  playerNum
+}) => {
   const { setShownCard, setPos } = useCardContext();
+
+  function drawTwo() {
+    if (state.turn.phase !== 'draw' || state.turn.player !== playerNum) return;
+    socket.emit('draw-two', credentials.roomId, credentials.userId);
+    setShowHand(true);
+    setTimeout(() => {
+      setShowHand(false);
+    }, 1000);
+  }
 
   return (
     <div className='mat'>
@@ -37,8 +57,41 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ state }) => {
       ))}
 
       <div className='small-cards'>
-        <div className='small deck'>Deck</div>
-        <div className='small discard'>Discard Pile</div>
+        <div className='small deck'>
+          <img
+            src='./assets/back/back-creme.png'
+            alt='flipped card'
+            className={`small-card ${
+              state.turn.phase === 'draw' && state.turn.player === playerNum
+                ? 'glow click'
+                : ''
+            }`}
+            onClick={drawTwo}
+          />
+        </div>
+        <div className='small discard'>
+          {state.mainDeck.discardTop &&
+            (state.mainDeck.discardTop.type === CardType.hero ? (
+              <img
+                src={getImage(
+                  state.mainDeck.discardTop.name,
+                  state.mainDeck.discardTop.type,
+                  state.mainDeck.discardTop.class
+                )}
+                alt={state.mainDeck.discardTop.name}
+                className='small-card'
+              />
+            ) : (
+              <img
+                src={getImage(
+                  state.mainDeck.discardTop.name,
+                  state.mainDeck.discardTop.type
+                )}
+                alt={state.mainDeck.discardTop.name}
+                className='small-card'
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

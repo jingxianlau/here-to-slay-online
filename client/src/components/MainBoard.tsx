@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { GameState } from '../types';
+import { Credentials, GameState } from '../types';
 import PlayerBoard from './PlayerBoard';
 import CenterBoard from './CenterBoard';
+import { Socket } from 'socket.io-client';
 
 interface MainBoardProps {
   state: GameState;
   playerNum: number;
+  socket: Socket;
+  credentials: Credentials;
+  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MainBoard: React.FC<MainBoardProps> = ({ state, playerNum }) => {
+const MainBoard: React.FC<MainBoardProps> = ({
+  state,
+  playerNum,
+  socket,
+  credentials,
+  setShowHand
+}) => {
   const [boardOrder, setBoardOrder] = useState<number[][]>([[], [], []]);
 
   useEffect(() => {
@@ -81,17 +91,43 @@ const MainBoard: React.FC<MainBoardProps> = ({ state, playerNum }) => {
                   }}
                 >
                   {boardNum !== playerNum ? (
-                    <h4>{state.match.players[boardNum]}</h4>
+                    <h4
+                      style={{
+                        marginBottom: '5px',
+                        color:
+                          state.turn.player === boardNum ? '#fc7c37' : 'white'
+                      }}
+                    >
+                      {state.match.players[boardNum]}
+                    </h4>
                   ) : (
-                    <h2 style={{ marginBottom: '5px' }}>
+                    <h2
+                      style={{
+                        marginBottom: '5px',
+                        color:
+                          state.turn.player === boardNum ? '#fc7c37' : 'white'
+                      }}
+                    >
                       {state.match.players[boardNum]}
                     </h2>
                   )}
-                  <PlayerBoard state={state} playerNum={boardNum} col={num} />
+                  <PlayerBoard
+                    state={state}
+                    playerNum={boardNum}
+                    col={num}
+                    socket={socket}
+                    credentials={credentials}
+                  />
                 </div>
               ) : (
                 <div className='center-board' key={i}>
-                  <CenterBoard state={state} />
+                  <CenterBoard
+                    state={state}
+                    socket={socket}
+                    credentials={credentials}
+                    setShowHand={setShowHand}
+                    playerNum={playerNum}
+                  />
                 </div>
               )
             )}

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rollDice = exports.nextPlayer = exports.distributeCards = exports.shuffle = void 0;
+const rooms_1 = require("../rooms");
 const helpers_1 = require("./helpers");
 const shuffle = (arr) => {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -31,9 +32,9 @@ const distributeCards = (state, numPlayers) => {
     }
 };
 exports.distributeCards = distributeCards;
-function nextPlayer(room) {
-    let player = room.state.turn.player;
-    room.state.turn.player = (player + 1) % room.numPlayers;
+function nextPlayer(roomId) {
+    let player = rooms_1.rooms[roomId].state.turn.player;
+    rooms_1.rooms[roomId].state.turn.player = (player + 1) % rooms_1.rooms[roomId].numPlayers;
 }
 exports.nextPlayer = nextPlayer;
 function rollDice() {

@@ -33,7 +33,6 @@ const Lobby: React.FC = () => {
         (successful: boolean, playerNum: number) => {
           if (!successful) {
             localStorage.removeItem('credentials');
-            alert('could not connect to match');
             navigate('/');
           } else {
             if (playerNum !== -1) {

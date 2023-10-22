@@ -39,8 +39,9 @@ const Game: React.FC = () => {
       let socket = io('http://localhost:4000');
       socket.on('connect', () => {});
       setSocket(socket);
+
       socket.emit(
-        'enter-match',
+        'enter-lobby',
         credentials.roomId,
         credentials.userId,
         username,
@@ -52,6 +53,7 @@ const Game: React.FC = () => {
             if (playerNum !== -1) {
               setPlayerNum(playerNum);
             } else {
+              localStorage.removeItem('credentials');
               navigate('/');
             }
           }
@@ -62,6 +64,7 @@ const Game: React.FC = () => {
         setState(state);
 
         /* PHASES */
+        // Start Roll
         if (
           phase === 'start-roll' &&
           state.match.startRolls.rolls[state.turn.player] !== 0
@@ -75,6 +78,17 @@ const Game: React.FC = () => {
         } else if (phase === 'start-roll') {
           setPhase(state.turn.phase);
           getRollData();
+        } else if (
+          state.players[playerNum]?.hand.length === 0 &&
+          phase === 'draw' &&
+          state.turn.player === playerNum
+        ) {
+          // Get 5 Cards
+          socket.emit('draw-five', credentials.roomId, credentials.userId);
+          setShowHand(true);
+          setTimeout(() => {
+            setShowHand(false);
+          }, 1000);
         } else {
           setPhase(state.turn.phase);
         }
@@ -92,7 +106,9 @@ const Game: React.FC = () => {
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
       return () => {
-        if (socket) socket.disconnect();
+        if (socket) {
+          socket.disconnect();
+        }
       };
     }
   }, []);
@@ -121,7 +137,8 @@ const Game: React.FC = () => {
 
   return (
     credentials &&
-    state && (
+    state &&
+    socket && (
       <div onClick={state.turn.isRolling ? roll : () => {}}>
         <div className='game'>
           {phase === 'start-roll' ? (
@@ -133,8 +150,21 @@ const Game: React.FC = () => {
             />
           ) : (
             <>
-              <MainBoard state={state} playerNum={playerNum} />
-              <Hand state={state} playerNum={playerNum} show={showHand} />
+              <MainBoard
+                state={state}
+                playerNum={playerNum}
+                socket={socket}
+                credentials={credentials}
+                setShowHand={setShowHand}
+              />
+              <Hand
+                state={state}
+                playerNum={playerNum}
+                show={showHand}
+                socket={socket}
+                credentials={credentials}
+                setShowHand={setShowHand}
+              />
             </>
           )}
         </div>

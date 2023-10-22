@@ -1,6 +1,7 @@
 import React from 'react';
 import { AnyCard, HeroCard } from '../types';
 import { getImage } from '../helpers/getImage';
+import { Socket } from 'socket.io-client';
 
 interface ShownCardProps {
   shownCard: AnyCard;

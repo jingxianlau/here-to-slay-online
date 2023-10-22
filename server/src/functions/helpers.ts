@@ -1,7 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import { GameState, Room, privateState } from '../types';
 import { rooms } from '../rooms';
-import { initialState } from '../cards/cards';
 
 export const random = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -31,11 +30,7 @@ export const checkCredentials = (roomId: string, userId: string): number => {
   }
 };
 
-export const validSender = (
-  rooms: { [key: string]: Room },
-  roomId: string,
-  userId: string
-): number => {
+export const validSender = (roomId: string, userId: string): number => {
   const playerNum = checkCredentials(roomId, userId);
 
   if (

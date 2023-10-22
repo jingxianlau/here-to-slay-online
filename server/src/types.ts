@@ -113,7 +113,7 @@ export interface GameState {
 
     // window for challenging
     preparedCard?: {
-      card: HeroCard | MagicCard | ItemCard;
+      card: AnyCard;
       successful: null | boolean;
     } | null;
   };
@@ -127,7 +127,7 @@ export interface GameState {
   };
   turn: {
     player: number;
-    movesLeft: 1 | 2 | 3;
+    movesLeft: 0 | 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
   };
@@ -171,7 +171,7 @@ export interface privateState {
 
     // window for challenging
     preparedCard?: {
-      cardId: string;
+      card: AnyCard;
       successful: null | boolean;
     } | null;
   };

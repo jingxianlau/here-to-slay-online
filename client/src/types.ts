@@ -105,7 +105,7 @@ export interface GameState {
 
     // window for challenging
     preparedCard?: {
-      card: HeroCard | MagicCard | ItemCard;
+      card: AnyCard;
       successful: null | boolean;
     } | null;
   };
@@ -130,4 +130,9 @@ export interface CardContextObj {
   setShownCard: React.Dispatch<React.SetStateAction<AnyCard | null>>;
   pos: 'left' | 'right' | 'top' | null;
   setPos: React.Dispatch<React.SetStateAction<'left' | 'right' | 'top' | null>>;
+}
+
+export interface SocketContextObj {
+  socket: Socket | null;
+  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
 }

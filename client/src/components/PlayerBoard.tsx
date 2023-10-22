@@ -1,15 +1,24 @@
 import React from 'react';
-import { GameState, LeaderCard } from '../types';
+import { Credentials, GameState, LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
 import useCardContext from '../hooks/useCardContext';
+import { Socket } from 'socket.io-client';
 
 interface PlayerBoardProps {
   state: GameState;
   playerNum: number;
   col: number;
+  socket: Socket;
+  credentials: Credentials;
 }
 
-const PlayerBoard: React.FC<PlayerBoardProps> = ({ state, playerNum, col }) => {
+const PlayerBoard: React.FC<PlayerBoardProps> = ({
+  state,
+  playerNum,
+  col,
+  socket,
+  credentials
+}) => {
   const { setShownCard, setPos } = useCardContext();
 
   return state.board[playerNum].largeCards.length > 0 ? (

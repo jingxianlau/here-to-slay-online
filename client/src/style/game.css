@@ -68,7 +68,7 @@ header img {
   box-shadow: none;
 }
 .shown-card.top {
-  bottom: 33.5vh;
+  bottom: 34.3vh;
   left: calc(50vw - 20.475vh);
   margin: auto;
   display: flex;
@@ -110,21 +110,43 @@ header img {
   background: linear-gradient(to bottom, transparent, #1e1e1e 8vh);
   transition: ease-in-out 0.2s;
 }
+.bottomMenu .discard {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  background-color: #fc7c37;
+  border-radius: 50%;
+  left: 1vw;
+  bottom: 2vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.bottomMenu .discard span.material-symbols-outlined {
+  font-size: 40px;
+  transition: 0.3s;
+  user-select: none;
+}
+.bottomMenu .discard:hover span.material-symbols-outlined {
+  font-size: 50px;
+  font-size: 55px;
+}
 .hand {
   display: flex;
   align-items: flex-end;
 }
 .hand img.small-md {
-  margin: 0 3px;
+  margin: 0 2px;
   width: 18.837vh;
   height: 26.312vh;
-  border-radius: 0.5vh;
+  border-radius: 0.8vh;
   border: 0px solid #fc7c37;
   user-select: none;
   transition: ease-in-out 0.2s;
 }
 .hand img.small-md:hover {
-  margin: 8px;
+  margin: 25px 12px;
   border: 4px solid #fc7c37;
   cursor: pointer;
 }
@@ -317,10 +339,18 @@ img.small-card {
   height: 11.44vh;
   border-radius: 0.2vh;
   user-select: none;
+  transition: ease-out 0.5s;
 }
 img.large-card {
   width: 9.2vh;
   height: 15.7vh;
   border-radius: 0.4vh;
   user-select: none;
+  transition: ease-out 0.5s;
+}
+img.glow {
+  box-shadow: #fc7c37 0 0 12px 12px;
+}
+img.click:hover {
+  cursor: pointer;
 }

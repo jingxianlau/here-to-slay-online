@@ -1,3 +1,4 @@
+import { rooms } from '../rooms';
 import { AnyCard, GameState, LeaderCard, MonsterCard, Room } from '../types';
 import { random } from './helpers';
 
@@ -33,9 +34,9 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
   }
 };
 
-export function nextPlayer(room: Room) {
-  let player = room.state.turn.player;
-  room.state.turn.player = (player + 1) % room.numPlayers;
+export function nextPlayer(roomId: string) {
+  let player = rooms[roomId].state.turn.player;
+  rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
 }
 
 export function rollDice(): [number, number] {
