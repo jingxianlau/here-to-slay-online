@@ -33,7 +33,8 @@ const checkCredentials = (roomId, userId) => {
 exports.checkCredentials = checkCredentials;
 const validSender = (roomId, userId) => {
     const playerNum = (0, exports.checkCredentials)(roomId, userId);
-    if (rooms_1.rooms[roomId].state.turn.player === playerNum &&
+    if ((rooms_1.rooms[roomId].state.turn.player === playerNum ||
+        rooms_1.rooms[roomId].state.turn.challenger === playerNum) &&
         rooms_1.rooms[roomId].state.secret.playerIds[playerNum] === userId) {
         return playerNum;
     }

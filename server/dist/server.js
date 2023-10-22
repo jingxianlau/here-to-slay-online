@@ -82,6 +82,9 @@ io.on('connection', socket => {
         cb(true);
         if (rooms_1.rooms[roomId].state.match.isReady.every(val => val === true) &&
             rooms_1.rooms[roomId].numPlayers >= 3) {
+            for (let i = 0; i < rooms_1.rooms[roomId].numPlayers; i++) {
+                rooms_1.rooms[roomId].state.match.isReady.push(null);
+            }
             setTimeout(() => {
                 io.in(roomId).emit('start-match');
             }, 500);
@@ -111,49 +114,47 @@ io.on('connection', socket => {
             sendGameState(roomId);
         }
     });
-    socket.on('roll', (roomId, userId) => {
+    socket.on('start-roll', (roomId, userId) => {
         const playerNum = (0, helpers_1.validSender)(roomId, userId);
-        if (playerNum === -1 || !rooms_1.rooms[roomId].state.turn.isRolling)
+        if (playerNum === -1 ||
+            !rooms_1.rooms[roomId].state.turn.isRolling ||
+            rooms_1.rooms[roomId].state.turn.phase !== 'start-roll')
             return;
-        if (rooms_1.rooms[roomId].state.turn.phase === 'start-roll') {
-            const startRolls = rooms_1.rooms[roomId].state.match.startRolls;
-            const roll = (0, game_1.rollDice)();
-            const val = roll[0] + roll[1];
-            rooms_1.rooms[roomId].state.dice.main.roll = roll;
-            rooms_1.rooms[roomId].state.dice.main.total = val;
-            startRolls.rolls[playerNum] = val;
-            startRolls.maxVal = Math.max(startRolls.maxVal, val);
-            sendGameState(roomId);
-            for (let i = 0; i < startRolls.inList.length; i++) {
-                if (startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
-                    startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
-                    startRolls.inList.splice(i--, 1);
-                }
+        const startRolls = rooms_1.rooms[roomId].state.match.startRolls;
+        const roll = (0, game_1.rollDice)();
+        const val = roll[0] + roll[1];
+        rooms_1.rooms[roomId].state.dice.main.roll = roll;
+        rooms_1.rooms[roomId].state.dice.main.total = val;
+        startRolls.rolls[playerNum] = val;
+        startRolls.maxVal = Math.max(startRolls.maxVal, val);
+        sendGameState(roomId);
+        for (let i = 0; i < startRolls.inList.length; i++) {
+            if (startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
+                startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+                startRolls.inList.splice(i--, 1);
             }
-            if (startRolls.inList.length === 1) {
-                rooms_1.rooms[roomId].state.turn.player = startRolls.inList[0];
-                rooms_1.rooms[roomId].state.turn.phase = 'draw';
-                rooms_1.rooms[roomId].state.turn.isRolling = false;
-                rooms_1.rooms[roomId].state.dice.main.roll[0] = 1;
-                rooms_1.rooms[roomId].state.dice.main.roll[1] = 1;
-                setTimeout(() => sendGameState(roomId), 3000);
-                return;
-            }
-            else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
-                startRolls.rolls = [];
-                for (let i = 0; i < rooms_1.rooms[roomId].numPlayers; i++) {
-                    startRolls.rolls.push(0);
-                }
-                startRolls.maxVal = 0;
-            }
-            const next = (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
-            rooms_1.rooms[roomId].state.turn.player = startRolls.inList[next];
+        }
+        if (startRolls.inList.length === 1) {
+            rooms_1.rooms[roomId].state.turn.player = startRolls.inList[0];
+            rooms_1.rooms[roomId].state.turn.phase = 'draw';
+            rooms_1.rooms[roomId].state.turn.isRolling = false;
             rooms_1.rooms[roomId].state.dice.main.roll[0] = 1;
             rooms_1.rooms[roomId].state.dice.main.roll[1] = 1;
             setTimeout(() => sendGameState(roomId), 3000);
+            return;
         }
-        else {
+        else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+            startRolls.rolls = [];
+            for (let i = 0; i < rooms_1.rooms[roomId].numPlayers; i++) {
+                startRolls.rolls.push(0);
+            }
+            startRolls.maxVal = 0;
         }
+        const next = (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
+        rooms_1.rooms[roomId].state.turn.player = startRolls.inList[next];
+        rooms_1.rooms[roomId].state.dice.main.roll[0] = 1;
+        rooms_1.rooms[roomId].state.dice.main.roll[1] = 1;
+        setTimeout(() => sendGameState(roomId), 3000);
     });
     socket.on('prepare-card', (roomId, userId, card) => {
         const playerNum = (0, helpers_1.validSender)(roomId, userId);
@@ -170,6 +171,58 @@ io.on('connection', socket => {
         gameState.turn.movesLeft--;
         sendGameState(roomId);
     });
+    socket.on('challenge', (roomId, userId, challenged) => {
+        const playerNum = (0, helpers_1.checkCredentials)(roomId, userId);
+        const gameState = rooms_1.rooms[roomId].state;
+        if (playerNum === -1 ||
+            gameState.turn.phase !== 'play' ||
+            !gameState.mainDeck.preparedCard) {
+            return;
+        }
+        gameState.match.isReady[playerNum] = challenged;
+        if (gameState.match.isReady.every(val => val === false)) {
+            gameState.mainDeck.preparedCard.successful = true;
+        }
+        else if (challenged) {
+            gameState.dice.main.roll = [1, 1];
+            gameState.dice.main.total = 0;
+            gameState.dice.main.modifier = 0;
+            gameState.dice.defend = {
+                roll: [1, 1],
+                total: 0,
+                modifier: 0
+            };
+            gameState.turn.phase = 'challenge';
+            gameState.turn.challenger = playerNum;
+            gameState.turn.isRolling = true;
+        }
+    });
+    socket.on('challenge-roll', (roomId, userId) => {
+        const playerNum = (0, helpers_1.validSender)(roomId, userId);
+        const gameState = rooms_1.rooms[roomId].state;
+        if (playerNum === -1 ||
+            gameState.turn.phase !== 'challenge' ||
+            !gameState.mainDeck.preparedCard ||
+            (gameState.dice.main.total === 0 &&
+                gameState.turn.player !== playerNum) ||
+            (gameState.dice.main.total > 0 &&
+                gameState.turn.challenger !== playerNum) ||
+            gameState.dice.defend === null) {
+            return;
+        }
+        const roll = (0, game_1.rollDice)();
+        const val = roll[0] + roll[1];
+        if (gameState.dice.main.total === 0) {
+            gameState.dice.main.roll = roll;
+            gameState.dice.main.total = val;
+        }
+        else {
+            gameState.dice.defend.roll = roll;
+            gameState.dice.defend.total = val;
+        }
+        sendGameState(roomId);
+    });
+    socket.on('modify-roll', (roomId, userId, dice) => { });
     socket.on('confirm-card', (roomId, userId, useEffect) => {
         const playerNum = (0, helpers_1.validSender)(roomId, userId);
         const gameState = rooms_1.rooms[roomId].state;
@@ -184,11 +237,20 @@ io.on('connection', socket => {
                 gameState.turn.movesLeft === 0) {
                 (0, game_1.nextPlayer)(roomId);
             }
-            gameState.mainDeck.preparedCard = null;
+            if (useEffect) {
+                gameState.mainDeck.preparedCard = null;
+            }
         }
         else {
             gameState.mainDeck.preparedCard = null;
         }
+        gameState.dice.main.roll = [1, 1];
+        gameState.dice.main.total = 0;
+        gameState.dice.main.modifier = 0;
+        gameState.dice.defend = null;
+        gameState.turn.phase = 'play';
+        delete gameState.turn.challenger;
+        gameState.turn.isRolling = false;
         sendGameState(roomId);
     });
     socket.on('draw-two', (roomId, userId) => {
@@ -231,7 +293,7 @@ io.on('connection', socket => {
         sendGameState(roomId);
     });
     socket.on('attack', (roomId, userId, monsterId) => { });
-    socket.on('hero-effect', (roomId, userId, cardId) => { });
+    socket.on('use-effect', (roomId, userId, cardId) => { });
 });
 io.listen(4000);
 console.log('socketio server on port 4000');

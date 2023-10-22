@@ -137,6 +137,9 @@ io.on('connection', socket => {
         rooms[roomId].state.match.isReady.every(val => val === true) &&
         rooms[roomId].numPlayers >= 3
       ) {
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          rooms[roomId].state.match.isReady.push(null);
+        }
         setTimeout(() => {
           io.in(roomId).emit('start-match');
         }, 500);
@@ -188,65 +191,65 @@ io.on('connection', socket => {
 
   */
 
-  socket.on('roll', (roomId: string, userId: string) => {
+  socket.on('start-roll', (roomId: string, userId: string) => {
     const playerNum = validSender(roomId, userId);
-    if (playerNum === -1 || !rooms[roomId].state.turn.isRolling) return;
+    if (
+      playerNum === -1 ||
+      !rooms[roomId].state.turn.isRolling ||
+      rooms[roomId].state.turn.phase !== 'start-roll'
+    )
+      return;
 
-    if (rooms[roomId].state.turn.phase === 'start-roll') {
-      // START ROLL
-      const startRolls = rooms[roomId].state.match.startRolls;
+    const startRolls = rooms[roomId].state.match.startRolls;
 
-      const roll = rollDice();
-      const val = roll[0] + roll[1];
+    const roll = rollDice();
+    const val = roll[0] + roll[1];
 
-      rooms[roomId].state.dice.main.roll = roll;
-      rooms[roomId].state.dice.main.total = val;
-      startRolls.rolls[playerNum] = val;
-      startRolls.maxVal = Math.max(startRolls.maxVal, val);
+    rooms[roomId].state.dice.main.roll = roll;
+    rooms[roomId].state.dice.main.total = val;
+    startRolls.rolls[playerNum] = val;
+    startRolls.maxVal = Math.max(startRolls.maxVal, val);
 
-      sendGameState(roomId);
+    sendGameState(roomId);
 
-      // REMOVE LOSING VALUES
-      for (let i = 0; i < startRolls.inList.length; i++) {
-        if (
-          startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
-          startRolls.rolls[startRolls.rolls.length - 1] !== 0
-        ) {
-          startRolls.inList.splice(i--, 1);
-        }
+    // REMOVE LOSING VALUES
+    for (let i = 0; i < startRolls.inList.length; i++) {
+      if (
+        startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
+        startRolls.rolls[startRolls.rolls.length - 1] !== 0
+      ) {
+        startRolls.inList.splice(i--, 1);
       }
+    }
 
-      // IF PLAYER WON
-      if (startRolls.inList.length === 1) {
-        // SETUP MATCH
-        rooms[roomId].state.turn.player = startRolls.inList[0];
-        rooms[roomId].state.turn.phase = 'draw';
-        rooms[roomId].state.turn.isRolling = false;
-        rooms[roomId].state.dice.main.roll[0] = 1;
-        rooms[roomId].state.dice.main.roll[1] = 1;
-
-        setTimeout(() => sendGameState(roomId), 3000);
-        return;
-        // IF TIED (SETUP NEXT ROUND)
-      } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
-        startRolls.rolls = [];
-        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
-          startRolls.rolls.push(0);
-        }
-        startRolls.maxVal = 0;
-      }
-
-      // RESET PLAYER & ROLL
-      const next =
-        (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
-      rooms[roomId].state.turn.player = startRolls.inList[next];
+    // IF PLAYER WON
+    if (startRolls.inList.length === 1) {
+      // SETUP MATCH
+      rooms[roomId].state.turn.player = startRolls.inList[0];
+      rooms[roomId].state.turn.phase = 'draw';
+      rooms[roomId].state.turn.isRolling = false;
       rooms[roomId].state.dice.main.roll[0] = 1;
       rooms[roomId].state.dice.main.roll[1] = 1;
 
       setTimeout(() => sendGameState(roomId), 3000);
-    } else {
-      // STANDARD ROLL
+      return;
+      // IF TIED (SETUP NEXT ROUND)
+    } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+      startRolls.rolls = [];
+      for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+        startRolls.rolls.push(0);
+      }
+      startRolls.maxVal = 0;
     }
+
+    // RESET PLAYER & ROLL
+    const next =
+      (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
+    rooms[roomId].state.turn.player = startRolls.inList[next];
+    rooms[roomId].state.dice.main.roll[0] = 1;
+    rooms[roomId].state.dice.main.roll[1] = 1;
+
+    setTimeout(() => sendGameState(roomId), 3000);
   });
 
   socket.on('prepare-card', (roomId: string, userId: string, card: AnyCard) => {
@@ -269,6 +272,68 @@ io.on('connection', socket => {
 
     sendGameState(roomId);
   });
+
+  socket.on(
+    'challenge',
+    (roomId: string, userId: string, challenged: boolean) => {
+      const playerNum = checkCredentials(roomId, userId);
+      const gameState = rooms[roomId].state;
+      if (
+        playerNum === -1 ||
+        gameState.turn.phase !== 'play' ||
+        !gameState.mainDeck.preparedCard
+      ) {
+        return;
+      }
+
+      gameState.match.isReady[playerNum] = challenged;
+      if (gameState.match.isReady.every(val => val === false)) {
+        gameState.mainDeck.preparedCard.successful = true;
+      } else if (challenged) {
+        gameState.dice.main.roll = [1, 1];
+        gameState.dice.main.total = 0;
+        gameState.dice.main.modifier = 0;
+        gameState.dice.defend = {
+          roll: [1, 1],
+          total: 0,
+          modifier: 0
+        };
+        gameState.turn.phase = 'challenge';
+        gameState.turn.challenger = playerNum;
+        gameState.turn.isRolling = true;
+      }
+    }
+  );
+
+  socket.on('challenge-roll', (roomId: string, userId: string) => {
+    const playerNum = validSender(roomId, userId);
+    const gameState = rooms[roomId].state;
+    if (
+      playerNum === -1 ||
+      gameState.turn.phase !== 'challenge' ||
+      !gameState.mainDeck.preparedCard ||
+      (gameState.dice.main.total === 0 &&
+        gameState.turn.player !== playerNum) ||
+      (gameState.dice.main.total > 0 &&
+        gameState.turn.challenger !== playerNum) ||
+      gameState.dice.defend === null
+    ) {
+      return;
+    }
+
+    const roll = rollDice();
+    const val = roll[0] + roll[1];
+    if (gameState.dice.main.total === 0) {
+      gameState.dice.main.roll = roll;
+      gameState.dice.main.total = val;
+    } else {
+      gameState.dice.defend.roll = roll;
+      gameState.dice.defend.total = val;
+    }
+    sendGameState(roomId);
+  });
+
+  socket.on('modify-roll', (roomId: string, userId: string, dice: 0 | 1) => {});
 
   socket.on(
     'confirm-card',
@@ -294,12 +359,21 @@ io.on('connection', socket => {
         }
 
         // USE CARD EFFECT
-
-        gameState.mainDeck.preparedCard = null;
+        if (useEffect) {
+          gameState.mainDeck.preparedCard = null;
+        }
       } else {
         // DESTROY CARD
         gameState.mainDeck.preparedCard = null;
       }
+
+      gameState.dice.main.roll = [1, 1];
+      gameState.dice.main.total = 0;
+      gameState.dice.main.modifier = 0;
+      gameState.dice.defend = null;
+      gameState.turn.phase = 'play';
+      delete gameState.turn.challenger;
+      gameState.turn.isRolling = false;
 
       sendGameState(roomId);
     }
@@ -354,7 +428,7 @@ io.on('connection', socket => {
   );
 
   socket.on(
-    'hero-effect',
+    'use-effect',
     (roomId: string, userId: string, cardId: string) => {}
   );
 });

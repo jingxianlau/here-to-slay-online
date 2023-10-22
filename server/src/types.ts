@@ -90,7 +90,7 @@ export interface GameState {
     main: { roll: [number, number]; modifier: number; total: number };
 
     // for challenging
-    defend: { roll: [number, number]; modifer: number; total: number } | null;
+    defend: { roll: [number, number]; modifier: number; total: number } | null;
   };
   board: {
     // for win condition (6 diff classes)
@@ -122,11 +122,12 @@ export interface GameState {
   match: {
     gameStarted: boolean;
     players: string[];
-    isReady: boolean[];
+    isReady: (boolean | null)[];
     startRolls: { maxVal: number; inList: number[]; rolls: number[] };
   };
   turn: {
     player: number;
+    challenger?: number;
     movesLeft: 0 | 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;
@@ -148,7 +149,7 @@ export interface privateState {
     main: { roll: [number, number]; modifier: number; total: number };
 
     // for challenging
-    defend: { roll: [number, number]; modifer: number; total: number } | null;
+    defend: { roll: [number, number]; modifier: number; total: number } | null;
   };
   board: {
     // for win condition (6 diff classes)
@@ -180,11 +181,12 @@ export interface privateState {
   match: {
     gameStarted: boolean;
     players: string[];
-    isReady: boolean[];
+    isReady: (boolean | null)[];
     startRolls: { maxVal: number; inList: number[]; rolls: number[] };
   };
   turn: {
     player: number;
+    challenger?: number;
     movesLeft: 1 | 2 | 3;
     phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
     isRolling: boolean;

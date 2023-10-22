@@ -131,7 +131,11 @@ const Game: React.FC = () => {
   function roll() {
     if (!state || !socket) return;
     if (state.turn.player === playerNum) {
-      socket.emit('roll', credentials.roomId, credentials.userId);
+      switch (state.turn.phase) {
+        case 'start-roll':
+          socket.emit('start-roll', credentials.roomId, credentials.userId);
+          break;
+      }
     }
   }
 
