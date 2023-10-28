@@ -79,10 +79,18 @@ export interface GameState {
 
   // PUBLIC
   dice: {
-    main: { roll: [number, number]; modifier: number; total: number };
+    main: {
+      roll: [number, number];
+      modifier: [number, number][];
+      total: number;
+    };
 
     // for challenging
-    defend: { roll: [number, number]; modifier: number; total: number } | null;
+    defend: {
+      roll: [number, number];
+      modifier: [number, number][];
+      total: number;
+    } | null;
   };
   board: {
     // for win condition (6 diff classes)
@@ -120,8 +128,15 @@ export interface GameState {
   turn: {
     player: number;
     challenger?: number;
-    movesLeft: 1 | 2 | 3;
-    phase: 'start-roll' | 'draw' | 'play' | 'attack' | 'challenge';
+    movesLeft: 0 | 1 | 2 | 3;
+    phase:
+      | 'start-roll'
+      | 'draw'
+      | 'play'
+      | 'attack'
+      | 'challenge'
+      | 'challenge-roll'
+      | 'modify';
     isRolling: boolean;
   };
 }

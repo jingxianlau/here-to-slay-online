@@ -10,7 +10,7 @@ import {
 import { distributeCards, nextPlayer, rollDice } from './functions/game';
 import { createRoom, getRooms, joinRoom } from './controllers/lobbyController';
 import { rooms } from './rooms';
-import { AnyCard, CardType } from './types';
+import { AnyCard, CardType, ModifierCard } from './types';
 
 /* EXPRESS SERVER */
 const app = express();
@@ -25,14 +25,13 @@ app.get('/get-rooms', getRooms);
 app.post('/create-room', createRoom);
 app.post('/join-room', joinRoom);
 
-app.listen(4500, () => console.log('express server on port 4500'));
+const httpServer = app.listen(4000, () => console.log('server on port 4000'));
 
 /* SOCKET.IO  SERVER */
 
-const io = new Server({
+const io = new Server(httpServer, {
   cors: {
-    origin: true,
-    credentials: true
+    origin: 'http://localhost:3000'
   }
 });
 
@@ -99,6 +98,7 @@ io.on('connection', socket => {
       socket.disconnect();
       return;
     }
+    console.log('player left');
 
     if (rooms[roomId].numPlayers === 1) {
       delete rooms[roomId];
@@ -108,8 +108,8 @@ io.on('connection', socket => {
     }
 
     removePlayer(rooms[roomId], playerNum);
-    cb();
     sendState(roomId);
+    cb();
     socket.disconnect();
   });
 
@@ -183,7 +183,7 @@ io.on('connection', socket => {
   /* 
   
   GAME
-  - 'roll'
+  - 'start-roll'
   - 'prepare-card'
   - 'confirm-card'
   - 'draw-two'
@@ -200,6 +200,7 @@ io.on('connection', socket => {
     )
       return;
 
+    rooms[roomId].state.turn.movesLeft--;
     const startRolls = rooms[roomId].state.match.startRolls;
 
     const roll = rollDice();
@@ -230,6 +231,7 @@ io.on('connection', socket => {
       rooms[roomId].state.turn.isRolling = false;
       rooms[roomId].state.dice.main.roll[0] = 1;
       rooms[roomId].state.dice.main.roll[1] = 1;
+      rooms[roomId].state.turn.movesLeft = 3;
 
       setTimeout(() => sendGameState(roomId), 3000);
       return;
@@ -246,6 +248,7 @@ io.on('connection', socket => {
     const next =
       (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
     rooms[roomId].state.turn.player = startRolls.inList[next];
+    rooms[roomId].state.turn.movesLeft = 1;
     rooms[roomId].state.dice.main.roll[0] = 1;
     rooms[roomId].state.dice.main.roll[1] = 1;
 
@@ -256,11 +259,16 @@ io.on('connection', socket => {
     const playerNum = validSender(roomId, userId);
     const gameState = rooms[roomId].state;
     if (
+      gameState.turn.phase !== 'play' ||
       playerNum === -1 ||
       card.player !== playerNum ||
-      !gameState.players[playerNum].hand.includes(card)
+      !gameState.players[playerNum].hand.some(val => card.id === val.id)
     ) {
       return;
+    }
+
+    if (card.type === CardType.hero) {
+      gameState.board[playerNum].heroCards.push(card);
     }
 
     gameState.mainDeck.preparedCard = {
@@ -268,7 +276,11 @@ io.on('connection', socket => {
       successful: null
     };
 
+    gameState.players[playerNum].hand = gameState.players[
+      playerNum
+    ].hand.filter(c => c.id !== card.id);
     gameState.turn.movesLeft--;
+    gameState.turn.phase = 'challenge';
 
     sendGameState(roomId);
   });
@@ -292,13 +304,13 @@ io.on('connection', socket => {
       } else if (challenged) {
         gameState.dice.main.roll = [1, 1];
         gameState.dice.main.total = 0;
-        gameState.dice.main.modifier = 0;
+        gameState.dice.main.modifier = [];
         gameState.dice.defend = {
           roll: [1, 1],
           total: 0,
-          modifier: 0
+          modifier: []
         };
-        gameState.turn.phase = 'challenge';
+        gameState.turn.phase = 'challenge-roll';
         gameState.turn.challenger = playerNum;
         gameState.turn.isRolling = true;
       }
@@ -310,7 +322,7 @@ io.on('connection', socket => {
     const gameState = rooms[roomId].state;
     if (
       playerNum === -1 ||
-      gameState.turn.phase !== 'challenge' ||
+      gameState.turn.phase !== 'challenge-roll' ||
       !gameState.mainDeck.preparedCard ||
       (gameState.dice.main.total === 0 &&
         gameState.turn.player !== playerNum) ||
@@ -329,11 +341,15 @@ io.on('connection', socket => {
     } else {
       gameState.dice.defend.roll = roll;
       gameState.dice.defend.total = val;
+      gameState.turn.phase = 'modify';
     }
     sendGameState(roomId);
   });
 
-  socket.on('modify-roll', (roomId: string, userId: string, dice: 0 | 1) => {});
+  socket.on(
+    'modify-roll',
+    (roomId: string, userId: string, dice: 0 | 1, modifier: ModifierCard) => {}
+  );
 
   socket.on(
     'confirm-card',
@@ -369,7 +385,7 @@ io.on('connection', socket => {
 
       gameState.dice.main.roll = [1, 1];
       gameState.dice.main.total = 0;
-      gameState.dice.main.modifier = 0;
+      gameState.dice.main.modifier = [];
       gameState.dice.defend = null;
       gameState.turn.phase = 'play';
       delete gameState.turn.challenger;
@@ -398,10 +414,11 @@ io.on('connection', socket => {
     const gameState = rooms[roomId].state;
     if (playerNum === -1) return;
 
-    const hasCards = Boolean(gameState.players[playerNum].hand.length);
+    const hasCards = gameState.players[playerNum].hand.length > 0;
     if (hasCards) {
       gameState.turn.movesLeft = 0;
-      for (let i = 0; i < gameState.players[playerNum].hand.length; i++) {
+      const numCards = gameState.players[playerNum].hand.length;
+      for (let i = 0; i < numCards; i++) {
         let card = gameState.players[playerNum].hand.pop() as AnyCard;
         delete card.player;
         gameState.secret.discardPile.push(card);
@@ -423,7 +440,7 @@ io.on('connection', socket => {
   });
 
   socket.on(
-    'attack',
+    'attack-monster',
     (roomId: string, userId: string, monsterId: string) => {}
   );
 
@@ -432,9 +449,6 @@ io.on('connection', socket => {
     (roomId: string, userId: string, cardId: string) => {}
   );
 });
-
-io.listen(4000);
-console.log('socketio server on port 4000');
 
 /* 
 
@@ -456,3 +470,5 @@ function sendGameState(roomId: string) {
     io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
   }
 }
+
+function checkWin(roomId: string) {}

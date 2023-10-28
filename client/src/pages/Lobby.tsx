@@ -11,6 +11,7 @@ const Lobby: React.FC = () => {
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
   const [playerNum, setPlayerNum] = useState(-1);
   const [isReady, setIsReady] = useState(false);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const credentials = getCredentials();
   const username = localStorage.getItem('username') as string;
 
@@ -93,7 +94,7 @@ const Lobby: React.FC = () => {
   }
 
   function leaveRoom() {
-    socket?.emit('leave-match', credentials.roomId, credentials.userId, () => {
+    socket?.emit('leave-lobby', credentials.roomId, credentials.userId, () => {
       localStorage.removeItem('credentials');
       navigate('/');
     });

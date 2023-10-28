@@ -34,13 +34,13 @@ function App() {
   }
 
   async function loadRooms() {
-    const response = await fetch('http://localhost:4500/get-rooms');
+    const response = await fetch('http://localhost:4000/get-rooms');
     const json = await response.json();
     setRooms(json);
   }
 
   async function joinRoom(id?: string) {
-    const res = await fetch('http://localhost:4500/join-room', {
+    const res = await fetch('http://localhost:4000/join-room', {
       method: 'POST',
       body: JSON.stringify({ roomId: id ? id : roomId, username: username }),
       headers: {
@@ -70,7 +70,7 @@ function App() {
     ) {
       alert('Invalid Room ID');
     } else {
-      const res = await fetch('http://localhost:4500/create-room', {
+      const res = await fetch('http://localhost:4000/create-room', {
         method: 'POST',
         body: JSON.stringify({
           roomId: roomId,

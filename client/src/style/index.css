@@ -73,12 +73,20 @@ button:hover {
 
 .room {
   padding: 4px 20px;
-  border-radius: 15px;
   border: 2px solid transparent;
 }
 .room:hover {
   cursor: pointer;
   border: 2px solid #fc7c37;
+}
+.room:nth-child(1) {
+  border-radius: 15px 15px 0 0;
+}
+.room:last-child {
+  border-radius: 0 0 15px 15px;
+}
+.room:only-child {
+  border-radius: 15px;
 }
 
 .room div {
@@ -89,8 +97,11 @@ button:hover {
   right: 20px;
 }
 
+.rooms .room:nth-child(odd) {
+  background-color: #393939;
+}
 .rooms .room:nth-child(even) {
-  background-color: #ddd;
+  background-color: #4d4d4d;
 }
 
 .lobby {

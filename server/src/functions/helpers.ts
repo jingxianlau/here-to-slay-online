@@ -23,11 +23,7 @@ export const checkCredentials = (roomId: string, userId: string): number => {
 
   const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
 
-  if (playerNum === -1) {
-    return -1;
-  } else {
-    return playerNum;
-  }
+  return playerNum;
 };
 
 export const validSender = (roomId: string, userId: string): number => {

@@ -35,6 +35,7 @@ exports.distributeCards = distributeCards;
 function nextPlayer(roomId) {
     let player = rooms_1.rooms[roomId].state.turn.player;
     rooms_1.rooms[roomId].state.turn.player = (player + 1) % rooms_1.rooms[roomId].numPlayers;
+    rooms_1.rooms[roomId].state.turn.movesLeft = 3;
 }
 exports.nextPlayer = nextPlayer;
 function rollDice() {

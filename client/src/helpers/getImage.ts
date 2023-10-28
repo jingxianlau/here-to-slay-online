@@ -1,15 +1,13 @@
-import { CardType, HeroClass } from '../types';
+import { AnyCard, CardType, HeroClass } from '../types';
 
-export const getImage = (
-  name: string,
-  type: CardType,
-  heroClass?: HeroClass
-) => {
-  if (heroClass) {
-    return `./assets/${type}/${heroClass}/${name
+export const getImage = (card: AnyCard) => {
+  if (card.type === CardType.hero) {
+    return `./assets/${card.type}/${card.class}/${card.name
       .replaceAll(' ', '-')
       .toLowerCase()}.png`;
   } else {
-    return `./assets/${type}/${name.replaceAll(' ', '-').toLowerCase()}.png`;
+    return `./assets/${card.type}/${card.name
+      .replaceAll(' ', '-')
+      .toLowerCase()}.png`;
   }
 };

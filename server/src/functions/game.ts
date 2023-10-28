@@ -37,6 +37,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
 export function nextPlayer(roomId: string) {
   let player = rooms[roomId].state.turn.player;
   rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
+  rooms[roomId].state.turn.movesLeft = 3;
 }
 
 export function rollDice(): [number, number] {

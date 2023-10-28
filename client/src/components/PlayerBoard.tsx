@@ -42,9 +42,13 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             }}
           >
             <img
-              src={getImage(card.name, card.type, card.class)}
+              src={getImage(card)}
               alt={card.name}
-              className='small-card'
+              className={
+                card.id === state.mainDeck.preparedCard?.card.id
+                  ? 'small-card glow'
+                  : 'small-card'
+              }
             />
           </div>
         ))}
@@ -71,11 +75,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
               setPos(null);
             }}
           >
-            <img
-              src={getImage(card.name, card.type)}
-              alt={card.name}
-              className='large-card'
-            />
+            <img src={getImage(card)} alt={card.name} className='large-card' />
           </div>
         ))}
 

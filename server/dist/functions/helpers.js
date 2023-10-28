@@ -23,12 +23,7 @@ const checkCredentials = (roomId, userId) => {
     if (!rooms_1.rooms[roomId])
         return -1;
     const playerNum = rooms_1.rooms[roomId].state.secret.playerIds.indexOf(userId);
-    if (playerNum === -1) {
-        return -1;
-    }
-    else {
-        return playerNum;
-    }
+    return playerNum;
 };
 exports.checkCredentials = checkCredentials;
 const validSender = (roomId, userId) => {

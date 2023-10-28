@@ -45,11 +45,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             setPos(null);
           }}
         >
-          <img
-            src={getImage(card.name, card.type)}
-            alt={card.name}
-            className='large-card'
-          />
+          <img src={getImage(card)} alt={card.name} className='large-card' />
         </div>
       ))}
       {Array.from(Array(3 - state.mainDeck.monsters.length), (_, i) => (
@@ -70,27 +66,13 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
           />
         </div>
         <div className='small discard'>
-          {state.mainDeck.discardTop &&
-            (state.mainDeck.discardTop.type === CardType.hero ? (
-              <img
-                src={getImage(
-                  state.mainDeck.discardTop.name,
-                  state.mainDeck.discardTop.type,
-                  state.mainDeck.discardTop.class
-                )}
-                alt={state.mainDeck.discardTop.name}
-                className='small-card'
-              />
-            ) : (
-              <img
-                src={getImage(
-                  state.mainDeck.discardTop.name,
-                  state.mainDeck.discardTop.type
-                )}
-                alt={state.mainDeck.discardTop.name}
-                className='small-card'
-              />
-            ))}
+          {state.mainDeck.discardTop && (
+            <img
+              src={getImage(state.mainDeck.discardTop)}
+              alt={state.mainDeck.discardTop.name}
+              className='small-card'
+            />
+          )}
         </div>
       </div>
     </div>

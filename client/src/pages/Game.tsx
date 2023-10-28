@@ -22,6 +22,7 @@ const Game: React.FC = () => {
 
   const [showRoll, setShowRoll] = useState(false);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
+  const [hasRolled, setHasRolled] = useState(false);
 
   const [showHand, setShowHand] = useState(false);
 
@@ -69,15 +70,21 @@ const Game: React.FC = () => {
           phase === 'start-roll' &&
           state.match.startRolls.rolls[state.turn.player] !== 0
         ) {
+          // new roll
           setPhase(state.turn.phase);
           setTimeout(() => {
             getRollData();
             setShowRoll(true);
           }, 1000);
-          setTimeout(() => setShowRoll(false), 3000);
+          setTimeout(() => {
+            setShowRoll(false);
+            setHasRolled(false);
+          }, 3000);
         } else if (phase === 'start-roll') {
+          // new round
           setPhase(state.turn.phase);
           getRollData();
+          setHasRolled(false);
         } else if (
           state.players[playerNum]?.hand.length === 0 &&
           phase === 'draw' &&
@@ -113,15 +120,15 @@ const Game: React.FC = () => {
     }
   }, []);
 
+  /* SHOW HAND */
   useEffect(() => {
     window.addEventListener('mousemove', mouseMoveHandler);
     return () => {
       window.removeEventListener('mousemove', mouseMoveHandler);
     };
   }, [showHand]);
-
   const mouseMoveHandler = (e: MouseEvent) => {
-    if (showHand && window.innerHeight - e.clientY >= 160) {
+    if (showHand && window.innerHeight - e.clientY >= 200) {
       setShowHand(false);
     } else if (!showHand && window.innerHeight - e.clientY <= 80) {
       setShowHand(true);
@@ -129,8 +136,9 @@ const Game: React.FC = () => {
   };
 
   function roll() {
-    if (!state || !socket) return;
+    if (!state || !socket || state.turn.movesLeft === 0 || hasRolled) return;
     if (state.turn.player === playerNum) {
+      setHasRolled(true);
       switch (state.turn.phase) {
         case 'start-roll':
           socket.emit('start-roll', credentials.roomId, credentials.userId);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardType, Credentials, GameState, HeroCard } from '../types';
+import { AnyCard, CardType, Credentials, GameState } from '../types';
 import { getImage } from '../helpers/getImage';
 import useCardContext from '../hooks/useCardContext';
 import { Socket } from 'socket.io-client';
@@ -24,16 +24,34 @@ const Hand: React.FC<HandProps> = ({
   const { setShownCard, setPos } = useCardContext();
 
   const drawFive = () => {
-    socket.emit('draw-five', credentials.roomId, credentials.userId);
+    if (!state || !socket || state.turn.movesLeft === 0) return;
+    if (state.turn.player === playerNum) {
+      socket.emit('draw-five', credentials.roomId, credentials.userId);
+    }
+  };
+
+  const prepareCard = (card: AnyCard) => {
+    if (!state || !socket || state.turn.movesLeft === 0) return;
+    if (
+      state.turn.player === playerNum &&
+      (card.type === CardType.hero ||
+        card.type === CardType.item ||
+        card.type === CardType.magic)
+    ) {
+      socket.emit('prepare-card', credentials.roomId, credentials.userId, card);
+      setShowHand(false);
+    }
   };
 
   return (
     <div className='bottomMenu' style={{ bottom: show ? 0 : '-30vh' }}>
-      {state.turn.player === playerNum && state.turn.movesLeft === 3 && (
-        <div className='discard' onClick={drawFive}>
-          <span className='material-symbols-outlined'>delete_forever</span>
-        </div>
-      )}
+      {state.turn.player === playerNum &&
+        state.turn.movesLeft === 3 &&
+        state.turn.phase === 'play' && (
+          <div className='discard' onClick={drawFive}>
+            <span className='material-symbols-outlined'>delete_forever</span>
+          </div>
+        )}
       <div className='hand'>
         {state.players[playerNum]?.hand.map((card, i) => (
           <div
@@ -47,19 +65,12 @@ const Hand: React.FC<HandProps> = ({
               setPos(null);
             }}
           >
-            {card.type !== CardType.hero ? (
-              <img
-                src={getImage(card.name, card.type)}
-                alt={card.name}
-                className='small-md'
-              />
-            ) : (
-              <img
-                src={getImage(card.name, card.type, card.class)}
-                alt={card.name}
-                className='small-md'
-              />
-            )}
+            <img
+              src={getImage(card)}
+              alt={card.name}
+              className='small-md'
+              onClick={() => prepareCard(card)}
+            />
           </div>
         ))}
         {state.players[playerNum]?.hand.length === 0 && (
