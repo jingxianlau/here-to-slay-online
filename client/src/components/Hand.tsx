@@ -33,6 +33,7 @@ const Hand: React.FC<HandProps> = ({
   const prepareCard = (card: AnyCard) => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
     if (
+      state.turn.phase !== 'play' &&
       state.turn.player === playerNum &&
       (card.type === CardType.hero ||
         card.type === CardType.item ||

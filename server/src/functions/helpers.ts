@@ -1,10 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
-import { GameState, Room, privateState } from '../types';
+import { GameState, privateState } from '../types';
 import { rooms } from '../rooms';
-
-export const random = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
 export const removePlayer = (
   room: { numPlayers: number; state: GameState; private: boolean },
@@ -59,9 +55,7 @@ export const addPlayer = (roomId: string, userId: string, username: string) => {
     largeCards: []
   });
 
-  // for dev v
-  room.state.match.isReady.push(true);
-  // for dev ^
+  room.state.match.isReady.push(false);
 };
 
 export const parseState = (userId: string, state: GameState): privateState => {

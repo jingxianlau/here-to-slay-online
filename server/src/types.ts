@@ -121,7 +121,11 @@ export interface GameState {
 
     // window for challenging
     preparedCard?: {
-      card: AnyCard;
+      card: HeroCard | ItemCard | MagicCard;
+      successful: null | boolean;
+    } | null;
+    attackedMonster?: {
+      card: MonsterCard;
       successful: null | boolean;
     } | null;
   };
@@ -195,7 +199,11 @@ export interface privateState {
 
     // window for challenging
     preparedCard?: {
-      card: AnyCard;
+      card: HeroCard | ItemCard | MagicCard;
+      successful: null | boolean;
+    } | null;
+    attackedMonster?: {
+      card: MonsterCard;
       successful: null | boolean;
     } | null;
   };

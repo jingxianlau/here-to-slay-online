@@ -1,19 +1,13 @@
 import { rooms } from '../rooms';
-import { AnyCard, GameState, LeaderCard, MonsterCard, Room } from '../types';
-import { random } from './helpers';
-
-export const shuffle = (arr: AnyCard[]) => {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-};
+import { AnyCard, GameState, LeaderCard, MonsterCard } from '../types';
+import shuffle from 'lodash.shuffle';
+import random from 'lodash.random';
 
 export const distributeCards = (state: GameState, numPlayers: number) => {
   // DISTRIBUTE CARDS
-  shuffle(state.secret.deck);
-  shuffle(state.secret.leaderPile);
-  shuffle(state.secret.monsterPile);
+  state.secret.deck = shuffle(state.secret.deck);
+  state.secret.leaderPile = shuffle(state.secret.leaderPile);
+  state.secret.monsterPile = shuffle(state.secret.monsterPile);
 
   state.mainDeck.monsters = [
     state.secret.monsterPile.pop() as MonsterCard,
@@ -25,6 +19,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       let card = state.secret.deck.pop() as AnyCard;
       card.player = i;
       state.players[i].hand.push(card);
+      state.match.isReady.push(null);
     }
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;

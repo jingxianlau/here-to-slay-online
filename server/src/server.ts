@@ -1,34 +1,38 @@
 import { Server } from 'socket.io';
 import express from 'express';
-import cors from 'cors';
-import {
-  checkCredentials,
-  removePlayer,
-  validSender,
-  parseState
-} from './functions/helpers';
-import { distributeCards, nextPlayer, rollDice } from './functions/game';
-import { createRoom, getRooms, joinRoom } from './controllers/lobbyController';
+
+import expressServer from './controllers/express/expressServer';
+import { parseState } from './functions/helpers';
 import { rooms } from './rooms';
-import { AnyCard, CardType, ModifierCard } from './types';
+
+import {
+  enterLobby,
+  leaveLobby,
+  ready,
+  startMatch
+} from './controllers/socketio/lobby/lobby';
+import { startRoll } from './controllers/socketio/game/startRoll';
+import {
+  challenge,
+  challengeRoll,
+  confirmChallenge,
+  prepareCard
+} from './controllers/socketio/game/challenge';
+import { drawFive, drawTwo } from './controllers/socketio/game/draw';
+import { modifyRoll } from './controllers/socketio/game/modify';
+import {
+  attackMonster,
+  attackRoll,
+  confirmAttack
+} from './controllers/socketio/game/attack';
+import { useEffect } from './controllers/socketio/game/useEffect';
 
 /* EXPRESS SERVER */
 const app = express();
-app.use(
-  cors({
-    origin: 'http://localhost:3000'
-  })
-);
-app.use(express.json());
-
-app.get('/get-rooms', getRooms);
-app.post('/create-room', createRoom);
-app.post('/join-room', joinRoom);
-
+app.use(expressServer);
 const httpServer = app.listen(4000, () => console.log('server on port 4000'));
 
 /* SOCKET.IO  SERVER */
-
 const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:3000'
@@ -36,433 +40,49 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', socket => {
-  /*
-  
-  MATCH
-  - 'enter-lobby'
-  - 'leave-lobby'
-  - 'ready'
-  - 'start-match'
+  /* LOBBY */
+  socket.on('enter-lobby', enterLobby(socket));
+  socket.on('leave-lobby', leaveLobby(socket));
+  socket.on('ready', ready(socket));
+  socket.on('start-match', startMatch(socket));
 
-  */
+  /* GAME */
+  // start roll
+  socket.on('start-roll', startRoll);
 
-  socket.on(
-    'enter-lobby',
-    (
-      roomId: string,
-      userId: string,
-      username: string,
-      cb: (successful: boolean, playerNum: number | null) => void
-    ) => {
-      // check credentials
-      const playerNum = checkCredentials(roomId, userId);
-      if (playerNum === -1) {
-        cb(false, null);
-        socket.disconnect();
-        return;
-      }
+  // draw
+  socket.on('draw-two', drawTwo);
+  socket.on('draw-five', drawFive);
 
-      if (
-        rooms[roomId].state.match.players[playerNum] === '' &&
-        !rooms[roomId].state.match.gameStarted
-      ) {
-        // fill username
-        rooms[roomId].state.match.players[playerNum] = `Anonymous ${
-          playerNum + 1
-        }`;
-      }
+  // TO TEST: challenge
+  socket.on('prepare-card', prepareCard);
+  socket.on('challenge', challenge);
+  socket.on('challenge-roll', challengeRoll);
+  socket.on('confirm-challenge', confirmChallenge);
 
-      // join
-      if (
-        // valid credentials check
-        rooms[roomId].state.secret.playerIds[playerNum] === userId &&
-        (rooms[roomId].state.match.players[playerNum] === username ||
-          rooms[roomId].state.match.players[playerNum] ===
-            `Anonymous ${playerNum + 1}`)
-      ) {
-        socket.join(roomId);
-        sendState(roomId);
-        cb(true, playerNum);
-      } else {
-        removePlayer(rooms[roomId], playerNum);
-        cb(false, null);
-        sendState(roomId);
-        socket.disconnect();
-      }
-    }
-  );
+  // TODO: modify
+  socket.on('modify-roll', modifyRoll);
 
-  socket.on('leave-lobby', (roomId: string, userId: string, cb: () => void) => {
-    const playerNum = checkCredentials(roomId, userId);
-    if (playerNum === -1) {
-      socket.disconnect();
-      return;
-    }
-    console.log('player left');
+  // TODO: attack
+  socket.on('attack-monster', attackMonster);
+  socket.on('attack-roll', attackRoll);
+  socket.on('confirm-attack', confirmAttack);
 
-    if (rooms[roomId].numPlayers === 1) {
-      delete rooms[roomId];
-      cb();
-      socket.disconnect();
-      return;
-    }
-
-    removePlayer(rooms[roomId], playerNum);
-    sendState(roomId);
-    cb();
-    socket.disconnect();
-  });
-
-  socket.on(
-    'ready',
-    (
-      roomId: string,
-      userId: string,
-      ready: boolean,
-      cb: (successful: boolean) => void
-    ) => {
-      const playerNum = checkCredentials(roomId, userId);
-      if (playerNum === -1) {
-        cb(false);
-        socket.disconnect();
-        return;
-      }
-
-      rooms[roomId].state.match.isReady[playerNum] = ready;
-
-      sendState(roomId);
-      cb(true);
-
-      if (
-        rooms[roomId].state.match.isReady.every(val => val === true) &&
-        rooms[roomId].numPlayers >= 3
-      ) {
-        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
-          rooms[roomId].state.match.isReady.push(null);
-        }
-        setTimeout(() => {
-          io.in(roomId).emit('start-match');
-        }, 500);
-      }
-    }
-  );
-
-  socket.on('start-match', (roomId: string, playerId: string) => {
-    const state = rooms[roomId].state;
-    const numPlayers = rooms[roomId].numPlayers;
-
-    const playerNum = state.secret.playerIds.indexOf(playerId);
-    state.secret.playerSocketIds[playerNum] = socket.id;
-
-    if (rooms[roomId].state.match.gameStarted) {
-      sendGameState(roomId);
-      return;
-    }
-
-    if (
-      numPlayers >= 3 &&
-      io.sockets.adapter.rooms.get(roomId)?.size === numPlayers &&
-      state.secret.playerSocketIds.every(val => Boolean(val))
-    ) {
-      state.match.gameStarted = true;
-      state.turn.phase = 'start-roll';
-      state.turn.isRolling = true;
-
-      for (let i = 0; i < numPlayers; i++) {
-        // starting roll
-        state.match.startRolls.inList.push(i);
-        state.match.startRolls.rolls.push(0);
-      }
-
-      distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
-
-      sendGameState(roomId);
-    }
-  });
-
-  /* 
-  
-  GAME
-  - 'start-roll'
-  - 'prepare-card'
-  - 'confirm-card'
-  - 'draw-two'
-  - 'draw-five'
-
-  */
-
-  socket.on('start-roll', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    if (
-      playerNum === -1 ||
-      !rooms[roomId].state.turn.isRolling ||
-      rooms[roomId].state.turn.phase !== 'start-roll'
-    )
-      return;
-
-    rooms[roomId].state.turn.movesLeft--;
-    const startRolls = rooms[roomId].state.match.startRolls;
-
-    const roll = rollDice();
-    const val = roll[0] + roll[1];
-
-    rooms[roomId].state.dice.main.roll = roll;
-    rooms[roomId].state.dice.main.total = val;
-    startRolls.rolls[playerNum] = val;
-    startRolls.maxVal = Math.max(startRolls.maxVal, val);
-
-    sendGameState(roomId);
-
-    // REMOVE LOSING VALUES
-    for (let i = 0; i < startRolls.inList.length; i++) {
-      if (
-        startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
-        startRolls.rolls[startRolls.rolls.length - 1] !== 0
-      ) {
-        startRolls.inList.splice(i--, 1);
-      }
-    }
-
-    // IF PLAYER WON
-    if (startRolls.inList.length === 1) {
-      // SETUP MATCH
-      rooms[roomId].state.turn.player = startRolls.inList[0];
-      rooms[roomId].state.turn.phase = 'draw';
-      rooms[roomId].state.turn.isRolling = false;
-      rooms[roomId].state.dice.main.roll[0] = 1;
-      rooms[roomId].state.dice.main.roll[1] = 1;
-      rooms[roomId].state.turn.movesLeft = 3;
-
-      setTimeout(() => sendGameState(roomId), 3000);
-      return;
-      // IF TIED (SETUP NEXT ROUND)
-    } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
-      startRolls.rolls = [];
-      for (let i = 0; i < rooms[roomId].numPlayers; i++) {
-        startRolls.rolls.push(0);
-      }
-      startRolls.maxVal = 0;
-    }
-
-    // RESET PLAYER & ROLL
-    const next =
-      (startRolls.inList.indexOf(playerNum) + 1) % startRolls.inList.length;
-    rooms[roomId].state.turn.player = startRolls.inList[next];
-    rooms[roomId].state.turn.movesLeft = 1;
-    rooms[roomId].state.dice.main.roll[0] = 1;
-    rooms[roomId].state.dice.main.roll[1] = 1;
-
-    setTimeout(() => sendGameState(roomId), 3000);
-  });
-
-  socket.on('prepare-card', (roomId: string, userId: string, card: AnyCard) => {
-    const playerNum = validSender(roomId, userId);
-    const gameState = rooms[roomId].state;
-    if (
-      gameState.turn.phase !== 'play' ||
-      playerNum === -1 ||
-      card.player !== playerNum ||
-      !gameState.players[playerNum].hand.some(val => card.id === val.id)
-    ) {
-      return;
-    }
-
-    if (card.type === CardType.hero) {
-      gameState.board[playerNum].heroCards.push(card);
-    }
-
-    gameState.mainDeck.preparedCard = {
-      card: card,
-      successful: null
-    };
-
-    gameState.players[playerNum].hand = gameState.players[
-      playerNum
-    ].hand.filter(c => c.id !== card.id);
-    gameState.turn.movesLeft--;
-    gameState.turn.phase = 'challenge';
-
-    sendGameState(roomId);
-  });
-
-  socket.on(
-    'challenge',
-    (roomId: string, userId: string, challenged: boolean) => {
-      const playerNum = checkCredentials(roomId, userId);
-      const gameState = rooms[roomId].state;
-      if (
-        playerNum === -1 ||
-        gameState.turn.phase !== 'play' ||
-        !gameState.mainDeck.preparedCard
-      ) {
-        return;
-      }
-
-      gameState.match.isReady[playerNum] = challenged;
-      if (gameState.match.isReady.every(val => val === false)) {
-        gameState.mainDeck.preparedCard.successful = true;
-      } else if (challenged) {
-        gameState.dice.main.roll = [1, 1];
-        gameState.dice.main.total = 0;
-        gameState.dice.main.modifier = [];
-        gameState.dice.defend = {
-          roll: [1, 1],
-          total: 0,
-          modifier: []
-        };
-        gameState.turn.phase = 'challenge-roll';
-        gameState.turn.challenger = playerNum;
-        gameState.turn.isRolling = true;
-      }
-    }
-  );
-
-  socket.on('challenge-roll', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    const gameState = rooms[roomId].state;
-    if (
-      playerNum === -1 ||
-      gameState.turn.phase !== 'challenge-roll' ||
-      !gameState.mainDeck.preparedCard ||
-      (gameState.dice.main.total === 0 &&
-        gameState.turn.player !== playerNum) ||
-      (gameState.dice.main.total > 0 &&
-        gameState.turn.challenger !== playerNum) ||
-      gameState.dice.defend === null
-    ) {
-      return;
-    }
-
-    const roll = rollDice();
-    const val = roll[0] + roll[1];
-    if (gameState.dice.main.total === 0) {
-      gameState.dice.main.roll = roll;
-      gameState.dice.main.total = val;
-    } else {
-      gameState.dice.defend.roll = roll;
-      gameState.dice.defend.total = val;
-      gameState.turn.phase = 'modify';
-    }
-    sendGameState(roomId);
-  });
-
-  socket.on(
-    'modify-roll',
-    (roomId: string, userId: string, dice: 0 | 1, modifier: ModifierCard) => {}
-  );
-
-  socket.on(
-    'confirm-card',
-    (roomId: string, userId: string, useEffect?: boolean) => {
-      const playerNum = validSender(roomId, userId);
-      const gameState = rooms[roomId].state;
-      if (
-        playerNum === -1 ||
-        !gameState.mainDeck.preparedCard ||
-        gameState.mainDeck.preparedCard.successful === null
-      ) {
-        return;
-      }
-
-      if (gameState.mainDeck.preparedCard.successful) {
-        // no more moves
-        if (
-          gameState.mainDeck.preparedCard.card.type === CardType.hero &&
-          !useEffect &&
-          gameState.turn.movesLeft === 0
-        ) {
-          nextPlayer(roomId);
-        }
-
-        // USE CARD EFFECT
-        if (useEffect) {
-          gameState.mainDeck.preparedCard = null;
-        }
-      } else {
-        // DESTROY CARD
-        gameState.mainDeck.preparedCard = null;
-      }
-
-      gameState.dice.main.roll = [1, 1];
-      gameState.dice.main.total = 0;
-      gameState.dice.main.modifier = [];
-      gameState.dice.defend = null;
-      gameState.turn.phase = 'play';
-      delete gameState.turn.challenger;
-      gameState.turn.isRolling = false;
-
-      sendGameState(roomId);
-    }
-  );
-
-  socket.on('draw-two', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    const gameState = rooms[roomId].state;
-    if (playerNum === -1 || gameState.turn.phase !== 'draw') return;
-
-    for (let i = 0; i < 2; i++) {
-      let card = gameState.secret.deck.pop() as AnyCard;
-      card.player = playerNum;
-      gameState.players[playerNum].hand.push(card);
-    }
-
-    gameState.turn.phase = 'play';
-    sendGameState(roomId);
-  });
-  socket.on('draw-five', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    const gameState = rooms[roomId].state;
-    if (playerNum === -1) return;
-
-    const hasCards = gameState.players[playerNum].hand.length > 0;
-    if (hasCards) {
-      gameState.turn.movesLeft = 0;
-      const numCards = gameState.players[playerNum].hand.length;
-      for (let i = 0; i < numCards; i++) {
-        let card = gameState.players[playerNum].hand.pop() as AnyCard;
-        delete card.player;
-        gameState.secret.discardPile.push(card);
-        gameState.mainDeck.discardTop = card;
-      }
-      sendGameState(roomId);
-    }
-
-    for (let i = 0; i < 5; i++) {
-      let card = gameState.secret.deck.pop() as AnyCard;
-      card.player = playerNum;
-      gameState.players[playerNum].hand.push(card);
-    }
-
-    if (hasCards) {
-      nextPlayer(roomId);
-    }
-    sendGameState(roomId);
-  });
-
-  socket.on(
-    'attack-monster',
-    (roomId: string, userId: string, monsterId: string) => {}
-  );
-
-  socket.on(
-    'use-effect',
-    (roomId: string, userId: string, cardId: string) => {}
-  );
+  // TODO: use-effect
+  socket.on('use-effect', useEffect);
 });
 
 /* 
-
 HELPER FUNCTIONS 
 - sendState (lobby)
 - sendGameState (in match)
-
+- confirmNumPlayers
 */
-
-function sendState(roomId: string) {
+export function sendState(roomId: string) {
   io.in(roomId).emit('state', rooms[roomId].state.match);
 }
 
-function sendGameState(roomId: string) {
+export function sendGameState(roomId: string) {
   const state = rooms[roomId].state;
 
   for (let i = 0; i < rooms[roomId].numPlayers; i++) {
@@ -471,4 +91,12 @@ function sendGameState(roomId: string) {
   }
 }
 
-function checkWin(roomId: string) {}
+export function emit(roomId: string, message: string): void {
+  io.in(roomId).emit(message);
+}
+
+export function confirmNumPlayers(roomId: string): boolean {
+  return (
+    io.sockets.adapter.rooms.get(roomId)?.size === rooms[roomId].numPlayers
+  );
+}

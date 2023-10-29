@@ -10,7 +10,7 @@ import {
   HeroClass,
   AnyCard,
   GameState
-} from '../types';
+} from './types';
 import { v4 as uuid } from 'uuid';
 
 // ALL CARDS (BASE GAME)
@@ -826,14 +826,15 @@ export const initialState: GameState = {
 
   // PUBLIC
   dice: {
-    main: { roll: [1, 1], modifier: 0, total: 0 },
+    main: { roll: [1, 1], modifier: [], total: 0 },
     defend: null
   },
   board: [],
   mainDeck: {
     monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
     discardTop: null,
-    preparedCard: null
+    preparedCard: null,
+    attackedMonster: null
   },
 
   // MATCH VARIABLES

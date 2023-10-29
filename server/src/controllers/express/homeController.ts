@@ -1,9 +1,10 @@
 import { v4 as uuid } from 'uuid';
-import { rooms } from '../rooms';
+import { rooms } from '../../rooms';
 import cloneDeep from 'lodash.clonedeep';
-import { initialState } from '../cards/cards';
-import { random, addPlayer } from '../functions/helpers';
+import { initialState } from '../../cards';
+import { addPlayer } from '../../functions/helpers';
 import { RequestHandler } from 'express';
+import random from 'lodash.random';
 
 export const getRooms: RequestHandler = (req, res) => {
   let updatedRooms: { [key: string]: number } = {};
