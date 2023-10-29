@@ -173,23 +173,36 @@ header img {
   user-select: none;
   transition: ease-in-out 0.2s;
 }
-.hand img.small-md:hover {
+.hand img.small-md.glow {
+  width: 19.402vh;
+  height: 27.101vh;
+  margin: 0 12px;
+}
+.hand img.small-md.active:hover {
   margin: 25px 12px;
   border: 4px solid #fc7c37;
   cursor: pointer;
 }
+.hand img.small-md.glow:hover {
+  margin: 30px 16px;
+}
+.hand img.small-md.inactive {
+  opacity: 0.2;
+}
 
 /* START ROLL */
-
-.start-roll_summary {
+.roll-summary-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -40px;
 }
 .start-roll_summary {
   display: flex;
-  margin-left: auto;
+  margin: auto;
 }
 .summary-player {
-  margin-left: 20px;
+  margin-left: 40px;
 }
 .summary-player span {
   font-weight: 400;
@@ -381,4 +394,55 @@ img.glow {
 }
 img.click:hover {
   cursor: pointer;
+}
+
+/* POPUP */
+/* challenge */
+.popup {
+  position: absolute;
+  width: 90vw;
+  height: 75vh;
+  background-color: #1e1e1e;
+  left: 5vw;
+  top: 3vh;
+  border-radius: 25px;
+  box-shadow: #1e1e1e 0 0 30px 30px;
+  transition: ease-in-out 0.25s;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* .popup.not-own {
+  
+} */
+.challenge-popup,
+.challenge-roll-popup {
+  margin-top: -6vh;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.popup .small-lg {
+  width: 45.045vh;
+  height: 62.92vh;
+  border-radius: 1.8vh;
+  user-select: none;
+}
+.popup .small-md {
+  width: 36.732vh;
+  height: 51.308vh;
+  border-radius: 1.5vh;
+  user-select: none;
+}
+.popup .center {
+  margin-top: -10vh;
+}
+.popup .center img {
+  margin-top: 3vh;
+}
+.side-modifier {
+  width: 36.732vh;
+  height: 51.308vh;
 }

@@ -8,6 +8,7 @@ interface HandProps {
   state: GameState;
   playerNum: number;
   show: boolean;
+  allowedCards: CardType[] | null;
   socket: Socket;
   credentials: Credentials;
   setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,6 +18,7 @@ const Hand: React.FC<HandProps> = ({
   state,
   playerNum,
   show,
+  allowedCards,
   socket,
   credentials,
   setShowHand
@@ -33,7 +35,7 @@ const Hand: React.FC<HandProps> = ({
   const prepareCard = (card: AnyCard) => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
     if (
-      state.turn.phase !== 'play' &&
+      state.turn.phase === 'play' &&
       state.turn.player === playerNum &&
       (card.type === CardType.hero ||
         card.type === CardType.item ||
@@ -58,8 +60,13 @@ const Hand: React.FC<HandProps> = ({
           <div
             key={i}
             onMouseEnter={() => {
-              setShownCard(card);
-              setPos('top');
+              if (
+                allowedCards?.some(val => val === card.type) ||
+                allowedCards?.length === 0
+              ) {
+                setShownCard(card);
+                setPos('top');
+              }
             }}
             onMouseLeave={() => {
               setShownCard(null);
@@ -69,8 +76,15 @@ const Hand: React.FC<HandProps> = ({
             <img
               src={getImage(card)}
               alt={card.name}
-              className='small-md'
+              className={`small-md ${
+                allowedCards?.length === 0
+                  ? 'active'
+                  : allowedCards?.some(val => val === card.type)
+                  ? 'active glow'
+                  : 'inactive'
+              }`}
               onClick={() => prepareCard(card)}
+              draggable='false'
             />
           </div>
         ))}

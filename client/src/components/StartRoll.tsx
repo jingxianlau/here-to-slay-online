@@ -36,17 +36,19 @@ const StartRoll: React.FC<StartRollProps> = ({
             </div>
           ))}
         </div>
-        <div className='start-roll_summary'>
-          {rollSummary.length === 0 && <h4>ㅤ</h4>}
-          {rollSummary.map(
-            num =>
-              state.match.startRolls.rolls[num] !== 0 && (
-                <h4 className='summary-player' key={num}>
-                  {state.match.players[num]}:{' '}
-                  <span>{state.match.startRolls.rolls[num]}</span>
-                </h4>
-              )
-          )}
+        <div className='roll-summary-container'>
+          <div className='start-roll_summary'>
+            {rollSummary.length === 0 && <h4>ㅤ</h4>}
+            {rollSummary.map(
+              num =>
+                state.match.startRolls.rolls[num] !== 0 && (
+                  <h4 className='summary-player' key={num}>
+                    {state.match.players[num]}:{' '}
+                    <span>{state.match.startRolls.rolls[num]}</span>
+                  </h4>
+                )
+            )}
+          </div>
         </div>
       </div>
 

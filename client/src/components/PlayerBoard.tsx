@@ -49,6 +49,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                   ? 'small-card glow'
                   : 'small-card'
               }
+              draggable='false'
             />
           </div>
         ))}
@@ -75,7 +76,12 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
               setPos(null);
             }}
           >
-            <img src={getImage(card)} alt={card.name} className='large-card' />
+            <img
+              src={getImage(card)}
+              alt={card.name}
+              className='large-card'
+              draggable='false'
+            />
           </div>
         ))}
 

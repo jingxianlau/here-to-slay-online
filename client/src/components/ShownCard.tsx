@@ -16,6 +16,7 @@ const ShownCard: React.FC<ShownCardProps> = ({ shownCard, pos }) => {
         className={
           shownCard.type === 'large' ? 'large-enlarged' : 'small-enlarged'
         }
+        draggable='false'
       />
     </div>
   );

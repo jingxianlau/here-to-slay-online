@@ -4,12 +4,13 @@ import '../style/index.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 import { getCredentials } from '../helpers/getJSON';
-import { GameState } from '../types';
+import { CardType, GameState } from '../types';
 import StartRoll from '../components/StartRoll';
 import MainBoard from '../components/MainBoard';
 import Hand from '../components/Hand';
 import useCardContext from '../hooks/useCardContext';
 import ShownCard from '../components/ShownCard';
+import Popup from '../components/Popup';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -18,13 +19,25 @@ const Game: React.FC = () => {
   // variables
   const [socket, setSocket] = useState<Socket | null>(null);
   const [state, setState] = useState<GameState | null>(null);
-  const [phase, setPhase] = useState('start-roll');
+  const [phase, setPhase] = useState<
+    | 'start-roll'
+    | 'draw'
+    | 'play'
+    | 'attack'
+    | 'challenge'
+    | 'challenge-roll'
+    | 'modify'
+  >();
 
   const [showRoll, setShowRoll] = useState(false);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
   const [hasRolled, setHasRolled] = useState(false);
 
   const [showHand, setShowHand] = useState(false);
+  const [allowedCards, setAllowedCards] = useState<CardType[] | null>([]);
+  const [handLock, setHandLock] = useState(false);
+  const [shownCardLock, setShownCardLock] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   // credentials
   const [playerNum, setPlayerNum] = useState(-1);
@@ -63,41 +76,57 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
+        setPhase(state.turn.phase);
 
         /* PHASES */
-        // Start Roll
-        if (
-          phase === 'start-roll' &&
-          state.match.startRolls.rolls[state.turn.player] !== 0
-        ) {
-          // new roll
-          setPhase(state.turn.phase);
-          setTimeout(() => {
-            getRollData();
-            setShowRoll(true);
-          }, 1000);
-          setTimeout(() => {
-            setShowRoll(false);
-            setHasRolled(false);
-          }, 3000);
-        } else if (phase === 'start-roll') {
-          // new round
-          setPhase(state.turn.phase);
-          getRollData();
-          setHasRolled(false);
-        } else if (
-          state.players[playerNum]?.hand.length === 0 &&
-          phase === 'draw' &&
-          state.turn.player === playerNum
-        ) {
-          // Get 5 Cards
-          socket.emit('draw-five', credentials.roomId, credentials.userId);
-          setShowHand(true);
-          setTimeout(() => {
-            setShowHand(false);
-          }, 1000);
-        } else {
-          setPhase(state.turn.phase);
+        switch (state.turn.phase) {
+          case 'start-roll':
+            if (state.match.startRolls.rolls[state.turn.player] !== 0) {
+              // new roll
+              setTimeout(() => {
+                getRollData();
+                setShowRoll(true);
+              }, 1000);
+              setTimeout(() => {
+                setShowRoll(false);
+                setHasRolled(false);
+              }, 3000);
+            } else {
+              // new round
+              getRollData();
+              setHasRolled(false);
+            }
+            break;
+
+          case 'draw':
+            setShowPopup(false);
+            if (
+              state.players[playerNum]?.hand.length === 0 &&
+              state.turn.player === playerNum
+            ) {
+              // Get 5 Cards
+              socket.emit('draw-five', credentials.roomId, credentials.userId);
+              setShowHand(true);
+              setTimeout(() => {
+                setShowHand(false);
+              }, 1000);
+            }
+            break;
+
+          case 'challenge':
+            setShowPopup(true);
+            break;
+
+          case 'challenge-roll':
+            setShowPopup(true);
+            break;
+
+          case 'modify':
+            setShowPopup(true);
+            break;
+
+          case 'play':
+            setShowPopup(false);
         }
 
         /* HELPER FUNCTIONS */
@@ -112,6 +141,7 @@ const Game: React.FC = () => {
       });
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
+
       return () => {
         if (socket) {
           socket.disconnect();
@@ -128,6 +158,7 @@ const Game: React.FC = () => {
     };
   }, [showHand]);
   const mouseMoveHandler = (e: MouseEvent) => {
+    if (handLock) return;
     if (showHand && window.innerHeight - e.clientY >= 200) {
       setShowHand(false);
     } else if (!showHand && window.innerHeight - e.clientY <= 80) {
@@ -135,16 +166,20 @@ const Game: React.FC = () => {
     }
   };
 
+  /* ROLL */
   function roll() {
-    if (!state || !socket || state.turn.movesLeft === 0 || hasRolled) return;
-    if (state.turn.player === playerNum) {
-      setHasRolled(true);
-      switch (state.turn.phase) {
-        case 'start-roll':
-          socket.emit('start-roll', credentials.roomId, credentials.userId);
-          break;
-      }
-    }
+    if (
+      !state ||
+      !socket ||
+      state.turn.movesLeft === 0 ||
+      state.turn.phase !== 'start-roll' ||
+      hasRolled ||
+      state.turn.player !== playerNum
+    )
+      return;
+
+    setHasRolled(true);
+    socket.emit('start-roll', credentials.roomId, credentials.userId);
   }
 
   return (
@@ -169,10 +204,31 @@ const Game: React.FC = () => {
                 credentials={credentials}
                 setShowHand={setShowHand}
               />
+              {(phase === 'challenge' ||
+                phase === 'challenge-roll' ||
+                phase === 'modify') &&
+                showPopup && (
+                  <Popup
+                    state={state}
+                    playerNum={playerNum}
+                    socket={socket}
+                    credentials={credentials}
+                    setShowHand={setShowHand}
+                    setHandLock={setHandLock}
+                    setShownCardLock={setShownCardLock}
+                    setAllowedCards={setAllowedCards}
+                    show={showPopup}
+                    phase={phase}
+                  />
+                )}
+              {shownCard && pos && !shownCardLock && (
+                <ShownCard shownCard={shownCard} pos={pos} />
+              )}
               <Hand
                 state={state}
                 playerNum={playerNum}
                 show={showHand}
+                allowedCards={allowedCards}
                 socket={socket}
                 credentials={credentials}
                 setShowHand={setShowHand}
@@ -180,7 +236,6 @@ const Game: React.FC = () => {
             </>
           )}
         </div>
-        {shownCard && pos && <ShownCard shownCard={shownCard} pos={pos} />}
       </div>
     )
   );

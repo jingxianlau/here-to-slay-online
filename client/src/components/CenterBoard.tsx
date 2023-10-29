@@ -45,7 +45,12 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             setPos(null);
           }}
         >
-          <img src={getImage(card)} alt={card.name} className='large-card' />
+          <img
+            src={getImage(card)}
+            alt={card.name}
+            className='large-card'
+            draggable='false'
+          />
         </div>
       ))}
       {Array.from(Array(3 - state.mainDeck.monsters.length), (_, i) => (
@@ -63,6 +68,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
                 : ''
             }`}
             onClick={drawTwo}
+            draggable='false'
           />
         </div>
         <div className='small discard'>
@@ -71,6 +77,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
               src={getImage(state.mainDeck.discardTop)}
               alt={state.mainDeck.discardTop.name}
               className='small-card'
+              draggable='false'
             />
           )}
         </div>

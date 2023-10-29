@@ -20,8 +20,8 @@ export const enterLobby = (socket: Socket) => {
     const playerNum = checkCredentials(roomId, userId);
     if (playerNum === -1) {
       cb(false, null);
-      socket.disconnect();
       sendState(roomId);
+      socket.disconnect();
       return;
     }
 
@@ -51,7 +51,6 @@ export const enterLobby = (socket: Socket) => {
       cb(false, null);
       sendState(roomId);
       socket.disconnect();
-      sendState(roomId);
     }
   };
 };
@@ -60,8 +59,8 @@ export const leaveLobby = (socket: Socket) => {
   return (roomId: string, userId: string, cb: () => void) => {
     const playerNum = checkCredentials(roomId, userId);
     if (playerNum === -1) {
-      socket.disconnect();
       sendState(roomId);
+      socket.disconnect();
       return;
     }
 
@@ -69,7 +68,6 @@ export const leaveLobby = (socket: Socket) => {
       delete rooms[roomId];
       cb();
       socket.disconnect();
-      sendState(roomId);
       return;
     }
 
@@ -77,7 +75,6 @@ export const leaveLobby = (socket: Socket) => {
     sendState(roomId);
     cb();
     socket.disconnect();
-    sendState(roomId);
   };
 };
 
@@ -91,8 +88,8 @@ export const ready = (socket: Socket) => {
     const playerNum = checkCredentials(roomId, userId);
     if (playerNum === -1) {
       cb(false);
-      socket.disconnect();
       sendState(roomId);
+      socket.disconnect();
       return;
     }
 
