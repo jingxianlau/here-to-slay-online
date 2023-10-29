@@ -33,8 +33,18 @@ export function nextPlayer(roomId: string) {
   let player = rooms[roomId].state.turn.player;
   rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
   rooms[roomId].state.turn.movesLeft = 3;
+  rooms[roomId].state.turn.phase = 'draw';
 }
 
 export function rollDice(): [number, number] {
   return [random(1, 6), random(1, 6)];
+}
+
+export function reshuffleDeck(roomId: string) {
+  const state = rooms[roomId].state;
+  state.secret.deck = shuffle(state.secret.discardPile);
+  state.secret.discardPile = [];
+  state.mainDeck.discardTop = null;
+
+  return state.secret.deck.pop() as AnyCard;
 }

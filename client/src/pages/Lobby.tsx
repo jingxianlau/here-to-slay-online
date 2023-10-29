@@ -11,7 +11,6 @@ const Lobby: React.FC = () => {
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
   const [playerNum, setPlayerNum] = useState(-1);
   const [isReady, setIsReady] = useState(false);
-  const [isTabHidden, setIsTabHidden] = useState(false);
   const credentials = getCredentials();
   const username = localStorage.getItem('username') as string;
 

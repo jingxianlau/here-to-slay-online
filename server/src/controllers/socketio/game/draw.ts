@@ -1,4 +1,4 @@
-import { nextPlayer } from '../../../functions/game';
+import { nextPlayer, reshuffleDeck } from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -11,6 +11,11 @@ export const drawTwo = (roomId: string, userId: string) => {
 
   for (let i = 0; i < 2; i++) {
     let card = gameState.secret.deck.pop() as AnyCard;
+
+    if (!card) {
+      card = reshuffleDeck(roomId);
+    }
+
     card.player = playerNum;
     gameState.players[playerNum].hand.push(card);
   }
@@ -39,6 +44,11 @@ export const drawFive = (roomId: string, userId: string) => {
 
   for (let i = 0; i < 5; i++) {
     let card = gameState.secret.deck.pop() as AnyCard;
+
+    if (!card) {
+      card = reshuffleDeck(roomId);
+    }
+
     card.player = playerNum;
     gameState.players[playerNum].hand.push(card);
   }
