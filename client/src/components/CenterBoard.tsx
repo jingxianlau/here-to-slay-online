@@ -1,48 +1,42 @@
 import React from 'react';
-import { CardType, Credentials, GameState } from '../types';
 import { getImage } from '../helpers/getImage';
-import useCardContext from '../hooks/useCardContext';
 import { Socket } from 'socket.io-client';
+import useClientContext from '../hooks/useClientContext';
 
 interface CenterBoardProps {
-  state: GameState;
   socket: Socket;
-  credentials: Credentials;
-  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
-  playerNum: number;
 }
 
-const CenterBoard: React.FC<CenterBoardProps> = ({
-  state,
-  socket,
-  credentials,
-  setShowHand,
-  playerNum
-}) => {
-  const { setShownCard, setPos } = useCardContext();
+const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
+  const { state, credentials, showHand, playerNum, shownCard } =
+    useClientContext();
 
   function drawTwo() {
-    if (state.turn.phase !== 'draw' || state.turn.player !== playerNum) return;
+    if (
+      state.val.turn.phase !== 'draw' ||
+      state.val.turn.player !== playerNum.val
+    )
+      return;
     socket.emit('draw-two', credentials.roomId, credentials.userId);
-    setShowHand(true);
+    showHand.set(true);
     setTimeout(() => {
-      setShowHand(false);
+      showHand.set(false);
     }, 1000);
   }
 
   return (
     <div className='mat'>
-      {state.mainDeck.monsters.map(card => (
+      {state.val.mainDeck.monsters.map(card => (
         <div
           className='large'
           key={card.id}
           onMouseEnter={() => {
-            setShownCard(card);
-            setPos('left');
+            shownCard.set(card);
+            shownCard.setPos('left');
           }}
           onMouseLeave={() => {
-            setShownCard(null);
-            setPos(null);
+            shownCard.set(null);
+            shownCard.setPos(null);
           }}
         >
           <img
@@ -53,7 +47,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
           />
         </div>
       ))}
-      {Array.from(Array(3 - state.mainDeck.monsters.length), (_, i) => (
+      {Array.from(Array(3 - state.val.mainDeck.monsters.length), (_, i) => (
         <div className='large' key={i}></div>
       ))}
 
@@ -63,7 +57,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             src='./assets/back/back-creme.png'
             alt='flipped card'
             className={`small-card ${
-              state.turn.phase === 'draw' && state.turn.player === playerNum
+              state.val.turn.phase === 'draw' &&
+              state.val.turn.player === playerNum.val
                 ? 'glow click'
                 : ''
             }`}
@@ -72,10 +67,10 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
           />
         </div>
         <div className='small discard'>
-          {state.mainDeck.discardTop && (
+          {state.val.mainDeck.discardTop && (
             <img
-              src={getImage(state.mainDeck.discardTop)}
-              alt={state.mainDeck.discardTop.name}
+              src={getImage(state.val.mainDeck.discardTop)}
+              alt={state.val.mainDeck.discardTop.name}
               className='small-card'
               draggable='false'
             />

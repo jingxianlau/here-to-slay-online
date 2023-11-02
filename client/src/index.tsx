@@ -5,14 +5,14 @@ import './style/index.css';
 import App from './App';
 import Lobby from './pages/Lobby';
 import Game from './pages/Game';
-import CardContextProvider from './context/CardContext';
+import ClientContextProvider from './context/ClientStateContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <CardContextProvider>
+    <ClientContextProvider>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<App />} />
@@ -20,7 +20,7 @@ root.render(
           <Route path='/game' element={<Game />} />
         </Routes>
       </BrowserRouter>
-    </CardContextProvider>
+    </ClientContextProvider>
   </React.StrictMode>
 );
 

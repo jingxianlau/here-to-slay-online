@@ -4,33 +4,26 @@ import PlayerBoard from './PlayerBoard';
 import CenterBoard from './CenterBoard';
 import { Socket } from 'socket.io-client';
 import TopMenu from './TopMenu';
+import useClientContext from '../hooks/useClientContext';
 
 interface MainBoardProps {
-  state: GameState;
-  playerNum: number;
   socket: Socket;
-  credentials: Credentials;
-  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MainBoard: React.FC<MainBoardProps> = ({
-  state,
-  playerNum,
-  socket,
-  credentials,
-  setShowHand
-}) => {
+const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
+  const { state, playerNum, credentials, showHand } = useClientContext();
+
   const [boardOrder, setBoardOrder] = useState<number[][]>([[], [], []]);
 
   useEffect(() => {
-    const numPlayers = state.match.players.length;
+    const numPlayers = state.val.match.players.length;
     let board: number[][] = [[], [], []];
     switch (numPlayers) {
       case 3:
         board[1].push(-1);
-        board[1].push(playerNum);
-        board[0].push((playerNum + 1) % numPlayers);
-        board[2].push((playerNum + 2) % numPlayers);
+        board[1].push(playerNum.val);
+        board[0].push((playerNum.val + 1) % 3);
+        board[2].push((playerNum.val + 2) % 3);
 
         setBoardOrder(board);
         break;
@@ -40,11 +33,11 @@ const MainBoard: React.FC<MainBoardProps> = ({
 
       case 5:
         board[1].push(-1);
-        board[1].push(playerNum);
-        board[0].push((playerNum + 1) % numPlayers);
-        board[0].push((playerNum + 2) % numPlayers);
-        board[2].push((playerNum + 3) % numPlayers);
-        board[2].push((playerNum + 4) % numPlayers);
+        board[1].push(playerNum.val);
+        board[0].push((playerNum.val + 1) % 5);
+        board[0].push((playerNum.val + 2) % 5);
+        board[2].push((playerNum.val + 3) % 5);
+        board[2].push((playerNum.val + 4) % 5);
 
         setBoardOrder(board);
         break;
@@ -53,7 +46,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
 
   return (
     <>
-      <TopMenu state={state} />
+      <TopMenu />
 
       <div className='content'>
         {boardOrder.map((arr, num) => (
@@ -68,51 +61,43 @@ const MainBoard: React.FC<MainBoardProps> = ({
               boardNum !== -1 ? (
                 <div
                   className={`${
-                    boardNum === playerNum ? 'own-board' : 'player-board'
+                    boardNum === playerNum.val ? 'own-board' : 'player-board'
                   }`}
                   key={i}
                   style={{
                     marginBottom: arr.length > 1 ? 0 : '120px'
                   }}
                 >
-                  {boardNum !== playerNum ? (
+                  {boardNum !== playerNum.val ? (
                     <h4
                       style={{
                         marginBottom: '5px',
                         color:
-                          state.turn.player === boardNum ? '#fc7c37' : 'white'
+                          state.val.turn.player === boardNum
+                            ? '#fc7c37'
+                            : 'white'
                       }}
                     >
-                      {state.match.players[boardNum]}
+                      {state.val.match.players[boardNum]}
                     </h4>
                   ) : (
                     <h2
                       style={{
                         marginBottom: '5px',
                         color:
-                          state.turn.player === boardNum ? '#fc7c37' : 'white'
+                          state.val.turn.player === boardNum
+                            ? '#fc7c37'
+                            : 'white'
                       }}
                     >
-                      {state.match.players[boardNum]}
+                      {state.val.match.players[boardNum]}
                     </h2>
                   )}
-                  <PlayerBoard
-                    state={state}
-                    playerNum={boardNum}
-                    col={num}
-                    socket={socket}
-                    credentials={credentials}
-                  />
+                  <PlayerBoard playerNum={boardNum} col={num} socket={socket} />
                 </div>
               ) : (
                 <div className='center-board' key={i}>
-                  <CenterBoard
-                    state={state}
-                    socket={socket}
-                    credentials={credentials}
-                    setShowHand={setShowHand}
-                    playerNum={playerNum}
-                  />
+                  <CenterBoard socket={socket} />
                 </div>
               )
             )}

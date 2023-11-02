@@ -1,98 +1,142 @@
-import React from 'react';
-import { AnyCard, CardType, Credentials, GameState } from '../types';
+import React, { useEffect } from 'react';
+import { AnyCard, CardType, Credentials, GameState, allCards } from '../types';
 import { getImage } from '../helpers/getImage';
-import useCardContext from '../hooks/useCardContext';
+import useCardContext from '../hooks/useClientContext';
 import { Socket } from 'socket.io-client';
+import useClientContext from '../hooks/useClientContext';
+import { allowedCard } from '../helpers/allowedCard';
 
 interface HandProps {
-  state: GameState;
-  playerNum: number;
-  show: boolean;
-  allowedCards: CardType[] | null;
   socket: Socket;
-  credentials: Credentials;
-  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Hand: React.FC<HandProps> = ({
-  state,
-  playerNum,
-  show,
-  allowedCards,
-  socket,
-  credentials,
-  setShowHand
-}) => {
-  const { setShownCard, setPos } = useCardContext();
+const Hand: React.FC<HandProps> = ({ socket }) => {
+  const {
+    state: { val: state, set: setState },
+    playerNum,
+    showHand,
+    allowedCards,
+    credentials,
+    shownCard
+  } = useClientContext();
+
+  // useEffect(() => {
+  //   if (state.turn.phase === 'challenge') {
+  //   }
+  // }, [state.turn.phase]);
 
   const drawFive = () => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
-    if (state.turn.player === playerNum) {
+    if (state.turn.player === playerNum.val) {
       socket.emit('draw-five', credentials.roomId, credentials.userId);
     }
   };
 
-  const prepareCard = (card: AnyCard) => {
+  const playCard = (card: AnyCard) => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
-    if (
-      state.turn.phase === 'play' &&
-      state.turn.player === playerNum &&
-      (card.type === CardType.hero ||
-        card.type === CardType.item ||
-        card.type === CardType.magic)
-    ) {
-      socket.emit('prepare-card', credentials.roomId, credentials.userId, card);
-      setShowHand(false);
+
+    switch (state.turn.phase) {
+      case 'play':
+        if (
+          state.turn.player === playerNum.val &&
+          (card.type === CardType.hero ||
+            card.type === CardType.item ||
+            card.type === CardType.magic)
+        ) {
+          socket.emit(
+            'prepare-card',
+            credentials.roomId,
+            credentials.userId,
+            card
+          );
+          showHand.set(false);
+        }
+        break;
+      case 'challenge':
+        if (
+          state.turn.player === playerNum.val &&
+          card.type === CardType.challenge
+        ) {
+          socket.emit(
+            'challenge',
+            credentials.roomId,
+            credentials.userId,
+            card,
+            true
+          );
+        }
+        break;
     }
   };
 
   return (
-    <div className='bottomMenu' style={{ bottom: show ? 0 : '-30vh' }}>
-      {state.turn.player === playerNum &&
-        state.turn.movesLeft === 3 &&
-        state.turn.phase === 'play' && (
-          <div className='discard' onClick={drawFive}>
-            <span className='material-symbols-outlined'>delete_forever</span>
-          </div>
-        )}
-      <div className='hand'>
-        {state.players[playerNum]?.hand.map((card, i) => (
-          <div
-            key={i}
-            onMouseEnter={() => {
-              if (
-                allowedCards?.some(val => val === card.type) ||
-                allowedCards?.length === 0
-              ) {
-                setShownCard(card);
-                setPos('top');
-              }
-            }}
-            onMouseLeave={() => {
-              setShownCard(null);
-              setPos(null);
-            }}
-          >
-            <img
-              src={getImage(card)}
-              alt={card.name}
-              className={`small-md ${
-                allowedCards?.length === 0
-                  ? 'active'
-                  : allowedCards?.some(val => val === card.type)
-                  ? 'active glow'
-                  : 'inactive'
-              }`}
-              onClick={() => prepareCard(card)}
-              draggable='false'
-            />
-          </div>
-        ))}
-        {state.players[playerNum]?.hand.length === 0 && (
-          <div style={{ marginBottom: '5vh' }}>
-            <h2>No Cards :(</h2>
-          </div>
-        )}
+    <div
+      className='hand-trigger'
+      onMouseOver={() => showHand.set(true)}
+      onMouseOut={() => showHand.set(showHand.locked ? true : false)}
+    >
+      {!showHand.val && (
+        <>
+          <h5>
+            <span>Hand</span>
+            <span className='material-symbols-outlined arrow-down'>
+              keyboard_double_arrow_down
+            </span>
+          </h5>
+        </>
+      )}
+      <div
+        className='bottomMenu'
+        style={{ bottom: showHand.val ? 0 : '-30vh' }}
+      >
+        {state.turn.player === playerNum.val &&
+          state.turn.movesLeft === 3 &&
+          state.turn.phase === 'play' && (
+            <div className='discard' onClick={drawFive}>
+              <span className='material-symbols-outlined'>delete_forever</span>
+            </div>
+          )}
+        <div className='hand'>
+          {state.players[playerNum.val]?.hand.map((card, i) => (
+            <div
+              key={i}
+              onMouseEnter={() => {
+                if (allowedCard(allowedCards.val, card.type)) {
+                  shownCard.set(card);
+                  shownCard.setPos('top');
+                }
+              }}
+              onMouseLeave={() => {
+                shownCard.set(null);
+                shownCard.setPos(null);
+              }}
+            >
+              <img
+                src={getImage(card)}
+                alt={card.name}
+                className={`small-md ${
+                  allowedCards.val.length === 5
+                    ? 'active'
+                    : allowedCard(allowedCards.val, card.type) &&
+                      (state.turn.phase === 'challenge' ||
+                        state.turn.phase === 'challenge-roll' ||
+                        state.turn.phase === 'modify')
+                    ? 'active glow'
+                    : allowedCard(allowedCards.val, card.type)
+                    ? 'active'
+                    : 'inactive'
+                }`}
+                onClick={() => playCard(card)}
+                draggable='false'
+              />
+            </div>
+          ))}
+          {state.players[playerNum.val]?.hand.length === 0 && (
+            <div style={{ marginBottom: '5vh' }}>
+              <h2>No Cards :(</h2>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,18 +3,22 @@ import { Socket, io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { GameState } from '../types';
 import { getCredentials } from '../helpers/getJSON';
+import useClientContext from '../hooks/useClientContext';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
+  const { setCredentials } = useClientContext();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
   const [playerNum, setPlayerNum] = useState(-1);
   const [isReady, setIsReady] = useState(false);
+
   const credentials = getCredentials();
   const username = localStorage.getItem('username') as string;
 
   useEffect(() => {
+    setCredentials(credentials);
     if (!credentials) {
       navigate('/');
       return;

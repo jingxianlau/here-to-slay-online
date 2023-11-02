@@ -1,37 +1,31 @@
 import React from 'react';
-import { GameState } from '../types';
 import Dice from './Dice';
+import useClientContext from '../hooks/useClientContext';
 
 interface StartRollProps {
-  state: GameState;
   rollSummary: number[];
-  playerNum: number;
-  showRoll: boolean;
 }
 
-const StartRoll: React.FC<StartRollProps> = ({
-  state,
-  rollSummary,
-  playerNum,
-  showRoll
-}) => {
+const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
+  const { state, playerNum, showRoll } = useClientContext();
+
   return (
     <>
       <div className='summary'>
         <div className='turn-order'>
-          {state.match.startRolls.inList.map(num => (
+          {state.val.match.startRolls.inList.map(num => (
             <div key={num}>
               <span
                 style={{
-                  fontWeight: state.turn.player === num ? 700 : 500,
-                  fontSize: state.turn.player === num ? '20px' : '16px',
-                  color: state.turn.player === num ? 'white' : '#bbb'
+                  fontWeight: state.val.turn.player === num ? 700 : 500,
+                  fontSize: state.val.turn.player === num ? '20px' : '16px',
+                  color: state.val.turn.player === num ? 'white' : '#bbb'
                 }}
               >
-                {state.match.players[num]}
+                {state.val.match.players[num]}
               </span>
-              {state.match.startRolls.inList[
-                state.match.startRolls.inList.length - 1
+              {state.val.match.startRolls.inList[
+                state.val.match.startRolls.inList.length - 1
               ] !== num && ' → '}
             </div>
           ))}
@@ -41,10 +35,10 @@ const StartRoll: React.FC<StartRollProps> = ({
             {rollSummary.length === 0 && <h4>ㅤ</h4>}
             {rollSummary.map(
               num =>
-                state.match.startRolls.rolls[num] !== 0 && (
+                state.val.match.startRolls.rolls[num] !== 0 && (
                   <h4 className='summary-player' key={num}>
-                    {state.match.players[num]}:{' '}
-                    <span>{state.match.startRolls.rolls[num]}</span>
+                    {state.val.match.players[num]}:{' '}
+                    <span>{state.val.match.startRolls.rolls[num]}</span>
                   </h4>
                 )
             )}
@@ -55,27 +49,29 @@ const StartRoll: React.FC<StartRollProps> = ({
       <div className='active-player'>
         <h2
           style={{
-            color: state.turn.player === playerNum ? '#fc7c37' : 'white',
-            fontWeight: state.turn.player === playerNum ? 800 : 600
+            color:
+              state.val.turn.player === playerNum.val ? '#fc7c37' : 'white',
+            fontWeight: state.val.turn.player === playerNum.val ? 800 : 600
           }}
         >
-          {state.match.players[state?.turn.player]}
+          {state.val.match.players[state.val.turn.player]}
         </h2>
       </div>
 
       <br />
 
       <div className='roll-content'>
-        {state.turn.isRolling && (
+        {state.val.turn.isRolling && (
           <>
             <div className='dice-box'>
               <Dice
-                roll1={state.dice.main.roll[0]}
-                roll2={state.dice.main.roll[1]}
+                roll1={state.val.dice.main.roll[0]}
+                roll2={state.val.dice.main.roll[1]}
               />
             </div>
             <h1>
-              {showRoll && state.dice.main.roll[0] + state.dice.main.roll[1]}
+              {showRoll &&
+                state.val.dice.main.roll[0] + state.val.dice.main.roll[1]}
             </h1>
           </>
         )}

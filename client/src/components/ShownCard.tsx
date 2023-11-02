@@ -1,24 +1,25 @@
 import React from 'react';
 import { AnyCard, HeroCard } from '../types';
 import { getImage } from '../helpers/getImage';
+import useClientContext from '../hooks/useClientContext';
 
-interface ShownCardProps {
-  shownCard: AnyCard;
-  pos: 'left' | 'right' | 'top';
-}
+interface ShownCardProps {}
 
-const ShownCard: React.FC<ShownCardProps> = ({ shownCard, pos }) => {
+const ShownCard: React.FC<ShownCardProps> = () => {
+  const { shownCard } = useClientContext();
   return (
-    <div className={`shown-card ${pos}`}>
-      <img
-        src={getImage(shownCard)}
-        alt={shownCard.name}
-        className={
-          shownCard.type === 'large' ? 'large-enlarged' : 'small-enlarged'
-        }
-        draggable='false'
-      />
-    </div>
+    shownCard.val && (
+      <div className={`shown-card ${shownCard.pos}`}>
+        <img
+          src={getImage(shownCard.val)}
+          alt={shownCard.val.name}
+          className={
+            shownCard.val.type === 'large' ? 'large-enlarged' : 'small-enlarged'
+          }
+          draggable='false'
+        />
+      </div>
+    )
   );
 };
 

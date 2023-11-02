@@ -1,55 +1,50 @@
-import React, { ReactNode, useEffect } from 'react';
-import { CardType, Credentials, GameState } from '../types';
+import React, { useEffect } from 'react';
+import { CardType } from '../types';
 import { Socket } from 'socket.io-client';
 import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
 import TopMenu from './TopMenu';
+import useClientContext from '../hooks/useClientContext';
 
-interface PopupProps {
-  phase: 'challenge' | 'challenge-roll' | 'modify';
-  playerNum: number;
-  state: GameState;
-  socket: Socket;
-  credentials: Credentials;
-  setShowHand: React.Dispatch<React.SetStateAction<boolean>>;
-  setHandLock: React.Dispatch<React.SetStateAction<boolean>>;
-  setShownCardLock: React.Dispatch<React.SetStateAction<boolean>>;
-  setAllowedCards: React.Dispatch<React.SetStateAction<CardType[] | null>>;
-  show: boolean;
-}
+const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
+  const {
+    state: { val: state, set: setState },
+    playerNum,
+    credentials: { roomId, userId },
+    showHand,
+    shownCard,
+    allowedCards,
+    showPopup,
+    timer
+  } = useClientContext();
 
-const Popup: React.FC<PopupProps> = ({
-  phase,
-  state,
-  playerNum,
-  socket,
-  credentials,
-  setShowHand,
-  setHandLock,
-  setShownCardLock,
-  setAllowedCards,
-  show
-}) => {
   const preppedCard = state.mainDeck.preparedCard;
 
   useEffect(() => {
-    setHandLock(true);
-    setShowHand(true);
-    setShownCardLock(true);
+    if (showPopup.val) {
+      showHand.setLocked(true);
+      showHand.set(true);
+      shownCard.setLocked(true);
 
-    if (state.turn.player === playerNum) {
-      setAllowedCards(null);
-    } else if (phase === 'challenge') {
-      setAllowedCards([CardType.challenge]);
+      if (state.turn.player === playerNum.val) {
+        allowedCards.set([]);
+      } else if (state.turn.phase === 'challenge') {
+        allowedCards.set([CardType.challenge]);
+
+        timer.onEnd(() => {
+          socket.emit('challenge', roomId, userId, false);
+        });
+        timer.settings.start();
+      }
     }
-  }, []);
+  }, [showPopup.val]);
 
   return (
-    <div className={'popup'} style={{ opacity: show ? 1 : 0 }}>
+    <div className={'popup'} style={{ opacity: showPopup.val ? 1 : 0 }}>
       <div className='popup_summary'></div>
 
       {preppedCard &&
-        (phase === 'challenge' ? (
+        (state.turn.phase === 'challenge' ? (
           <div className='challenge-popup'>
             <img
               src={getImage(preppedCard.card)}
@@ -58,7 +53,7 @@ const Popup: React.FC<PopupProps> = ({
             />
 
             <div className='center'>
-              <TopMenu state={state} />
+              <TopMenu />
               <img
                 src='./assets/challenge/challenge.png'
                 className='small-md center-img'
@@ -68,7 +63,8 @@ const Popup: React.FC<PopupProps> = ({
 
             <div className='side-modifier'></div>
           </div>
-        ) : phase === 'challenge-roll' || phase === 'modify' ? (
+        ) : state.turn.phase === 'challenge-roll' ||
+          state.turn.phase === 'modify' ? (
           <div className='challenge-roll-popup'>
             <img
               src={getImage(preppedCard.card)}

@@ -1,3 +1,4 @@
+import Timer, { TimerEvent } from 'easytimer.js';
 import { Socket } from 'socket.io-client';
 
 export interface Credentials {
@@ -22,6 +23,13 @@ export enum CardType {
   magic = 'magic',
   item = 'item'
 }
+export const allCards = [
+  CardType.modifier,
+  CardType.challenge,
+  CardType.hero,
+  CardType.magic,
+  CardType.item
+];
 
 interface Card {
   player?: number;
@@ -133,6 +141,7 @@ export interface GameState {
     player: number;
     challenger?: number;
     movesLeft: 0 | 1 | 2 | 3;
+    timeElapsed: number;
     phase:
       | 'start-roll'
       | 'draw'
@@ -145,14 +154,67 @@ export interface GameState {
   };
 }
 
-export interface CardContextObj {
-  shownCard: AnyCard | null;
-  setShownCard: React.Dispatch<React.SetStateAction<AnyCard | null>>;
-  pos: 'left' | 'right' | 'top' | null;
-  setPos: React.Dispatch<React.SetStateAction<'left' | 'right' | 'top' | null>>;
-}
+export interface ClientStateObj {
+  // player state
+  credentials: {
+    roomId: string;
+    userId: string;
+  };
+  setCredentials: React.Dispatch<
+    React.SetStateAction<{
+      roomId: string;
+      userId: string;
+    }>
+  >;
 
-export interface SocketContextObj {
-  socket: Socket | null;
-  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
+  playerNum: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
+
+  // gameplay state
+  state: {
+    val: GameState;
+    set: React.Dispatch<React.SetStateAction<GameState>>;
+  };
+
+  allowedCards: {
+    val: CardType[];
+    set: React.Dispatch<React.SetStateAction<CardType[]>>;
+  };
+
+  showRoll: {
+    val: boolean;
+    set: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  hasRolled: {
+    val: boolean;
+    set: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
+  showPopup: {
+    val: boolean;
+    set: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
+  showHand: {
+    val: boolean;
+    set: React.Dispatch<React.SetStateAction<boolean>>;
+    locked: boolean;
+    setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
+  shownCard: {
+    val: AnyCard | null;
+    set: React.Dispatch<React.SetStateAction<AnyCard | null>>;
+    pos: 'left' | 'right' | 'top' | null;
+    setPos: React.Dispatch<
+      React.SetStateAction<'left' | 'right' | 'top' | null>
+    >;
+    locked: boolean;
+    setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
+  timer: {
+    settings: Timer;
+    targetAchieved: boolean;
+    onEnd: (cb: () => void) => void;
+  };
 }

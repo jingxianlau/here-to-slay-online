@@ -1,40 +1,43 @@
 import React from 'react';
 import { GameState } from '../types';
+import useClientContext from '../hooks/useClientContext';
 
-const TopMenu: React.FC<{ state: GameState }> = ({ state }) => {
+const TopMenu: React.FC = () => {
+  const { state } = useClientContext();
+
   return (
     <div className='top-menu'>
       <div className='turn-order'>
-        {state.match.players.map((name, num) => (
+        {state.val.match.players.map((name, num) => (
           <div key={num}>
             <span
               style={{
-                fontWeight: state.turn.player === num ? 700 : 500,
-                fontSize: state.turn.player === num ? '20px' : '16px',
-                color: state.turn.player === num ? 'white' : '#bbb'
+                fontWeight: state.val.turn.player === num ? 700 : 500,
+                fontSize: state.val.turn.player === num ? '20px' : '16px',
+                color: state.val.turn.player === num ? 'white' : '#bbb'
               }}
             >
               {name}
             </span>
-            {state.match.players[state.match.players.length - 1] !== name &&
-              ' → '}
+            {state.val.match.players[state.val.match.players.length - 1] !==
+              name && ' → '}
           </div>
         ))}
       </div>
       <div className='turn-circles'>
         <div
           className={
-            state.turn.movesLeft >= 1 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 1 ? 'turn-circle active' : 'turn-circle'
           }
         ></div>
         <div
           className={
-            state.turn.movesLeft >= 2 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 2 ? 'turn-circle active' : 'turn-circle'
           }
         ></div>
         <div
           className={
-            state.turn.movesLeft >= 3 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 3 ? 'turn-circle active' : 'turn-circle'
           }
         ></div>
       </div>
