@@ -217,4 +217,13 @@ export interface ClientStateObj {
     targetAchieved: boolean;
     onEnd: (cb: () => void) => void;
   };
+
+  showHelperText: {
+    val: boolean;
+    set: React.Dispatch<React.SetStateAction<boolean>>;
+    text: string;
+    setText: React.Dispatch<React.SetStateAction<string>>;
+    showText: boolean;
+    setShowText: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }

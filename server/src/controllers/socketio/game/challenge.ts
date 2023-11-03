@@ -1,4 +1,9 @@
-import { nextPlayer, rollDice } from '../../../functions/game';
+import {
+  hasCard,
+  nextPlayer,
+  removeCard,
+  rollDice
+} from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -31,30 +36,42 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     c => c.id !== card.id
   );
   gameState.turn.movesLeft--;
-  gameState.turn.phase = 'challenge';
 
   sendGameState(roomId);
+
+  gameState.turn.phase = 'challenge';
+
+  setTimeout(() => {
+    sendGameState(roomId);
+  }, 750);
 };
 
 export const challenge = (
   roomId: string,
   userId: string,
-  challenged: boolean
+  challenged: boolean,
+  cardId: string | undefined
 ) => {
   const playerNum = checkCredentials(roomId, userId);
   const gameState = rooms[roomId].state;
   if (
     playerNum === -1 ||
-    gameState.turn.phase !== 'play' ||
-    !gameState.mainDeck.preparedCard
+    gameState.turn.phase !== 'challenge' ||
+    !gameState.mainDeck.preparedCard ||
+    (cardId && !hasCard(roomId, playerNum, cardId))
   ) {
     return;
   }
 
   gameState.match.isReady[playerNum] = challenged;
+
   if (gameState.match.isReady.every(val => val === false)) {
     gameState.mainDeck.preparedCard.successful = true;
-  } else if (challenged) {
+  } else if (challenged && cardId) {
+    if (!removeCard(roomId, playerNum, cardId)) {
+      return;
+    }
+
     gameState.dice.main.roll = [1, 1];
     gameState.dice.main.total = 0;
     gameState.dice.main.modifier = [];
@@ -63,10 +80,12 @@ export const challenge = (
       total: 0,
       modifier: []
     };
+
     gameState.turn.phase = 'challenge-roll';
     gameState.turn.challenger = playerNum;
     gameState.turn.isRolling = true;
   }
+  sendGameState(roomId);
 };
 
 export const challengeRoll = (roomId: string, userId: string) => {

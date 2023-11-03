@@ -11,6 +11,8 @@ import Hand from '../components/Hand';
 import ShownCard from '../components/ShownCard';
 import Popup from '../components/Popup';
 import useClientContext from '../hooks/useClientContext';
+import HelperText from '../components/HelperText';
+import ShownCardTop from '../components/ShownCardTop';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +26,8 @@ const Game: React.FC = () => {
     showPopup,
     showHand,
     shownCard,
-    timer
+    timer,
+    showHelperText
   } = useClientContext();
 
   console.log(useClientContext());
@@ -65,6 +68,7 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
+        showHelperText.set(false);
 
         /* PHASES */
         switch (state.turn.phase) {
@@ -88,6 +92,14 @@ const Game: React.FC = () => {
 
           case 'draw':
             showPopup.set(false);
+
+            showHelperText.setText('Draw Card');
+            showHelperText.set(true);
+            showHelperText.setShowText(true);
+            setTimeout(() => {
+              showHelperText.setShowText(false);
+            }, 2000);
+
             if (
               state.players[playerNum.val]?.hand.length === 0 &&
               state.turn.player === playerNum.val
@@ -171,11 +183,12 @@ const Game: React.FC = () => {
                   state.turn.phase === 'challenge-roll' ||
                   state.turn.phase === 'modify') && <Popup socket={socket} />}
 
-                {shownCard && shownCard.pos && !shownCard.locked && (
-                  <ShownCard />
-                )}
+                <ShownCard />
+                <ShownCardTop />
 
                 <Hand socket={socket} />
+
+                <HelperText />
               </>
             )}
           </div>

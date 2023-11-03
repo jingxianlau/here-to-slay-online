@@ -70,7 +70,7 @@ const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
               />
             </div>
             <h1>
-              {showRoll &&
+              {showRoll.val &&
                 state.val.dice.main.roll[0] + state.val.dice.main.roll[1]}
             </h1>
           </>

@@ -111,10 +111,16 @@ export const ready = (socket: Socket) => {
 
 export const startMatch = (socket: Socket) => {
   return (roomId: string, playerId: string) => {
+    const playerNum = checkCredentials(roomId, playerId);
+    if (playerNum === -1) {
+      sendState(roomId);
+      socket.disconnect();
+      return;
+    }
+
     const state = rooms[roomId].state;
     const numPlayers = rooms[roomId].numPlayers;
 
-    const playerNum = state.secret.playerIds.indexOf(playerId);
     state.secret.playerSocketIds[playerNum] = socket.id;
 
     if (rooms[roomId].state.match.gameStarted) {

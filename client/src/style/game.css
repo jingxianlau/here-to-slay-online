@@ -84,64 +84,81 @@ header img {
 /* SHOWN CARD */
 .shown-card {
   position: absolute;
-  background-color: #333;
+  background-color: #1e1e1e;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+.shown-card-top {
+  position: absolute;
+  background-color: none;
+  transition: opacity 0.3s ease-in-out;
+}
+.shown-card-top.show {
+  opacity: 1;
+}
+.shown-card.show {
+  opacity: 1;
+  height: 100vh;
+  width: 50vh;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shown-card.left,
 .shown-card.right {
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 33vw;
-  background: linear-gradient(to right, transparent, #1e1e1e 5vw);
-  display: flex;
-  align-items: center;
+  box-shadow: #1e1e1e 0 0 20px 30px;
 }
-.shown-card.left {
-  top: 0;
-  left: 0;
+.shown-card.hide {
+  width: 0;
   height: 100vh;
-  width: 33vw;
-  background: linear-gradient(to left, #11111100, #1e1e1e 5vw);
-  display: flex;
-  align-items: center;
-}
-.shown-card.top img {
+  top: 0;
+  opacity: 0;
   box-shadow: none;
 }
-.shown-card.top {
+.shown-card-top.hide {
+  width: 0;
+  height: 0;
+  /* opacity: 0; */
+  background-color: red;
+}
+.shown-card.right {
+  right: 0;
+}
+.shown-card.left {
+  left: 0;
+}
+.shown-card-top img {
+  box-shadow: none;
+}
+.shown-card-top {
   bottom: 33.3vh;
   left: calc(50vw - 22.5225vh);
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: transparent;
 }
-.shown-card.top img {
+.shown-card-top img {
   box-shadow: #1e1e1e 0 0 25px 25px;
 }
 
-.shown-card .large-enlarged {
+.shown-card .large-enlarged,
+.shown-card-top .large-enlarged {
   width: 46vh;
   height: 78.5vh;
   border-radius: 2vh;
   user-select: none;
 }
-.shown-card .small-enlarged {
+.shown-card .small-enlarged,
+.shown-card-top .small-enlarged {
   width: 45.045vh;
   height: 62.92vh;
   border-radius: 1.3vh;
   user-select: none;
-}
-.shown-card.left .small-enlarged {
-  margin-left: 1.3vw;
-}
-.shown-card.right .small-enlarged {
-  margin-left: 6.2vw;
-}
-.shown-card.left .large-enlarged {
-  margin-left: 1vw;
-}
-.shown-card.right .large-enlarged {
-  margin-left: 6vw;
 }
 
 /* HAND */
@@ -460,4 +477,37 @@ img.click:hover {
 .side-modifier {
   width: 36.732vh;
   height: 51.308vh;
+}
+
+/* HELPER TEXT & TIMER */
+.timer {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  transition: 0.3s ease-in-out 0.1s;
+}
+.timer.show {
+  opacity: 1;
+}
+.timer.hide {
+  opacity: 0;
+}
+.timer.time {
+  height: 1.2vh;
+}
+.timer.text {
+  background: #111;
+  box-shadow: #111 0 0 5px 8px;
+  height: 4.5vh;
+}
+.timer h3 {
+  margin-top: 1vh;
+}
+.timer h3.show {
+  opacity: 1;
+  transition: 0.3s ease-in 0.2s;
+}
+.timer h3.hide {
+  opacity: 0;
+  transition: 0.2s ease-in;
 }

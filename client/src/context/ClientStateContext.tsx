@@ -29,6 +29,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [shownCardLock, setShownCardLock] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const { timer, targetAchieved, onEnd } = useEventTimer(1);
+  const [helperText, setHelperText] = useState('');
+  const [showHelperText, setShowHelperText] = useState(false);
+  const [showText, setShowText] = useState(false);
 
   const initVal: ClientStateObj = {
     credentials,
@@ -75,6 +78,14 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       settings: timer,
       targetAchieved,
       onEnd
+    },
+    showHelperText: {
+      val: showHelperText,
+      set: setShowHelperText,
+      text: helperText,
+      setText: setHelperText,
+      showText: showText,
+      setShowText: setShowText
     }
   };
 
