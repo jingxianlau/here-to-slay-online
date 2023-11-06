@@ -27,23 +27,26 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
       showHand.setLocked(true);
       showHand.set(true);
       shownCard.setLocked(true);
-
-      showHelperText.setText('Challenge Card?');
-      showHelperText.set(true);
-      if (!window.sessionStorage.getItem('timer-seconds')) {
-        showHelperText.setShowText(true);
-        setTimeout(() => {
-          showHelperText.setShowText(false);
-        }, 2000);
-      }
+      setTimeout(() => {
+        showHand.setLocked(false);
+        showHand.set(false);
+      }, 1200);
 
       if (state.turn.player === playerNum.val) {
         allowedCards.set([]);
       } else if (state.turn.phase === 'challenge') {
         allowedCards.set([CardType.challenge]);
 
-        timer.onEnd(() => socket.emit('challenge', roomId, userId, false));
+        showHelperText.setText('Challenge Card?');
+        showHelperText.set(true);
+        if (!window.sessionStorage.getItem('timer-seconds')) {
+          showHelperText.setShowText(true);
+          setTimeout(() => {
+            showHelperText.setShowText(false);
+          }, 1200);
+        }
 
+        timer.onEnd(() => socket.emit('challenge', roomId, userId, false));
         const seconds = Number(window.sessionStorage.getItem('timer-seconds'));
         const tenths = Number(window.sessionStorage.getItem('timer-tenths'));
         timer.settings.start({
@@ -62,7 +65,6 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
           countdown: true,
           precision: 'secondTenths'
         });
-        console.log(timer.settings.getTimeValues());
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,20 +77,22 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
       {preppedCard &&
         (state.turn.phase === 'challenge' ? (
           <div className='challenge-popup'>
-            <img
-              src={getImage(preppedCard.card)}
-              alt={preppedCard.card.name}
-              className='small-lg'
-              draggable='false'
-            />
+            <div className='img-container left'>
+              <img
+                src={getImage(preppedCard.card)}
+                alt={preppedCard.card.name}
+                className='small-lg'
+                draggable='false'
+              />
+            </div>
 
-            <div className='center'>
-              <TopMenu />
+            <div className='img-container cross'>
               <img
                 src='./assets/challenge/challenge.png'
                 alt='challenge'
                 className='small-md center-img'
                 draggable='false'
+                onClick={() => socket.emit('challenge', roomId, userId, false)}
               />
             </div>
 

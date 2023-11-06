@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PlayerBoard from './PlayerBoard';
 import CenterBoard from './CenterBoard';
 import { Socket } from 'socket.io-client';
-import TopMenu from './TopMenu';
 import useClientContext from '../hooks/useClientContext';
 
 interface MainBoardProps {
@@ -45,66 +44,58 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
   }, []);
 
   return (
-    <>
-      <TopMenu />
-
-      <div className='content'>
-        {boardOrder.map((arr, num) => (
-          <div
-            className='col'
-            key={num}
-            style={{
-              justifyContent: arr.length > 1 ? 'space-between' : 'center'
-            }}
-          >
-            {arr.map((boardNum, i) =>
-              boardNum !== -1 ? (
-                <div
-                  className={`${
-                    boardNum === playerNum.val ? 'own-board' : 'player-board'
-                  }`}
-                  key={i}
-                  style={{
-                    marginBottom: arr.length > 1 ? 0 : '120px'
-                  }}
-                >
-                  {boardNum !== playerNum.val ? (
-                    <h4
-                      style={{
-                        marginBottom: '5px',
-                        color:
-                          state.val.turn.player === boardNum
-                            ? '#fc7c37'
-                            : 'white'
-                      }}
-                    >
-                      {state.val.match.players[boardNum]}
-                    </h4>
-                  ) : (
-                    <h2
-                      style={{
-                        marginBottom: '5px',
-                        color:
-                          state.val.turn.player === boardNum
-                            ? '#fc7c37'
-                            : 'white'
-                      }}
-                    >
-                      {state.val.match.players[boardNum]}
-                    </h2>
-                  )}
-                  <PlayerBoard playerNum={boardNum} col={num} socket={socket} />
-                </div>
-              ) : (
-                <div className='center-board' key={i}>
-                  <CenterBoard socket={socket} />
-                </div>
-              )
-            )}
-          </div>
-        ))}
-      </div>
-    </>
+    <div className='content'>
+      {boardOrder.map((arr, num) => (
+        <div
+          className='col'
+          key={num}
+          style={{
+            justifyContent: arr.length > 1 ? 'space-between' : 'center'
+          }}
+        >
+          {arr.map((boardNum, i) =>
+            boardNum !== -1 ? (
+              <div
+                className={`${
+                  boardNum === playerNum.val ? 'own-board' : 'player-board'
+                }`}
+                key={i}
+                style={{
+                  marginBottom: arr.length > 1 ? 0 : '120px'
+                }}
+              >
+                {boardNum !== playerNum.val ? (
+                  <h4
+                    style={{
+                      marginBottom: '5px',
+                      color:
+                        state.val.turn.player === boardNum ? '#fc7c37' : 'white'
+                    }}
+                  >
+                    {state.val.match.players[boardNum]}
+                  </h4>
+                ) : (
+                  <h2
+                    style={{
+                      marginBottom: '5px',
+                      color:
+                        state.val.turn.player === boardNum ? '#fc7c37' : 'white'
+                    }}
+                  >
+                    {state.val.match.players[boardNum]}
+                  </h2>
+                )}
+                <PlayerBoard playerNum={boardNum} col={num} socket={socket} />
+              </div>
+            ) : (
+              <div className='center-board' key={i}>
+                <CenterBoard socket={socket} />
+              </div>
+            )
+          )}
+        </div>
+      ))}
+    </div>
   );
 };
 

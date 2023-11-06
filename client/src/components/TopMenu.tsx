@@ -12,14 +12,16 @@ const TopMenu: React.FC = () => {
             <span
               style={{
                 fontWeight: state.val.turn.player === num ? 700 : 500,
-                fontSize: state.val.turn.player === num ? '20px' : '16px',
+                fontSize: state.val.turn.player === num ? '2.2vh' : '1.8vh',
                 color: state.val.turn.player === num ? 'white' : '#bbb'
               }}
             >
               {name}
             </span>
-            {state.val.match.players[state.val.match.players.length - 1] !==
-              name && ' → '}
+            <span style={{ fontSize: '2.5vh' }}>
+              {state.val.match.players[state.val.match.players.length - 1] !==
+                name && ' → '}
+            </span>
           </div>
         ))}
       </div>

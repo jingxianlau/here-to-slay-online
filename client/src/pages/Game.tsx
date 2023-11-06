@@ -13,6 +13,7 @@ import Popup from '../components/Popup';
 import useClientContext from '../hooks/useClientContext';
 import HelperText from '../components/HelperText';
 import ShownCardTop from '../components/ShownCardTop';
+import TopMenu from '../components/TopMenu';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -179,6 +180,8 @@ const Game: React.FC = () => {
               <StartRoll rollSummary={rollSummary} />
             ) : (
               <>
+                <TopMenu />
+
                 <MainBoard socket={socket} />
 
                 {(state.turn.phase === 'challenge' ||
