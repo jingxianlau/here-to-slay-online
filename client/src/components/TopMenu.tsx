@@ -1,5 +1,4 @@
 import React from 'react';
-import { GameState } from '../types';
 import useClientContext from '../hooks/useClientContext';
 
 const TopMenu: React.FC = () => {

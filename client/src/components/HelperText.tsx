@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useClientContext from '../hooks/useClientContext';
+import { TimeCounter } from 'easytimer.js';
 
 const HelperText: React.FC = () => {
   const { showHelperText, timer } = useClientContext();
+  const [timeValues, setTimeValues] = useState({} as TimeCounter);
+
+  useEffect(() => {
+    setTimeValues(timer.settings.getTimeValues());
+  }, [timer]);
   return (
     <div
       className={`timer
@@ -11,15 +17,7 @@ const HelperText: React.FC = () => {
         showHelperText.showText || !timer.settings.isRunning() ? 'text' : 'time'
       }`}
       style={
-        !showHelperText.showText && timer.settings.isRunning()
-          ? {
-              background: `linear-gradient(to right, #fc7c37 ${
-                (timer.settings.getTimeValues().seconds / 30) * 99
-              }%, 0, #fc7c37 ${
-                (timer.settings.getTimeValues().seconds / 30) * 100
-              }%, #111 ${(timer.settings.getTimeValues().seconds / 30) * 101}%)`
-            }
-          : !showHelperText.showText
+        !showHelperText.showText && !timer.settings.isRunning()
           ? {
               background: 'transparent',
               boxShadow: 'transparent 0 0 5px 8px'
@@ -34,6 +32,23 @@ const HelperText: React.FC = () => {
       >
         {showHelperText.text}
       </h3>
+      <div
+        className={`time-bar
+        ${
+          !showHelperText.showText && timer.settings.isRunning()
+            ? 'show'
+            : 'hide'
+        }`}
+        style={
+          timer.settings.isRunning()
+            ? {
+                width: `${
+                  (timeValues.seconds * 10 + timeValues.secondTenths) / 3
+                }%`
+              }
+            : { width: '100%' }
+        }
+      ></div>
     </div>
   );
 };

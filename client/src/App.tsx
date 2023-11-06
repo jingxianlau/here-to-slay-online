@@ -22,6 +22,7 @@ function App() {
     loadRooms();
 
     setInterval(loadRooms, 200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function changeUsername(name: string) {

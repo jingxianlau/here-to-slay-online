@@ -1,4 +1,4 @@
-import { AnyCard, CardType, HeroClass } from '../types';
+import { AnyCard, CardType } from '../types';
 
 export const getImage = (card: AnyCard) => {
   if (card.type === CardType.hero) {

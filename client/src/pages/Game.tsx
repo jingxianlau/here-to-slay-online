@@ -26,11 +26,8 @@ const Game: React.FC = () => {
     showPopup,
     showHand,
     shownCard,
-    timer,
     showHelperText
   } = useClientContext();
-
-  console.log(useClientContext());
 
   // variables
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -68,7 +65,6 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
-        showHelperText.set(false);
 
         /* PHASES */
         switch (state.turn.phase) {
@@ -92,6 +88,7 @@ const Game: React.FC = () => {
 
           case 'draw':
             showPopup.set(false);
+            allowedCards.set([]);
 
             showHelperText.setText('Draw Card');
             showHelperText.set(true);
@@ -115,6 +112,9 @@ const Game: React.FC = () => {
 
           case 'challenge':
             showPopup.set(true);
+            shownCard.setLocked(true);
+            shownCard.setPos(null);
+            shownCard.set(null);
             break;
 
           case 'challenge-roll':
@@ -134,11 +134,12 @@ const Game: React.FC = () => {
         /* HELPER FUNCTIONS */
         function getRollData() {
           setRollSummary([]);
-          state.match.startRolls.inList.map(num => {
+          for (let i = 0; i < state.match.startRolls.inList.length; i++) {
+            let num = state.match.startRolls.inList[i];
             if (state.match.startRolls.rolls[num] !== 0) {
               setRollSummary(e => [...e, num]);
             }
-          });
+          }
         }
       });
 
@@ -150,6 +151,7 @@ const Game: React.FC = () => {
         }
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ROLL */

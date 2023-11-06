@@ -5,17 +5,19 @@ import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
 import TopMenu from './TopMenu';
 import useClientContext from '../hooks/useClientContext';
+import { showText } from '../helpers/showText';
 
 const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
   const {
-    state: { val: state, set: setState },
+    state: { val: state },
     playerNum,
     credentials: { roomId, userId },
     showHand,
     shownCard,
     allowedCards,
     showPopup,
-    timer
+    timer,
+    showHelperText
   } = useClientContext();
 
   const preppedCard = state.mainDeck.preparedCard;
@@ -26,17 +28,44 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
       showHand.set(true);
       shownCard.setLocked(true);
 
+      showHelperText.setText('Challenge Card?');
+      showHelperText.set(true);
+      if (!window.sessionStorage.getItem('timer-seconds')) {
+        showHelperText.setShowText(true);
+        setTimeout(() => {
+          showHelperText.setShowText(false);
+        }, 2000);
+      }
+
       if (state.turn.player === playerNum.val) {
         allowedCards.set([]);
       } else if (state.turn.phase === 'challenge') {
         allowedCards.set([CardType.challenge]);
 
-        timer.onEnd(() => {
-          socket.emit('challenge', roomId, userId, false);
+        timer.onEnd(() => socket.emit('challenge', roomId, userId, false));
+
+        const seconds = Number(window.sessionStorage.getItem('timer-seconds'));
+        const tenths = Number(window.sessionStorage.getItem('timer-tenths'));
+        timer.settings.start({
+          startValues:
+            seconds || tenths
+              ? {
+                  seconds: seconds,
+                  secondTenths: tenths - 1
+                }
+              : {
+                  seconds: 30
+                },
+          target: {
+            secondTenths: -1
+          },
+          countdown: true,
+          precision: 'secondTenths'
         });
-        timer.settings.start();
+        console.log(timer.settings.getTimeValues());
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPopup.val]);
 
   return (
@@ -48,6 +77,7 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
           <div className='challenge-popup'>
             <img
               src={getImage(preppedCard.card)}
+              alt={preppedCard.card.name}
               className='small-lg'
               draggable='false'
             />
@@ -56,6 +86,7 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
               <TopMenu />
               <img
                 src='./assets/challenge/challenge.png'
+                alt='challenge'
                 className='small-md center-img'
                 draggable='false'
               />
@@ -68,6 +99,7 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
           <div className='challenge-roll-popup'>
             <img
               src={getImage(preppedCard.card)}
+              alt={preppedCard.card.name}
               className='small-card glow'
               draggable='false'
             />

@@ -1,5 +1,4 @@
-import Timer, { TimerEvent } from 'easytimer.js';
-import { Socket } from 'socket.io-client';
+import Timer from 'easytimer.js';
 
 export interface Credentials {
   roomId: string;

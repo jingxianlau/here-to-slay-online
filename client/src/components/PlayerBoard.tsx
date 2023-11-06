@@ -1,5 +1,5 @@
 import React from 'react';
-import { Credentials, GameState, LeaderCard } from '../types';
+import { LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';

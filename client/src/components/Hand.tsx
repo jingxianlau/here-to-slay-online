@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { AnyCard, CardType, Credentials, GameState, allCards } from '../types';
+import React from 'react';
+import { AnyCard, CardType } from '../types';
 import { getImage } from '../helpers/getImage';
-import useCardContext from '../hooks/useClientContext';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
@@ -12,7 +11,7 @@ interface HandProps {
 
 const Hand: React.FC<HandProps> = ({ socket }) => {
   const {
-    state: { val: state, set: setState },
+    state: { val: state },
     playerNum,
     showHand,
     allowedCards,
@@ -72,8 +71,16 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
   return (
     <div
       className='hand-trigger'
-      onMouseOver={() => showHand.set(true)}
-      onMouseOut={() => showHand.set(showHand.locked ? true : false)}
+      onMouseOver={() => {
+        if (!showHand.locked) {
+          showHand.set(true);
+        }
+      }}
+      onMouseOut={() => {
+        if (!showHand.locked) {
+          showHand.set(false);
+        }
+      }}
     >
       {!showHand.val && (
         <>
@@ -101,14 +108,19 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             <div
               key={i}
               onMouseEnter={() => {
-                if (allowedCard(allowedCards.val, card.type)) {
+                if (
+                  allowedCard(allowedCards.val, card.type) &&
+                  !shownCard.locked
+                ) {
                   shownCard.set(card);
                   shownCard.setPos('top');
                 }
               }}
               onMouseLeave={() => {
-                shownCard.set(null);
-                shownCard.setPos(null);
+                if (!shownCard.locked) {
+                  shownCard.set(null);
+                  shownCard.setPos(null);
+                }
               }}
             >
               <img

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { AnyCard, HeroCard } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
 

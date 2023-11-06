@@ -63,6 +63,7 @@ const Lobby: React.FC = () => {
         if (socket) socket.disconnect();
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function getReady() {

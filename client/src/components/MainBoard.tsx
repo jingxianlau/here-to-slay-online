@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Credentials, GameState } from '../types';
 import PlayerBoard from './PlayerBoard';
 import CenterBoard from './CenterBoard';
 import { Socket } from 'socket.io-client';
@@ -11,7 +10,7 @@ interface MainBoardProps {
 }
 
 const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
-  const { state, playerNum, credentials, showHand } = useClientContext();
+  const { state, playerNum } = useClientContext();
 
   const [boardOrder, setBoardOrder] = useState<number[][]>([[], [], []]);
 
@@ -42,6 +41,7 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
         setBoardOrder(board);
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
