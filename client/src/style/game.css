@@ -519,21 +519,23 @@ img.click:hover {
 .timer.hide {
   opacity: 0;
 }
-.timer.time {
+.timer {
   height: 1vh;
 }
-.timer.time .time-bar {
+.timer .time-bar {
   position: absolute;
   top: 0;
   transition: width 0.1s, opacity 0.5s, height 0.5s, background-color 0.5s;
   border-radius: 0 2.25vh 2.25vh 0;
 }
-.timer.time .time-bar.hide {
+.timer .time-bar.hide {
   opacity: 0;
-  height: 4.5vh;
   background-color: transparent;
 }
-.timer.time .time-bar.show {
+.timer.text .time-bar.hide {
+  height: 5vh;
+}
+.timer .time-bar.show {
   opacity: 1;
   height: 1vh;
   background-color: #fc7c37;
@@ -541,10 +543,10 @@ img.click:hover {
 .timer.text {
   background: #1a1a1a;
   box-shadow: #1a1a1a 0 0 5px 8px;
-  height: 4.5vh;
+  height: 5vh;
 }
 .timer h3 {
-  margin-top: 0.8vh;
+  margin-top: 1.5vh;
   font-size: 2.7vh;
 }
 .timer h3.show {
@@ -554,4 +556,11 @@ img.click:hover {
 .timer h3.hide {
   opacity: 0;
   transition: 0.2s ease-in;
+}
+
+/* DEV */
+.dev-reset {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

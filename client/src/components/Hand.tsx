@@ -60,8 +60,8 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             'challenge',
             credentials.roomId,
             credentials.userId,
-            card,
-            true
+            true,
+            card.id
           );
         }
         break;

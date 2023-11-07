@@ -34,16 +34,14 @@ const HelperText: React.FC = () => {
       </h3>
       <div
         className={`time-bar
-        ${
-          !showHelperText.showText && timer.settings.isRunning()
-            ? 'show'
-            : 'hide'
-        }`}
+        ${timer.settings.isRunning() ? 'show' : 'hide'}`}
         style={
           timer.settings.isRunning()
             ? {
                 width: `${
-                  (timeValues.seconds * 10 + timeValues.secondTenths) / 3
+                  ((timeValues.seconds * 10 + timeValues.secondTenths) /
+                    (timer.maxTime.val * 10)) *
+                  100
                 }%`
               }
             : { width: '100%' }

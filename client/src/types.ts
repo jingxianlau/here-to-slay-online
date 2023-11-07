@@ -213,8 +213,8 @@ export interface ClientStateObj {
 
   timer: {
     settings: Timer;
-    targetAchieved: boolean;
-    onEnd: (cb: () => void) => void;
+    maxTime: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
+    setTargetAchieved: (func: () => void) => void;
   };
 
   showHelperText: {

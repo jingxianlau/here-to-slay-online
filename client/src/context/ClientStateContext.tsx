@@ -28,7 +28,8 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [pos, setPos] = useState<'left' | 'right' | 'top' | null>(null);
   const [shownCardLock, setShownCardLock] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const { timer, targetAchieved, onEnd } = useEventTimer(30);
+  const { timer, setTargetAchieved } = useEventTimer();
+  const [maxTime, setMaxTime] = useState(30);
   const [helperText, setHelperText] = useState('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [showText, setShowText] = useState(false);
@@ -76,8 +77,11 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     timer: {
       settings: timer,
-      targetAchieved,
-      onEnd
+      setTargetAchieved,
+      maxTime: {
+        val: maxTime,
+        set: setMaxTime
+      }
     },
     showHelperText: {
       val: showHelperText,
@@ -97,73 +101,3 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 export default ClientContextProvider;
-
-/* 
-
-export interface ClientStateObj {
-  // player state
-  credentials: {
-    val: {
-      roomId: string;
-      userId: string;
-    };
-    set: React.Dispatch<
-      React.SetStateAction<{
-        roomId: string;
-        userId: string;
-      }>
-    >;
-  };
-  playerNum: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
-
-  // gameplay state
-  state: {
-    val: GameState;
-    set: React.Dispatch<React.SetStateAction<GameState>>;
-  };
-
-  allowedCards: {
-    val: CardType[];
-    set: React.Dispatch<React.SetStateAction<CardType[]>>;
-  };
-
-  showRoll: {
-    val: boolean;
-    set: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-  hasRolled: {
-    val: boolean;
-    set: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-
-  showPopup: {
-    val: boolean;
-    set: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-
-  showHand: {
-    val: boolean;
-    set: React.Dispatch<React.SetStateAction<boolean>>;
-    locked: boolean;
-    setLocked: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-
-  shownCard: {
-    val: AnyCard | null;
-    set: React.Dispatch<React.SetStateAction<AnyCard | null>>;
-    pos: 'left' | 'right' | 'top' | null;
-    setPos: React.Dispatch<
-      React.SetStateAction<'left' | 'right' | 'top' | null>
-    >;
-    locked: boolean;
-    setLocked: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-
-  timer: {
-    settings: Timer;
-    targetAchieved: boolean;
-    onEnd: (cb: () => void) => void;
-  };
-}
-
-*/

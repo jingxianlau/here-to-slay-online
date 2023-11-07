@@ -15,8 +15,8 @@ export const startRoll = (roomId: string, userId: string) => {
   rooms[roomId].state.turn.movesLeft--;
   const startRolls = rooms[roomId].state.match.startRolls;
 
-  const roll = rollDice();
-  const val = roll[0] + roll[1];
+  let roll = rollDice();
+  let val = roll[0] + roll[1];
 
   rooms[roomId].state.dice.main.roll = roll;
   rooms[roomId].state.dice.main.total = val;
@@ -26,12 +26,11 @@ export const startRoll = (roomId: string, userId: string) => {
   sendGameState(roomId);
 
   // REMOVE LOSING VALUES
-  for (let i = 0; i < startRolls.inList.length; i++) {
-    if (
-      startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal &&
-      startRolls.rolls[startRolls.rolls.length - 1] !== 0
-    ) {
-      startRolls.inList.splice(i--, 1);
+  if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+    for (let i = 0; i < startRolls.inList.length; i++) {
+      if (startRolls.rolls[startRolls.inList[i]] < startRolls.maxVal) {
+        startRolls.inList.splice(i--, 1);
+      }
     }
   }
 
@@ -50,7 +49,7 @@ export const startRoll = (roomId: string, userId: string) => {
     // IF TIED (SETUP NEXT ROUND)
   } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
     startRolls.rolls = [];
-    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+    for (let i = 0; i < startRolls.inList.length; i++) {
       startRolls.rolls.push(0);
     }
     startRolls.maxVal = 0;

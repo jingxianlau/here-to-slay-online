@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import express from 'express';
 
 import expressServer from './controllers/express/expressServer';
-import { parseState } from './functions/helpers';
+import { addPlayer, parseState } from './functions/helpers';
 import { rooms } from './rooms';
 
 import {
@@ -26,6 +26,9 @@ import {
   confirmAttack
 } from './controllers/socketio/game/attack';
 import { useEffect } from './controllers/socketio/game/useEffect';
+import { distributeCards } from './functions/game';
+import { initialState } from './cards';
+import cloneDeep from 'lodash.clonedeep';
 
 /* EXPRESS SERVER */
 const app = express();
@@ -70,6 +73,36 @@ io.on('connection', socket => {
 
   // TODO: use-effect
   socket.on('use-effect', useEffect);
+
+  // DEV: RESET GAME STATE
+  socket.on('reset-state', (roomId: string) => {
+    const playerSocketIds = cloneDeep(
+      rooms[roomId].state.secret.playerSocketIds
+    );
+    const playerIds = cloneDeep(rooms[roomId].state.secret.playerIds);
+    const usernames = cloneDeep(rooms[roomId].state.match.players);
+
+    rooms[roomId].numPlayers = 0;
+    rooms[roomId].state = cloneDeep(initialState);
+    const state = rooms[roomId].state;
+
+    for (let i = 0; i < playerIds.length; i++) {
+      addPlayer(roomId, playerIds[i], usernames[i]);
+    }
+
+    state.match.gameStarted = true;
+    state.turn.phase = 'draw';
+    state.turn.isRolling = false;
+    state.turn.player = 0;
+    state.dice.main.roll[0] = 1;
+    state.dice.main.roll[1] = 1;
+    state.turn.movesLeft = 3;
+    state.secret.playerSocketIds = playerSocketIds;
+
+    distributeCards(state, rooms[roomId].numPlayers);
+
+    sendGameState(roomId);
+  });
 });
 
 /* 

@@ -8,7 +8,7 @@ interface CenterBoardProps {
 }
 
 const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
-  const { state, credentials, showHand, playerNum, shownCard } =
+  const { state, credentials, showHand, playerNum, shownCard, timer } =
     useClientContext();
 
   function drawTwo() {
@@ -17,11 +17,12 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
       state.val.turn.player !== playerNum.val
     )
       return;
+
     socket.emit('draw-two', credentials.roomId, credentials.userId);
     showHand.set(true);
     setTimeout(() => {
       showHand.set(false);
-    }, 1000);
+    }, 1200);
   }
 
   return (

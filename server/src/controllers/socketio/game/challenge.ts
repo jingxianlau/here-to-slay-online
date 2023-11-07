@@ -36,14 +36,14 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     c => c.id !== card.id
   );
   gameState.turn.movesLeft--;
-
-  sendGameState(roomId);
-
   gameState.turn.phase = 'challenge';
 
-  setTimeout(() => {
-    sendGameState(roomId);
-  }, 750);
+  gameState.match.isReady = [];
+  for (let i = 0; i < gameState.match.players.length; i++) {
+    gameState.match.isReady.push(i === gameState.turn.player ? false : null);
+  }
+
+  sendGameState(roomId);
 };
 
 export const challenge = (
@@ -52,8 +52,10 @@ export const challenge = (
   challenged: boolean,
   cardId: string | undefined
 ) => {
+  console.log('challenge');
   const playerNum = checkCredentials(roomId, userId);
   const gameState = rooms[roomId].state;
+
   if (
     playerNum === -1 ||
     gameState.turn.phase !== 'challenge' ||
@@ -67,6 +69,11 @@ export const challenge = (
 
   if (gameState.match.isReady.every(val => val === false)) {
     gameState.mainDeck.preparedCard.successful = true;
+    sendGameState(roomId);
+
+    setTimeout(() => {
+      gameState.turn.phase = 'play';
+    }, 500);
   } else if (challenged && cardId) {
     if (!removeCard(roomId, playerNum, cardId)) {
       return;
@@ -84,8 +91,9 @@ export const challenge = (
     gameState.turn.phase = 'challenge-roll';
     gameState.turn.challenger = playerNum;
     gameState.turn.isRolling = true;
+
+    sendGameState(roomId);
   }
-  sendGameState(roomId);
 };
 
 export const challengeRoll = (roomId: string, userId: string) => {

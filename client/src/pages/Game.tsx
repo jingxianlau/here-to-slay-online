@@ -14,6 +14,8 @@ import useClientContext from '../hooks/useClientContext';
 import HelperText from '../components/HelperText';
 import ShownCardTop from '../components/ShownCardTop';
 import TopMenu from '../components/TopMenu';
+import { setTimer, showText } from '../helpers/showText';
+import { popupHand } from '../helpers/popupHand';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +29,8 @@ const Game: React.FC = () => {
     showPopup,
     showHand,
     shownCard,
-    showHelperText
+    showHelperText,
+    timer
   } = useClientContext();
 
   // variables
@@ -66,6 +69,7 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (state: GameState) => {
         setState(state);
+        timer.settings.stop();
 
         /* PHASES */
         switch (state.turn.phase) {
@@ -91,12 +95,14 @@ const Game: React.FC = () => {
             showPopup.set(false);
             allowedCards.set([]);
 
-            showHelperText.setText('Draw Card');
-            showHelperText.set(true);
-            showHelperText.setShowText(true);
-            setTimeout(() => {
-              showHelperText.setShowText(false);
-            }, 2000);
+            showText(showHelperText, 'Draw Card');
+            if (state.turn.player === playerNum.val) {
+              timer.setTargetAchieved(() => {
+                socket.emit('draw-two', credentials.roomId, credentials.userId);
+                popupHand(showHand);
+              });
+            }
+            setTimer(timer, 10);
 
             if (
               state.players[playerNum.val]?.hand.length === 0 &&
@@ -128,7 +134,14 @@ const Game: React.FC = () => {
 
           case 'play':
             showPopup.set(false);
-            allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
+            shownCard.setLocked(false);
+            allowedCards.set([]);
+
+            if (state.turn.player === playerNum.val) {
+              allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
+            }
+
+            showText(showHelperText, 'Play Card');
             break;
         }
 
@@ -194,6 +207,18 @@ const Game: React.FC = () => {
                 <Hand socket={socket} />
 
                 <HelperText />
+
+                <button
+                  className='dev-reset'
+                  onClick={() => {
+                    socket.emit('reset-state', credentials.roomId);
+
+                    // reload to run useEffect (else playernum breaks for some reason)
+                    navigate('/');
+                  }}
+                >
+                  Reset State
+                </button>
               </>
             )}
           </div>

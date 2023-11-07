@@ -3,9 +3,8 @@ import { CardType } from '../types';
 import { Socket } from 'socket.io-client';
 import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
-import TopMenu from './TopMenu';
 import useClientContext from '../hooks/useClientContext';
-import { showText } from '../helpers/showText';
+import { setTimer, showText } from '../helpers/showText';
 
 const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
   const {
@@ -34,37 +33,25 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
 
       if (state.turn.player === playerNum.val) {
         allowedCards.set([]);
-      } else if (state.turn.phase === 'challenge') {
-        allowedCards.set([CardType.challenge]);
+      }
 
-        showHelperText.setText('Challenge Card?');
-        showHelperText.set(true);
-        if (!window.sessionStorage.getItem('timer-seconds')) {
-          showHelperText.setShowText(true);
-          setTimeout(() => {
-            showHelperText.setShowText(false);
-          }, 1200);
+      if (state.turn.phase === 'challenge') {
+        if (state.mainDeck.preparedCard?.successful) {
+          allowedCards.set([]);
+          showText(showHelperText, 'No Challenge: Card Played', 500);
+        } else {
+          allowedCards.set([CardType.challenge]);
+
+          showText(showHelperText, 'Challenge Card?');
+          console.log(state.turn.player, playerNum.val);
+          if (state.turn.player === playerNum.val) {
+            console.log('hi');
+            timer.setTargetAchieved(() => {
+              socket.emit('challenge', roomId, userId, false);
+            });
+          }
+          setTimer(timer);
         }
-
-        timer.onEnd(() => socket.emit('challenge', roomId, userId, false));
-        const seconds = Number(window.sessionStorage.getItem('timer-seconds'));
-        const tenths = Number(window.sessionStorage.getItem('timer-tenths'));
-        timer.settings.start({
-          startValues:
-            seconds || tenths
-              ? {
-                  seconds: seconds,
-                  secondTenths: tenths - 1
-                }
-              : {
-                  seconds: 30
-                },
-          target: {
-            secondTenths: -1
-          },
-          countdown: true,
-          precision: 'secondTenths'
-        });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,7 +73,11 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
               />
             </div>
 
-            <div className='img-container cross'>
+            <div
+              className={`img-container ${
+                state.turn.player === playerNum.val ? '' : 'cross'
+              }`}
+            >
               <img
                 src='./assets/challenge/challenge.png'
                 alt='challenge'
