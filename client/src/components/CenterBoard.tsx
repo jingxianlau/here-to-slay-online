@@ -8,13 +8,12 @@ interface CenterBoardProps {
 }
 
 const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
-  const { state, credentials, showHand, playerNum, shownCard, timer } =
-    useClientContext();
+  const { state, credentials, showHand, shownCard } = useClientContext();
 
   function drawTwo() {
     if (
       state.val.turn.phase !== 'draw' ||
-      state.val.turn.player !== playerNum.val
+      state.val.turn.player !== state.val.playerNum
     )
       return;
 
@@ -59,7 +58,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
             alt='flipped card'
             className={`small-card ${
               state.val.turn.phase === 'draw' &&
-              state.val.turn.player === playerNum.val
+              state.val.turn.player === state.val.playerNum
                 ? 'glow click'
                 : ''
             }`}

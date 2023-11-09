@@ -1,13 +1,14 @@
 import React from 'react';
 import Dice from './Dice';
 import useClientContext from '../hooks/useClientContext';
+import HelperText from './HelperText';
 
 interface StartRollProps {
   rollSummary: number[];
 }
 
 const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
-  const { state, playerNum, showRoll } = useClientContext();
+  const { state, showRoll } = useClientContext();
 
   return (
     <>
@@ -50,8 +51,11 @@ const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
         <h2
           style={{
             color:
-              state.val.turn.player === playerNum.val ? '#fc7c37' : 'white',
-            fontWeight: state.val.turn.player === playerNum.val ? 800 : 600
+              state.val.turn.player === state.val.playerNum
+                ? '#fc7c37'
+                : 'white',
+            fontWeight:
+              state.val.turn.player === state.val.playerNum ? 800 : 600
           }}
         >
           {state.val.match.players[state.val.turn.player]}
@@ -76,6 +80,8 @@ const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
           </>
         )}
       </div>
+
+      <HelperText />
     </>
   );
 };

@@ -9,7 +9,7 @@ interface MainBoardProps {
 }
 
 const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
-  const { state, playerNum } = useClientContext();
+  const { state } = useClientContext();
 
   const [boardOrder, setBoardOrder] = useState<number[][]>([[], [], []]);
 
@@ -19,9 +19,9 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
     switch (numPlayers) {
       case 3:
         board[1].push(-1);
-        board[1].push(playerNum.val);
-        board[0].push((playerNum.val + 1) % 3);
-        board[2].push((playerNum.val + 2) % 3);
+        board[1].push(state.val.playerNum);
+        board[0].push((state.val.playerNum + 1) % 3);
+        board[2].push((state.val.playerNum + 2) % 3);
 
         setBoardOrder(board);
         break;
@@ -31,11 +31,11 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
 
       case 5:
         board[1].push(-1);
-        board[1].push(playerNum.val);
-        board[0].push((playerNum.val + 1) % 5);
-        board[0].push((playerNum.val + 2) % 5);
-        board[2].push((playerNum.val + 3) % 5);
-        board[2].push((playerNum.val + 4) % 5);
+        board[1].push(state.val.playerNum);
+        board[0].push((state.val.playerNum + 1) % 5);
+        board[0].push((state.val.playerNum + 2) % 5);
+        board[2].push((state.val.playerNum + 3) % 5);
+        board[2].push((state.val.playerNum + 4) % 5);
 
         setBoardOrder(board);
         break;
@@ -57,14 +57,16 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
             boardNum !== -1 ? (
               <div
                 className={`${
-                  boardNum === playerNum.val ? 'own-board' : 'player-board'
+                  boardNum === state.val.playerNum
+                    ? 'own-board'
+                    : 'player-board'
                 }`}
                 key={i}
                 style={{
                   marginBottom: arr.length > 1 ? 0 : '120px'
                 }}
               >
-                {boardNum !== playerNum.val ? (
+                {boardNum !== state.val.playerNum ? (
                   <h4
                     style={{
                       marginBottom: '5px',

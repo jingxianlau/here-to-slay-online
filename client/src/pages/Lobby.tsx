@@ -34,17 +34,20 @@ const Lobby: React.FC = () => {
         credentials.roomId,
         credentials.userId,
         username,
-        (successful: boolean, playerNum: number) => {
+        (successful: boolean) => {
           if (!successful) {
             localStorage.removeItem('credentials');
             navigate('/');
-          } else {
-            if (playerNum !== -1) {
-              setPlayerNum(playerNum);
-            } else {
-              navigate('/');
-            }
           }
+        }
+      );
+
+      socket.emit(
+        'player-num',
+        credentials.roomId,
+        credentials.userId,
+        (playerNum: number) => {
+          setPlayerNum(playerNum);
         }
       );
 
@@ -59,6 +62,8 @@ const Lobby: React.FC = () => {
         navigate('/game');
       });
 
+      console.log(playerNum);
+
       return () => {
         if (socket) socket.disconnect();
       };
@@ -67,25 +72,6 @@ const Lobby: React.FC = () => {
   }, []);
 
   function getReady() {
-    socket?.emit(
-      'enter-lobby',
-      credentials.roomId,
-      credentials.userId,
-      username,
-      (successful: boolean, playerNum: number) => {
-        if (!successful) {
-          localStorage.removeItem('credentials');
-          navigate('/');
-        } else {
-          if (playerNum !== -1) {
-            setPlayerNum(playerNum);
-          } else {
-            navigate('/');
-          }
-        }
-      }
-    );
-
     socket?.emit(
       'ready',
       credentials.roomId,

@@ -149,8 +149,10 @@ export interface GameState {
       | 'challenge'
       | 'challenge-roll'
       | 'modify';
+    phaseChanged: boolean;
     isRolling: boolean;
   };
+  playerNum: number;
 }
 
 export interface ClientStateObj {
@@ -166,7 +168,7 @@ export interface ClientStateObj {
     }>
   >;
 
-  playerNum: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
+  // playerNum: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
 
   // gameplay state
   state: {
@@ -211,11 +213,11 @@ export interface ClientStateObj {
     setLocked: React.Dispatch<React.SetStateAction<boolean>>;
   };
 
-  timer: {
-    settings: Timer;
-    maxTime: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
-    setTargetAchieved: (func: () => void) => void;
-  };
+  // timer: {
+  //   settings: Timer;
+  //   maxTime: { val: number; set: React.Dispatch<React.SetStateAction<number>> };
+  //   setTargetAchieved: (func: () => void) => void;
+  // };
 
   showHelperText: {
     val: boolean;

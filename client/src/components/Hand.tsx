@@ -12,7 +12,6 @@ interface HandProps {
 const Hand: React.FC<HandProps> = ({ socket }) => {
   const {
     state: { val: state },
-    playerNum,
     showHand,
     allowedCards,
     credentials,
@@ -26,7 +25,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
 
   const drawFive = () => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
-    if (state.turn.player === playerNum.val) {
+    if (state.turn.player === state.playerNum) {
       socket.emit('draw-five', credentials.roomId, credentials.userId);
     }
   };
@@ -37,7 +36,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
     switch (state.turn.phase) {
       case 'play':
         if (
-          state.turn.player === playerNum.val &&
+          state.turn.player === state.playerNum &&
           (card.type === CardType.hero ||
             card.type === CardType.item ||
             card.type === CardType.magic)
@@ -51,11 +50,9 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
           showHand.set(false);
         }
         break;
+
       case 'challenge':
-        if (
-          state.turn.player === playerNum.val &&
-          card.type === CardType.challenge
-        ) {
+        if (card.type === CardType.challenge) {
           socket.emit(
             'challenge',
             credentials.roomId,
@@ -96,7 +93,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
         className='bottomMenu'
         style={{ bottom: showHand.val ? 0 : '-30vh' }}
       >
-        {state.turn.player === playerNum.val &&
+        {state.turn.player === state.playerNum &&
           state.turn.movesLeft === 3 &&
           state.turn.phase === 'play' && (
             <div className='discard' onClick={drawFive}>
@@ -104,7 +101,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             </div>
           )}
         <div className='hand'>
-          {state.players[playerNum.val]?.hand.map((card, i) => (
+          {state.players[state.playerNum]?.hand.map((card, i) => (
             <div
               key={i}
               onMouseEnter={() => {
@@ -143,7 +140,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
               />
             </div>
           ))}
-          {state.players[playerNum.val]?.hand.length === 0 && (
+          {state.players[state.playerNum]?.hand.length === 0 && (
             <div style={{ marginBottom: '5vh' }}>
               <h2>No Cards :(</h2>
             </div>

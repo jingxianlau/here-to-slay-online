@@ -28,8 +28,8 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [pos, setPos] = useState<'left' | 'right' | 'top' | null>(null);
   const [shownCardLock, setShownCardLock] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const { timer, setTargetAchieved } = useEventTimer();
-  const [maxTime, setMaxTime] = useState(30);
+  // const { timer, setTargetAchieved } = useEventTimer();
+  // const [maxTime, setMaxTime] = useState(30);
   const [helperText, setHelperText] = useState('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [showText, setShowText] = useState(false);
@@ -37,10 +37,6 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const initVal: ClientStateObj = {
     credentials,
     setCredentials,
-    playerNum: {
-      val: playerNum,
-      set: setPlayerNum
-    },
     state: {
       val: state,
       set: setState
@@ -75,14 +71,14 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       locked: shownCardLock,
       setLocked: setShownCardLock
     },
-    timer: {
-      settings: timer,
-      setTargetAchieved,
-      maxTime: {
-        val: maxTime,
-        set: setMaxTime
-      }
-    },
+    // timer: {
+    //   settings: timer,
+    //   setTargetAchieved,
+    //   maxTime: {
+    //     val: maxTime,
+    //     set: setMaxTime
+    //   }
+    // },
     showHelperText: {
       val: showHelperText,
       set: setShowHelperText,

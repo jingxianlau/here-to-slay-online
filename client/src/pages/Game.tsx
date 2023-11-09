@@ -14,14 +14,12 @@ import useClientContext from '../hooks/useClientContext';
 import HelperText from '../components/HelperText';
 import ShownCardTop from '../components/ShownCardTop';
 import TopMenu from '../components/TopMenu';
-import { setTimer, showText } from '../helpers/showText';
-import { popupHand } from '../helpers/popupHand';
+import { showText } from '../helpers/showText';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
   const {
     credentials,
-    playerNum,
     state: { val: state, set: setState },
     allowedCards,
     showRoll,
@@ -29,8 +27,7 @@ const Game: React.FC = () => {
     showPopup,
     showHand,
     shownCard,
-    showHelperText,
-    timer
+    showHelperText
   } = useClientContext();
 
   // variables
@@ -52,28 +49,26 @@ const Game: React.FC = () => {
         credentials.roomId,
         credentials.userId,
         localStorage.getItem('username'),
-        (successful: boolean, num: number) => {
+        (successful: boolean) => {
           if (!successful) {
             localStorage.removeItem('credentials');
             navigate('/');
-          } else {
-            if (num !== -1) {
-              playerNum.set(num);
-            } else {
-              localStorage.removeItem('credentials');
-              navigate('/');
-            }
           }
         }
       );
 
       socket.on('game-state', (state: GameState) => {
+        console.log(state);
         setState(state);
-        timer.settings.stop();
 
         /* PHASES */
         switch (state.turn.phase) {
           case 'start-roll':
+            showText(
+              showHelperText,
+              'Roll Dice: Highest Roll Starts Turn First',
+              state.turn.phaseChanged
+            );
             if (state.match.startRolls.rolls[state.turn.player] !== 0) {
               // new roll
               setTimeout(() => {
@@ -88,6 +83,7 @@ const Game: React.FC = () => {
               // new round
               getRollData();
               hasRolled.set(false);
+              showRoll.set(false);
             }
             break;
 
@@ -95,25 +91,19 @@ const Game: React.FC = () => {
             showPopup.set(false);
             allowedCards.set([]);
 
-            showText(showHelperText, 'Draw Card');
-            if (state.turn.player === playerNum.val) {
-              timer.setTargetAchieved(() => {
-                socket.emit('draw-two', credentials.roomId, credentials.userId);
-                popupHand(showHand);
-              });
-            }
-            setTimer(timer, 10);
-
             if (
-              state.players[playerNum.val]?.hand.length === 0 &&
-              state.turn.player === playerNum.val
+              state.players[state.playerNum]?.hand.length === 0 &&
+              state.turn.player === state.playerNum
             ) {
               // Get 5 Cards
+              showText(showHelperText, 'Drawing 5 Cards', true, 500);
               socket.emit('draw-five', credentials.roomId, credentials.userId);
               showHand.set(true);
               setTimeout(() => {
                 showHand.set(false);
               }, 1000);
+            } else {
+              showText(showHelperText, 'Draw Card', state.turn.phaseChanged);
             }
             break;
 
@@ -137,11 +127,11 @@ const Game: React.FC = () => {
             shownCard.setLocked(false);
             allowedCards.set([]);
 
-            if (state.turn.player === playerNum.val) {
+            if (state.turn.player === state.playerNum) {
               allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
             }
 
-            showText(showHelperText, 'Play Card');
+            showText(showHelperText, 'Play Card', state.turn.phaseChanged);
             break;
         }
 
@@ -154,6 +144,7 @@ const Game: React.FC = () => {
               setRollSummary(e => [...e, num]);
             }
           }
+          console.log(rollSummary);
         }
       });
 
@@ -176,7 +167,7 @@ const Game: React.FC = () => {
       state.turn.movesLeft === 0 ||
       state.turn.phase !== 'start-roll' ||
       hasRolled.val ||
-      state.turn.player !== playerNum.val
+      state.turn.player !== state.playerNum
     )
       return;
 

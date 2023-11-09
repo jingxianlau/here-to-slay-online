@@ -3,21 +3,20 @@ import useClientContext from '../hooks/useClientContext';
 import { TimeCounter } from 'easytimer.js';
 
 const HelperText: React.FC = () => {
-  const { showHelperText, timer } = useClientContext();
-  const [timeValues, setTimeValues] = useState({} as TimeCounter);
+  const { showHelperText } = useClientContext();
+  // const [timeValues, setTimeValues] = useState({} as TimeCounter);
 
-  useEffect(() => {
-    setTimeValues(timer.settings.getTimeValues());
-  }, [timer]);
+  // useEffect(() => {
+  //   setTimeValues(timer.settings.getTimeValues());
+  // }, [timer]);
+
   return (
     <div
       className={`timer
       ${showHelperText.val ? 'show' : 'hide'}
-      ${
-        showHelperText.showText || !timer.settings.isRunning() ? 'text' : 'time'
-      }`}
+      ${showHelperText.showText ? 'text' : 'time'}`}
       style={
-        !showHelperText.showText && !timer.settings.isRunning()
+        !showHelperText.showText
           ? {
               background: 'transparent',
               boxShadow: 'transparent 0 0 5px 8px'
@@ -32,7 +31,7 @@ const HelperText: React.FC = () => {
       >
         {showHelperText.text}
       </h3>
-      <div
+      {/* <div
         className={`time-bar
         ${timer.settings.isRunning() ? 'show' : 'hide'}`}
         style={
@@ -46,7 +45,7 @@ const HelperText: React.FC = () => {
               }
             : { width: '100%' }
         }
-      ></div>
+      ></div> */}
     </div>
   );
 };

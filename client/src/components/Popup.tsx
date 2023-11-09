@@ -4,18 +4,16 @@ import { Socket } from 'socket.io-client';
 import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
 import useClientContext from '../hooks/useClientContext';
-import { setTimer, showText } from '../helpers/showText';
+import { showText } from '../helpers/showText';
 
 const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
   const {
     state: { val: state },
-    playerNum,
     credentials: { roomId, userId },
     showHand,
     shownCard,
     allowedCards,
     showPopup,
-    timer,
     showHelperText
   } = useClientContext();
 
@@ -31,31 +29,23 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
         showHand.set(false);
       }, 1200);
 
-      if (state.turn.player === playerNum.val) {
-        allowedCards.set([]);
-      }
-
       if (state.turn.phase === 'challenge') {
         if (state.mainDeck.preparedCard?.successful) {
           allowedCards.set([]);
-          showText(showHelperText, 'No Challenge: Card Played', 500);
+          showText(showHelperText, 'No Challenge - Card Played', true, 500);
         } else {
           allowedCards.set([CardType.challenge]);
 
-          showText(showHelperText, 'Challenge Card?');
-          console.log(state.turn.player, playerNum.val);
-          if (state.turn.player === playerNum.val) {
-            console.log('hi');
-            timer.setTargetAchieved(() => {
-              socket.emit('challenge', roomId, userId, false);
-            });
-          }
-          setTimer(timer);
+          showText(showHelperText, 'Challenge Card?', state.turn.phaseChanged);
         }
+      }
+
+      if (state.turn.player === state.playerNum) {
+        allowedCards.set([]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPopup.val]);
+  }, [showPopup.val, state.mainDeck.preparedCard?.successful]);
 
   return (
     <div className={'popup'} style={{ opacity: showPopup.val ? 1 : 0 }}>
@@ -72,21 +62,21 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
                 draggable='false'
               />
             </div>
-
             <div
               className={`img-container ${
-                state.turn.player === playerNum.val ? '' : 'cross'
+                state.turn.player === state.playerNum ? '' : 'cross'
               }`}
+              onClick={() => {
+                socket.emit('challenge', roomId, userId, false);
+              }}
             >
               <img
                 src='./assets/challenge/challenge.png'
                 alt='challenge'
                 className='small-md center-img'
                 draggable='false'
-                onClick={() => socket.emit('challenge', roomId, userId, false)}
               />
             </div>
-
             <div className='side-modifier'></div>
           </div>
         ) : state.turn.phase === 'challenge-roll' ||
@@ -99,7 +89,7 @@ const Popup: React.FC<{ socket: Socket }> = ({ socket }) => {
               draggable='false'
             />
             <div className='dice-box'>
-              {!state.dice.defend ? (
+              {!state.dice.defend?.total ? (
                 <Dice
                   roll1={state.dice.main.roll[0]}
                   roll2={state.dice.main.roll[1]}
