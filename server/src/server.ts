@@ -8,6 +8,7 @@ import { rooms } from './rooms';
 import {
   enterLobby,
   leaveLobby,
+  playerNum,
   ready,
   startMatch
 } from './controllers/socketio/lobby/lobby';
@@ -48,6 +49,7 @@ io.on('connection', socket => {
   socket.on('leave-lobby', leaveLobby(socket));
   socket.on('ready', ready(socket));
   socket.on('start-match', startMatch(socket));
+  socket.on('player-num', playerNum);
 
   /* GAME */
   // start roll
@@ -57,7 +59,7 @@ io.on('connection', socket => {
   socket.on('draw-two', drawTwo);
   socket.on('draw-five', drawFive);
 
-  // TO TEST: challenge
+  // challenge
   socket.on('prepare-card', prepareCard);
   socket.on('challenge', challenge);
   socket.on('challenge-roll', challengeRoll);
@@ -92,6 +94,7 @@ io.on('connection', socket => {
 
     state.match.gameStarted = true;
     state.turn.phase = 'draw';
+    state.turn.phaseChanged = true;
     state.turn.isRolling = false;
     state.turn.player = 0;
     state.dice.main.roll[0] = 1;
@@ -102,6 +105,7 @@ io.on('connection', socket => {
     distributeCards(state, rooms[roomId].numPlayers);
 
     sendGameState(roomId);
+    state.turn.phaseChanged = false;
   });
 });
 

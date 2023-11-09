@@ -37,6 +37,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   );
   gameState.turn.movesLeft--;
   gameState.turn.phase = 'challenge';
+  gameState.turn.phaseChanged = true;
 
   gameState.match.isReady = [];
   for (let i = 0; i < gameState.match.players.length; i++) {
@@ -44,6 +45,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   }
 
   sendGameState(roomId);
+  gameState.turn.phaseChanged = false;
 };
 
 export const challenge = (
@@ -52,10 +54,8 @@ export const challenge = (
   challenged: boolean,
   cardId: string | undefined
 ) => {
-  console.log('challenge');
   const playerNum = checkCredentials(roomId, userId);
   const gameState = rooms[roomId].state;
-
   if (
     playerNum === -1 ||
     gameState.turn.phase !== 'challenge' ||
@@ -73,11 +73,15 @@ export const challenge = (
 
     setTimeout(() => {
       gameState.turn.phase = 'play';
+      gameState.turn.phaseChanged = true;
+      sendGameState(roomId);
+      gameState.turn.phaseChanged = false;
     }, 500);
   } else if (challenged && cardId) {
     if (!removeCard(roomId, playerNum, cardId)) {
       return;
     }
+    sendGameState(roomId);
 
     gameState.dice.main.roll = [1, 1];
     gameState.dice.main.total = 0;
@@ -89,10 +93,11 @@ export const challenge = (
     };
 
     gameState.turn.phase = 'challenge-roll';
+    gameState.turn.phaseChanged = true;
     gameState.turn.challenger = playerNum;
     gameState.turn.isRolling = true;
-
     sendGameState(roomId);
+    gameState.turn.phaseChanged = false;
   }
 };
 
@@ -120,8 +125,10 @@ export const challengeRoll = (roomId: string, userId: string) => {
     gameState.dice.defend.roll = roll;
     gameState.dice.defend.total = val;
     gameState.turn.phase = 'modify';
+    gameState.turn.phaseChanged = true;
   }
   sendGameState(roomId);
+  gameState.turn.phaseChanged = false;
 };
 
 export const confirmChallenge = (
@@ -163,8 +170,10 @@ export const confirmChallenge = (
   gameState.dice.main.modifier = [];
   gameState.dice.defend = null;
   gameState.turn.phase = 'play';
+  gameState.turn.phaseChanged = true;
   delete gameState.turn.challenger;
   gameState.turn.isRolling = false;
 
   sendGameState(roomId);
+  gameState.turn.phaseChanged = false;
 };

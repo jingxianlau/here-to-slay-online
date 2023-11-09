@@ -14,12 +14,12 @@ export const enterLobby = (socket: Socket) => {
     roomId: string,
     userId: string,
     username: string,
-    cb: (successful: boolean, playerNum: number | null) => void
+    cb: (successful: boolean) => void
   ) => {
     // check credentials
     const playerNum = checkCredentials(roomId, userId);
     if (playerNum === -1) {
-      cb(false, null);
+      cb(false);
       sendState(roomId);
       socket.disconnect();
       return;
@@ -45,10 +45,10 @@ export const enterLobby = (socket: Socket) => {
     ) {
       socket.join(roomId);
       sendState(roomId);
-      cb(true, playerNum);
+      cb(true);
     } else {
       removePlayer(rooms[roomId], playerNum);
-      cb(false, null);
+      cb(false);
       sendState(roomId);
       socket.disconnect();
     }
@@ -135,6 +135,7 @@ export const startMatch = (socket: Socket) => {
     ) {
       state.match.gameStarted = true;
       state.turn.phase = 'start-roll';
+      state.turn.phaseChanged = true;
       state.turn.isRolling = true;
 
       for (let i = 0; i < numPlayers; i++) {
@@ -146,6 +147,15 @@ export const startMatch = (socket: Socket) => {
       distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
 
       sendGameState(roomId);
+      state.turn.phaseChanged = false;
     }
   };
+};
+
+export const playerNum = (
+  roomId: string,
+  userId: string,
+  cb: (playerNum: number) => void
+) => {
+  cb(checkCredentials(roomId, userId));
 };

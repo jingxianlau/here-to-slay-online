@@ -38,18 +38,25 @@ export const startRoll = (roomId: string, userId: string) => {
   if (startRolls.inList.length === 1) {
     // SETUP MATCH
     rooms[roomId].state.turn.player = startRolls.inList[0];
+    rooms[roomId].state.turn.phaseChanged = true;
     rooms[roomId].state.turn.phase = 'draw';
     rooms[roomId].state.turn.isRolling = false;
     rooms[roomId].state.dice.main.roll[0] = 1;
     rooms[roomId].state.dice.main.roll[1] = 1;
     rooms[roomId].state.turn.movesLeft = 3;
 
-    setTimeout(() => sendGameState(roomId), 3000);
+    setTimeout(() => {
+      sendGameState(roomId);
+      rooms[roomId].state.turn.phaseChanged = false;
+    }, 3000);
+
     return;
     // IF TIED (SETUP NEXT ROUND)
-  } else if (startRolls.rolls[startRolls.rolls.length - 1] !== 0) {
+  } else if (
+    startRolls.rolls[startRolls.inList[startRolls.inList.length - 1]] !== 0
+  ) {
     startRolls.rolls = [];
-    for (let i = 0; i < startRolls.inList.length; i++) {
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
       startRolls.rolls.push(0);
     }
     startRolls.maxVal = 0;

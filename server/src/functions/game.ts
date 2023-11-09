@@ -35,6 +35,7 @@ export function nextPlayer(roomId: string) {
   rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
   rooms[roomId].state.turn.movesLeft = 3;
   rooms[roomId].state.turn.phase = 'draw';
+  rooms[roomId].state.turn.phaseChanged = true;
 }
 
 export function rollDice(): [number, number] {

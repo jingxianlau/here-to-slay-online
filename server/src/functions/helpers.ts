@@ -59,10 +59,13 @@ export const addPlayer = (roomId: string, userId: string, username: string) => {
 };
 
 export const parseState = (userId: string, state: GameState): privateState => {
-  let newState: privateState = cloneDeep(state) as privateState;
+  const playerNum = state.secret.playerIds.indexOf(userId);
+  let newState: privateState = {
+    ...cloneDeep(state),
+    playerNum
+  } as privateState;
 
   const numPlayers = state.match.players.length;
-  const playerNum = state.secret.playerIds.indexOf(userId);
 
   newState.secret = null;
   for (let i = 0; i < numPlayers; i++) {

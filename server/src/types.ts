@@ -149,6 +149,7 @@ export interface GameState {
       | 'challenge'
       | 'challenge-roll'
       | 'modify';
+    phaseChanged: boolean;
     isRolling: boolean;
   };
 }
@@ -227,6 +228,8 @@ export interface privateState {
       | 'challenge'
       | 'challenge-roll'
       | 'modify';
+    phaseChanged: boolean;
     isRolling: boolean;
   };
+  playerNum: number;
 }

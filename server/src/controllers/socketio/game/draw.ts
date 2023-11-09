@@ -21,7 +21,9 @@ export const drawTwo = (roomId: string, userId: string) => {
   }
 
   gameState.turn.phase = 'play';
+  gameState.turn.phaseChanged = true;
   sendGameState(roomId);
+  gameState.turn.phaseChanged = false;
 };
 
 export const drawFive = (roomId: string, userId: string) => {
@@ -57,4 +59,5 @@ export const drawFive = (roomId: string, userId: string) => {
     nextPlayer(roomId);
   }
   sendGameState(roomId);
+  gameState.turn.phaseChanged = false;
 };
