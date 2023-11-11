@@ -44,6 +44,12 @@ export const enterLobby = (socket: Socket) => {
           `Anonymous ${playerNum + 1}`)
     ) {
       socket.join(roomId);
+
+      if (!rooms[roomId].state.match.gameStarted) {
+        rooms[roomId].state.match.isReady =
+          rooms[roomId].state.match.isReady.fill(true);
+      }
+
       sendState(roomId);
       cb(true);
     } else {
@@ -120,10 +126,9 @@ export const startMatch = (socket: Socket) => {
 
     const state = rooms[roomId].state;
     const numPlayers = rooms[roomId].numPlayers;
-
     state.secret.playerSocketIds[playerNum] = socket.id;
 
-    if (rooms[roomId].state.match.gameStarted) {
+    if (state.match.gameStarted) {
       sendGameState(roomId);
       return;
     }
@@ -131,23 +136,40 @@ export const startMatch = (socket: Socket) => {
     if (
       numPlayers >= 3 &&
       confirmNumPlayers(roomId) &&
-      state.secret.playerSocketIds.every(val => Boolean(val))
+      state.secret.playerSocketIds.every(val => Boolean(val)) &&
+      state.match.isReady.every(val => val === true) &&
+      state.turn.phase === 'start-roll'
     ) {
-      state.match.gameStarted = true;
-      state.turn.phase = 'start-roll';
-      state.turn.phaseChanged = true;
-      state.turn.isRolling = true;
-
-      for (let i = 0; i < numPlayers; i++) {
-        // starting roll
-        state.match.startRolls.inList.push(i);
-        state.match.startRolls.rolls.push(0);
-      }
-
+      /* DEV V */
       distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
+      /* DEV ^ */
 
+      // state.match.gameStarted = true;
+      // state.turn.phaseChanged = true;
+      // state.turn.isRolling = true;
+
+      // for (let i = 0; i < numPlayers; i++) {
+      //   // starting roll
+      //   state.match.startRolls.inList.push(i);
+      //   state.match.startRolls.rolls.push(0);
+      // }
+
+      /* DEV V */
+      state.match.gameStarted = true;
+      state.turn.player = 0;
+      state.turn.phaseChanged = true;
+      state.turn.phase = 'draw';
+      state.turn.isRolling = false;
+      state.dice.main.roll[0] = 1;
+      state.dice.main.roll[1] = 1;
+      state.turn.movesLeft = 3;
       sendGameState(roomId);
       state.turn.phaseChanged = false;
+      /* DEV ^ */
+
+      // distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
+      // sendGameState(roomId);
+      // state.turn.phaseChanged = false;
     }
   };
 };

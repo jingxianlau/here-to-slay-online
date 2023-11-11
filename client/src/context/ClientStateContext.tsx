@@ -17,7 +17,6 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
   const [credentials, setCredentials] = useState(getCredentials());
-  const [playerNum, setPlayerNum] = useState(-1);
   const [state, setState] = useState<GameState>({} as GameState);
   const [allowedCards, setAllowedCards] = useState<CardType[]>(allCards);
   const [showRoll, setShowRoll] = useState(false);
@@ -33,6 +32,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [helperText, setHelperText] = useState('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [showText, setShowText] = useState(false);
+  const [showBig, setShowBig] = useState(false);
 
   const initVal: ClientStateObj = {
     credentials,
@@ -84,8 +84,8 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       set: setShowHelperText,
       text: helperText,
       setText: setHelperText,
-      showText: showText,
-      setShowText: setShowText
+      showText,
+      setShowText
     }
   };
 

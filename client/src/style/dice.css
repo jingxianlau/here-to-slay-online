@@ -1,3 +1,7 @@
+.dices {
+  display: flex;
+}
+
 .container {
   position: relative;
   display: inline-block;

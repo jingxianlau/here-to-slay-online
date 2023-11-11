@@ -33,6 +33,7 @@ const Game: React.FC = () => {
   // variables
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
+  const [activeDice, setActiveDice] = useState<0 | 1>(0);
 
   useEffect(() => {
     if (!credentials) {
@@ -60,15 +61,13 @@ const Game: React.FC = () => {
       socket.on('game-state', (state: GameState) => {
         console.log(state);
         setState(state);
+        showHand.setLocked(false);
+        showHelperText.setShowText(false);
+        showHelperText.set(false);
 
         /* PHASES */
         switch (state.turn.phase) {
           case 'start-roll':
-            showText(
-              showHelperText,
-              'Roll Dice: Highest Roll Starts Turn First',
-              state.turn.phaseChanged
-            );
             if (state.match.startRolls.rolls[state.turn.player] !== 0) {
               // new roll
               setTimeout(() => {
@@ -96,18 +95,21 @@ const Game: React.FC = () => {
               state.turn.player === state.playerNum
             ) {
               // Get 5 Cards
-              showText(showHelperText, 'Drawing 5 Cards', true, 500);
+              showText(showHelperText, 'Draw', 500);
               socket.emit('draw-five', credentials.roomId, credentials.userId);
               showHand.set(true);
               setTimeout(() => {
                 showHand.set(false);
-              }, 1000);
+              }, 1200);
             } else {
-              showText(showHelperText, 'Draw Card', state.turn.phaseChanged);
+              if (state.turn.phaseChanged) {
+                showText(showHelperText, 'Draw');
+              }
             }
             break;
 
           case 'challenge':
+            setActiveDice(0);
             showPopup.set(true);
             shownCard.setLocked(true);
             shownCard.setPos(null);
@@ -116,6 +118,29 @@ const Game: React.FC = () => {
 
           case 'challenge-roll':
             showPopup.set(true);
+            showRoll.set(false);
+            if (state.dice.defend && state.dice.defend.total > 0) {
+              setActiveDice(1);
+            }
+
+            if (state.dice.main.total > 0) {
+              setTimeout(() => {
+                showRoll.set(true);
+              }, 1000);
+              setTimeout(() => {
+                if (state.dice.defend && state.dice.defend.total > 0) {
+                  showRoll.set(false);
+                }
+                hasRolled.set(false);
+
+                if (
+                  state.dice.main.total > 0 &&
+                  state.dice.defend?.total === 0
+                ) {
+                  setActiveDice(1);
+                }
+              }, 3000);
+            }
             break;
 
           case 'modify':
@@ -131,7 +156,9 @@ const Game: React.FC = () => {
               allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
             }
 
-            showText(showHelperText, 'Play Card', state.turn.phaseChanged);
+            if (state.turn.phaseChanged) {
+              showText(showHelperText, 'Play');
+            }
             break;
         }
 
@@ -144,7 +171,6 @@ const Game: React.FC = () => {
               setRollSummary(e => [...e, num]);
             }
           }
-          console.log(rollSummary);
         }
       });
 
@@ -190,7 +216,13 @@ const Game: React.FC = () => {
 
                 {(state.turn.phase === 'challenge' ||
                   state.turn.phase === 'challenge-roll' ||
-                  state.turn.phase === 'modify') && <Popup socket={socket} />}
+                  state.turn.phase === 'modify') && (
+                  <Popup
+                    socket={socket}
+                    activeDice={activeDice}
+                    setActiveDice={setActiveDice}
+                  />
+                )}
 
                 <ShownCard />
                 <ShownCardTop />
@@ -198,18 +230,6 @@ const Game: React.FC = () => {
                 <Hand socket={socket} />
 
                 <HelperText />
-
-                <button
-                  className='dev-reset'
-                  onClick={() => {
-                    socket.emit('reset-state', credentials.roomId);
-
-                    // reload to run useEffect (else playernum breaks for some reason)
-                    navigate('/');
-                  }}
-                >
-                  Reset State
-                </button>
               </>
             )}
           </div>

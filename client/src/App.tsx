@@ -9,20 +9,23 @@ function App() {
   const [username, setUsername] = useState('');
   const [isPrivate, setIsPrivate] = useState(true);
 
+  // useEffect(() => {
+  //   const uname = localStorage.getItem('username');
+  //   if (uname) {
+  //     setUsername(uname);
+  //   }
+  //   const credentials = localStorage.getItem('credentials');
+  //   if (credentials) {
+  //     navigate('/lobby');
+  //   }
+
+  //   loadRooms();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // DEV
   useEffect(() => {
-    const uname = localStorage.getItem('username');
-    if (uname) {
-      setUsername(uname);
-    }
-    const credentials = localStorage.getItem('credentials');
-    if (credentials) {
-      navigate('/lobby');
-    }
-
-    loadRooms();
-
-    setInterval(loadRooms, 200);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    joinRoom('999999');
   }, []);
 
   function changeUsername(name: string) {
@@ -60,7 +63,7 @@ function App() {
       );
       navigate('/lobby');
     } else {
-      alert(json.res);
+      // alert(json.res);
     }
   }
 

@@ -56,13 +56,15 @@ const Lobby: React.FC = () => {
         if (state.gameStarted) {
           navigate('/game');
         }
+
+        if (state.players.length >= 3) {
+          navigate('/game');
+        }
       });
 
       socket.on('start-match', () => {
         navigate('/game');
       });
-
-      console.log(playerNum);
 
       return () => {
         if (socket) socket.disconnect();

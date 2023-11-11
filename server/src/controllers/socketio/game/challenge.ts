@@ -36,16 +36,20 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     c => c.id !== card.id
   );
   gameState.turn.movesLeft--;
-  gameState.turn.phase = 'challenge';
-  gameState.turn.phaseChanged = true;
-
   gameState.match.isReady = [];
   for (let i = 0; i < gameState.match.players.length; i++) {
     gameState.match.isReady.push(i === gameState.turn.player ? false : null);
   }
 
   sendGameState(roomId);
-  gameState.turn.phaseChanged = false;
+
+  setTimeout(() => {
+    gameState.turn.phase = 'challenge';
+    gameState.turn.phaseChanged = true;
+
+    sendGameState(roomId);
+    gameState.turn.phaseChanged = false;
+  }, 1200);
 };
 
 export const challenge = (
@@ -66,38 +70,46 @@ export const challenge = (
   }
 
   gameState.match.isReady[playerNum] = challenged;
+  sendGameState(roomId);
 
   if (gameState.match.isReady.every(val => val === false)) {
+    gameState.match.isReady.fill(null);
     gameState.mainDeck.preparedCard.successful = true;
     sendGameState(roomId);
 
     setTimeout(() => {
-      gameState.turn.phase = 'play';
-      gameState.turn.phaseChanged = true;
-      sendGameState(roomId);
-      gameState.turn.phaseChanged = false;
-    }, 500);
+      gameState.mainDeck.preparedCard = null;
+
+      if (gameState.turn.movesLeft > 0) {
+        gameState.turn.phase = 'play';
+        gameState.turn.phaseChanged = true;
+        sendGameState(roomId);
+        gameState.turn.phaseChanged = false;
+      } else {
+        nextPlayer(roomId);
+        sendGameState(roomId);
+        gameState.turn.phaseChanged = false;
+      }
+    }, 1200);
   } else if (challenged && cardId) {
     if (!removeCard(roomId, playerNum, cardId)) {
       return;
     }
     sendGameState(roomId);
+    gameState.match.isReady.fill(null);
 
-    gameState.dice.main.roll = [1, 1];
-    gameState.dice.main.total = 0;
-    gameState.dice.main.modifier = [];
-    gameState.dice.defend = {
-      roll: [1, 1],
-      total: 0,
-      modifier: []
-    };
+    setTimeout(() => {
+      gameState.dice.main.roll = [1, 1];
+      gameState.dice.main.total = 0;
+      gameState.dice.main.modifier = [];
 
-    gameState.turn.phase = 'challenge-roll';
-    gameState.turn.phaseChanged = true;
-    gameState.turn.challenger = playerNum;
-    gameState.turn.isRolling = true;
-    sendGameState(roomId);
-    gameState.turn.phaseChanged = false;
+      gameState.turn.phase = 'challenge-roll';
+      gameState.turn.phaseChanged = true;
+      gameState.turn.challenger = playerNum;
+      gameState.turn.isRolling = true;
+      sendGameState(roomId);
+      gameState.turn.phaseChanged = false;
+    }, 1200);
   }
 };
 
@@ -108,10 +120,9 @@ export const challengeRoll = (roomId: string, userId: string) => {
     playerNum === -1 ||
     gameState.turn.phase !== 'challenge-roll' ||
     !gameState.mainDeck.preparedCard ||
-    (gameState.dice.main.total === 0 && gameState.turn.player !== playerNum) ||
-    (gameState.dice.main.total > 0 &&
+    (gameState.dice.main.total === 0 &&
       gameState.turn.challenger !== playerNum) ||
-    gameState.dice.defend === null
+    (gameState.dice.main.total > 0 && gameState.turn.player !== playerNum)
   ) {
     return;
   }
@@ -121,14 +132,25 @@ export const challengeRoll = (roomId: string, userId: string) => {
   if (gameState.dice.main.total === 0) {
     gameState.dice.main.roll = roll;
     gameState.dice.main.total = val;
-  } else {
+    gameState.dice.defend = {
+      roll: [1, 1],
+      total: 0,
+      modifier: []
+    };
+  } else if (gameState.dice.defend !== null) {
     gameState.dice.defend.roll = roll;
     gameState.dice.defend.total = val;
-    gameState.turn.phase = 'modify';
-    gameState.turn.phaseChanged = true;
   }
   sendGameState(roomId);
-  gameState.turn.phaseChanged = false;
+
+  if (gameState.dice.defend && gameState.dice.defend.total > 0) {
+    setTimeout(() => {
+      gameState.turn.phaseChanged = true;
+      gameState.turn.phase = 'modify';
+      sendGameState(roomId);
+      gameState.turn.phaseChanged = false;
+    }, 3000);
+  }
 };
 
 export const confirmChallenge = (

@@ -52,9 +52,7 @@ export interface MonsterCard extends Card {
   id: string;
 }
 export interface LeaderCard extends MonsterCard {
-  type: CardType.large;
   class: HeroClass;
-  id: string;
 }
 export type AnyCard =
   | HeroCard

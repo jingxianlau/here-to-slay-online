@@ -4,6 +4,7 @@ import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
+import { dropHand } from '../helpers/dropHand';
 
 interface HandProps {
   socket: Socket;
@@ -31,7 +32,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
   };
 
   const playCard = (card: AnyCard) => {
-    if (!state || !socket || state.turn.movesLeft === 0) return;
+    if (!state || !socket) return;
 
     switch (state.turn.phase) {
       case 'play':
@@ -47,7 +48,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             credentials.userId,
             card
           );
-          showHand.set(false);
+          dropHand(showHand, shownCard);
         }
         break;
 
@@ -60,6 +61,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             true,
             card.id
           );
+          dropHand(showHand, shownCard);
         }
         break;
     }
@@ -105,10 +107,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             <div
               key={i}
               onMouseEnter={() => {
-                if (
-                  allowedCard(allowedCards.val, card.type) &&
-                  !shownCard.locked
-                ) {
+                if (!shownCard.locked) {
                   shownCard.set(card);
                   shownCard.setPos('top');
                 }
@@ -135,7 +134,9 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
                     ? 'active'
                     : 'inactive'
                 }`}
-                onClick={() => playCard(card)}
+                onClick={() => {
+                  if (allowedCard(allowedCards.val, card.type)) playCard(card);
+                }}
                 draggable='false'
               />
             </div>

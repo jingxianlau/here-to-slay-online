@@ -85,7 +85,7 @@ header img {
 .shown-card {
   position: absolute;
   background-color: #1e1e1e;
-  transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out 75ms;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -121,8 +121,7 @@ header img {
 .shown-card-top.hide {
   width: 0;
   height: 0;
-  /* opacity: 0; */
-  background-color: red;
+  opacity: 0;
 }
 .shown-card.right {
   right: 0;
@@ -471,7 +470,7 @@ img.click:hover {
   top: 12vh;
   border-radius: 25px;
   box-shadow: #1e1e1e 0 0 10px 10px;
-  transition: ease-in-out 0.25s;
+  transition: ease-in-out 0.2s;
 
   display: flex;
   justify-content: center;
@@ -505,24 +504,133 @@ img.click:hover {
   width: 36.732vh;
   height: 51.308vh;
 }
+.side-list {
+  width: 36.732vh;
+  margin-right: 5vw;
+  margin-left: -5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+.side-list div {
+  display: flex;
+  align-items: flex-start;
+  font-size: 3vh;
+}
+.side-list div .name {
+  margin-right: 1vw;
+}
+.side-list div .res .tick {
+  margin-top: -0.3vh;
+  margin-left: -0.7vh;
+  background: url('./assets/tick.png');
+  background-size: cover;
+  display: inline-block;
+  height: 5vh;
+  width: 5vh;
+}
+.side-list div .res .cross {
+  margin-top: -0.3vh;
+  margin-left: -0.7vh;
+  background: url('./assets/cross.png');
+  background-size: cover;
+  display: inline-block;
+  height: 5vh;
+  width: 5vh;
+}
 
-/* HELPER TEXT & TIMER */
-.timer {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  transition: 0.5s;
+.popup .challenge-dice.active {
+  cursor: pointer;
 }
-.timer.show {
-  opacity: 1;
+.popup .dice-box {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.timer.hide {
+.popup .dice-box img {
+  width: 8vh;
+  height: 8vh;
+  margin-bottom: 1vh;
+}
+.popup .arrows {
+  width: 85%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+}
+.popup .arrows .material-symbols-outlined.hide {
   opacity: 0;
 }
-.timer {
-  height: 1vh;
+.popup .arrows .material-symbols-outlined {
+  font-size: 5vh;
+  user-select: none;
+  width: 5vh;
+  height: 5vh;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease-in-out;
 }
-.timer .time-bar {
+.popup .arrows .material-symbols-outlined.show:hover {
+  cursor: pointer;
+  background-color: #333;
+}
+.popup .dice-box h1 {
+  font-size: 5.3vh;
+}
+
+/* HELPER TEXT & TIMER */
+.helper-text-container {
+  position: absolute;
+  background: url('./assets/HTS_Dragon.png');
+  background-size: cover;
+  transition: opacity ease-in-out 0.2s;
+}
+.helper-text-container.hide.disappear {
+  height: 0;
+  width: 0;
+}
+.helper-text-container {
+  top: 17.5vh;
+  left: 3.6vw;
+  width: 92vw;
+  height: 30.8vw;
+}
+.helper-text-container.show {
+  opacity: 1;
+}
+.helper-text-container.hide {
+  opacity: 0;
+}
+.helper-text-container h3 {
+  margin-left: 1vw;
+  margin-top: 17.8vw;
+  font-size: 5.5vw;
+  font-weight: 1000;
+}
+.helper-text-container.show h3 {
+  opacity: 1;
+}
+.helper-text-container.hide h3 {
+  opacity: 0;
+}
+.helper-text-container h4 {
+  margin-left: 1vw;
+  margin-top: -6.5vw;
+  font-size: 1.8vw;
+  font-weight: 300;
+}
+.helper-text-container.show h4 {
+  opacity: 1;
+}
+.helper-text-container.hide h4 {
+  opacity: 0;
+}
+/* .timer .time-bar {
   position: absolute;
   top: 0;
   transition: width 0.1s, opacity 0.5s, height 0.5s, background-color 0.5s;
@@ -539,28 +647,4 @@ img.click:hover {
   opacity: 1;
   height: 1vh;
   background-color: #fc7c37;
-}
-.timer.text {
-  background: #1a1a1a;
-  box-shadow: #1a1a1a 0 0 5px 8px;
-  height: 5vh;
-}
-.timer h3 {
-  margin-top: 1.5vh;
-  font-size: 2.7vh;
-}
-.timer h3.show {
-  opacity: 1;
-  transition: 0.3s ease-in 0.2s;
-}
-.timer h3.hide {
-  opacity: 0;
-  transition: 0.2s ease-in;
-}
-
-/* DEV */
-.dev-reset {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
+} */
