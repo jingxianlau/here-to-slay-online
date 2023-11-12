@@ -8,55 +8,53 @@
 }
 
 .dice {
-  width: 120px;
-  height: 120px;
+  width: 14vh;
+  height: 14vh;
   transform-style: preserve-3d;
   transition: transform 1s;
-  margin: 20px;
+  margin: 2.3333vh;
 }
 
 .dot {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  margin: -12px 5px 5px -12px;
-  border-radius: 24px;
+  width: 2.8vh;
+  height: 2.8vh;
+  margin: -1.32vh 0.6vh 0.6vh -1.32vh;
+  border-radius: 50%;
   background-color: #222;
-  box-shadow: inset 2px 2px #222;
 }
 .side {
   position: absolute;
   background-color: #fff;
-  border-radius: 20px;
-  width: 120px;
-  height: 120px;
-  border: 1px solid #fff;
+  border-radius: 2vh;
+  width: 14vh;
+  height: 14vh;
+  border: 0.11666vh solid #fff;
   text-align: center;
-  line-height: 2em;
 }
 
 .side:nth-child(1) {
-  transform: translateZ(3.1em);
+  transform: translateZ(7vh);
 }
 
 .side:nth-child(6) {
-  transform: rotateY(90deg) translateZ(3.1em);
+  transform: rotateY(90deg) translateZ(7vh);
 }
 
 .side:nth-child(3) {
-  transform: rotateY(-90deg) translateZ(3.1em);
+  transform: rotateY(-90deg) translateZ(7vh);
 }
 
 .side:nth-child(4) {
-  transform: rotateX(90deg) translateZ(3.1em);
+  transform: rotateX(90deg) translateZ(7vh);
 }
 
 .side:nth-child(5) {
-  transform: rotateX(-90deg) translateZ(3.1em);
+  transform: rotateX(-90deg) translateZ(7vh);
 }
 
 .side:nth-child(2) {
-  transform: rotateY(-180deg) translateZ(3.1em);
+  transform: rotateY(-180deg) translateZ(7vh);
 }
 
 .two-1,

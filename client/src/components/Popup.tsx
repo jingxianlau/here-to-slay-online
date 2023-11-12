@@ -324,9 +324,27 @@ const Popup: React.FC<{
                     ? state.dice.defend.total
                     : ''}
                 </h1>
+                {state.turn.phase === 'modify' && (
+                  <div className='cancel-modify-container'>
+                    <div className='cancel-modify-button'>
+                      <div className='no-modify'></div>
+                    </div>
+                    <h5>Don't Modify</h5>
+                  </div>
+                )}
               </div>
 
-              <div className='side-modifier'></div>
+              <div className='side-modifier'>
+                {state.turn.phase === 'modify' &&
+                ((activeDice === 0 && state.dice.main.modifier.length) ||
+                  (activeDice === 1 && state.dice.defend?.modifier.length)) ? (
+                  <div className='has-modifier'>
+                    <h3>Modifiers</h3>
+                  </div>
+                ) : (
+                  <h3 style={{ color: '#aaa' }}>No Modifiers</h3>
+                )}
+              </div>
             </div>
           )
         ) : (

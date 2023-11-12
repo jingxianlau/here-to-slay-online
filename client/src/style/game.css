@@ -17,7 +17,7 @@ header img {
 .game {
   text-align: center;
   margin: auto;
-  font-size: 20px;
+  font-size: 2.4vh;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -174,8 +174,8 @@ header img {
 }
 .bottomMenu .discard {
   position: absolute;
-  width: 75px;
-  height: 75px;
+  width: 8vh;
+  height: 8vh;
   background-color: #fc7c37;
   border-radius: 50%;
   left: 1vw;
@@ -186,13 +186,12 @@ header img {
   cursor: pointer;
 }
 .bottomMenu .discard span.material-symbols-outlined {
-  font-size: 40px;
+  font-size: 5vh;
   transition: 0.3s;
   user-select: none;
 }
 .bottomMenu .discard:hover span.material-symbols-outlined {
-  font-size: 50px;
-  font-size: 55px;
+  font-size: 6.5vh;
 }
 .hand {
   display: flex;
@@ -468,7 +467,7 @@ img.click:hover {
   background-color: #1e1e1e;
   left: 7.5vw;
   top: 9.5vh;
-  border-radius: 25px;
+  border-radius: 5vh;
   box-shadow: #1e1e1e 0 0 10px 10px;
   transition: ease-in-out 0.2s;
 
@@ -501,9 +500,23 @@ img.click:hover {
   margin-top: -10vh;
 }
 .side-modifier {
-  width: 36.732vh;
-  height: 51.308vh;
+  width: 45.045vh;
+  height: 80vh;
+  margin-left: -5vh;
 }
+.side-modifier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.side-modifier .has-modifier {
+  width: 45.045vh;
+  height: 80vh;
+}
+.side-modifier h3 {
+  font-size: 2.7vh;
+}
+
 .side-list {
   width: 36.732vh;
   margin-right: 5vw;
@@ -544,7 +557,7 @@ img.click:hover {
   cursor: pointer;
 }
 .popup .dice-box {
-  height: 50vh;
+  height: 46vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -560,6 +573,9 @@ img.click:hover {
   align-items: center;
   justify-content: space-between;
   font-weight: 800;
+}
+.popup .arrows .name {
+  font-size: 2.4vh;
 }
 .popup .arrows .material-symbols-outlined.hide {
   opacity: 0;
@@ -581,6 +597,53 @@ img.click:hover {
 }
 .popup .dice-box h1 {
   font-size: 5.3vh;
+}
+.popup .cancel-modify-button {
+  position: relative;
+  width: 6vh;
+  height: 6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease-in-out;
+}
+.popup .no-modify {
+  width: 5vh;
+  height: 5vh;
+  border: 0.5vh solid #d03131;
+  background-color: #f95151;
+  border-radius: 50%;
+  transition: 0.3s ease-in-out;
+}
+.popup .no-modify::after {
+  content: '';
+  background: url('./assets/cross.png');
+  background-size: 4vh;
+  background-position: center;
+  position: absolute;
+  top: 0.5vh;
+  left: 0.5vh;
+  width: 5vh;
+  height: 5vh;
+  transition: 0.3s ease-in-out;
+}
+.popup .cancel-modify-button:hover .no-modify {
+  cursor: pointer;
+  box-shadow: #000 2px 2px 6px 1px;
+}
+.popup .cancel-modify-button:hover .no-modify::after {
+  background-size: 5.5vh;
+}
+.popup .cancel-modify-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4vh;
+}
+.popup .cancel-modify-container h5 {
+  margin-top: 0.6vh;
+  font-size: 2vh;
 }
 
 /* HELPER TEXT & TIMER */

@@ -119,6 +119,9 @@ const Game: React.FC = () => {
           case 'challenge-roll':
             showPopup.set(true);
             showRoll.set(false);
+            shownCard.setLocked(true);
+            shownCard.setPos(null);
+            shownCard.set(null);
             if (state.dice.defend && state.dice.defend.total > 0) {
               setActiveDice(1);
             }
@@ -145,6 +148,9 @@ const Game: React.FC = () => {
 
           case 'modify':
             showPopup.set(true);
+            shownCard.setLocked(true);
+            shownCard.setPos(null);
+            shownCard.set(null);
             break;
 
           case 'play':
