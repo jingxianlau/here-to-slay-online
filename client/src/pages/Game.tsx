@@ -128,7 +128,7 @@ const Game: React.FC = () => {
                 showRoll.set(true);
               }, 1000);
               setTimeout(() => {
-                if (state.dice.defend && state.dice.defend.total > 0) {
+                if (state.dice.defend?.total) {
                   showRoll.set(false);
                 }
                 hasRolled.set(false);

@@ -147,6 +147,7 @@ export const challengeRoll = (roomId: string, userId: string) => {
     setTimeout(() => {
       gameState.turn.phaseChanged = true;
       gameState.turn.phase = 'modify';
+      gameState.turn.isRolling = false;
       sendGameState(roomId);
       gameState.turn.phaseChanged = false;
     }, 3000);

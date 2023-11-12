@@ -166,10 +166,30 @@ const Popup: React.FC<{
                 <div className='arrows'>
                   <span
                     className={`material-symbols-outlined${
-                      activeDice === 1 ? ' show' : ' hide'
+                      activeDice === 1 &&
+                      state.dice.defend &&
+                      (!state.turn.isRolling ||
+                        (!state.dice.defend?.total &&
+                          !hasRolled.val &&
+                          showRoll.val) ||
+                        (state.dice.defend?.total &&
+                          !hasRolled.val &&
+                          !showRoll.val))
+                        ? ' show'
+                        : ' hide'
                     }`}
                     onClick={() => {
-                      if (state.dice.main?.total) {
+                      if (
+                        activeDice === 1 &&
+                        state.dice.defend &&
+                        (!state.turn.isRolling ||
+                          (!state.dice.defend?.total &&
+                            !hasRolled.val &&
+                            showRoll.val) ||
+                          (state.dice.defend?.total &&
+                            !hasRolled.val &&
+                            !showRoll.val))
+                      ) {
                         setActiveDice(0);
                       }
                     }}
@@ -181,7 +201,7 @@ const Popup: React.FC<{
                     style={{
                       color:
                         state.turn.phase === 'challenge-roll' &&
-                        ((!state.dice.main.total &&
+                        (((!state.dice.main.total || hasRolled.val) &&
                           activeDice === 0 &&
                           state.turn.challenger === state.playerNum) ||
                           (state.dice.main.total &&
@@ -197,12 +217,30 @@ const Popup: React.FC<{
                   </span>
                   <span
                     className={`material-symbols-outlined${
-                      activeDice === 0 && state.dice.main?.total
+                      activeDice === 0 &&
+                      state.dice.defend &&
+                      (!state.turn.isRolling ||
+                        (!state.dice.defend?.total &&
+                          !hasRolled.val &&
+                          showRoll.val) ||
+                        (state.dice.defend?.total &&
+                          !hasRolled.val &&
+                          !showRoll.val))
                         ? ' show'
                         : ' hide'
                     }`}
                     onClick={() => {
-                      if (state.dice.main?.total) {
+                      if (
+                        activeDice === 0 &&
+                        state.dice.defend &&
+                        (!state.turn.isRolling ||
+                          (!state.dice.defend?.total &&
+                            !hasRolled.val &&
+                            showRoll.val) ||
+                          (state.dice.defend?.total &&
+                            !hasRolled.val &&
+                            !showRoll.val))
+                      ) {
                         setActiveDice(1);
                       }
                     }}
@@ -213,6 +251,7 @@ const Popup: React.FC<{
                 <div
                   onClick={
                     state.turn.isRolling &&
+                    state.turn.phase === 'challenge-roll' &&
                     ((!state.dice.main.total &&
                       activeDice === 0 &&
                       state.turn.challenger === state.playerNum) ||
@@ -223,12 +262,13 @@ const Popup: React.FC<{
                       : () => {}
                   }
                   className={`challenge-dice ${
-                    (!state.dice.main.total &&
+                    state.turn.phase === 'challenge-roll' &&
+                    ((!state.dice.main.total &&
                       activeDice === 0 &&
                       state.turn.challenger === state.playerNum) ||
-                    (state.dice.main.total &&
-                      activeDice === 1 &&
-                      state.turn.player === state.playerNum)
+                      (state.dice.main.total &&
+                        activeDice === 1 &&
+                        state.turn.player === state.playerNum))
                       ? 'active'
                       : ''
                   }`}
