@@ -47,7 +47,6 @@ export interface ChallengeCard extends Card {
 export interface ModifierCard extends Card {
   type: CardType.modifier;
   modifier: [number, number] | [number];
-  diceId?: 1 | 2;
 }
 export interface ItemCard extends Card {
   type: CardType.item;
@@ -88,14 +87,16 @@ export interface GameState {
   dice: {
     main: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     };
 
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     } | null;
   };

@@ -87,14 +87,16 @@ export interface GameState {
   dice: {
     main: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     };
 
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     } | null;
   };
@@ -166,14 +168,16 @@ export interface privateState {
   dice: {
     main: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     };
 
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: [number, number][];
+      modifier: ModifierCard[];
+      modValues: number[];
       total: number;
     } | null;
   };

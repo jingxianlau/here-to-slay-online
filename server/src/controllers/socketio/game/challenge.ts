@@ -135,7 +135,8 @@ export const challengeRoll = (roomId: string, userId: string) => {
     gameState.dice.defend = {
       roll: [1, 1],
       total: 0,
-      modifier: []
+      modifier: [],
+      modValues: []
     };
   } else if (gameState.dice.defend !== null) {
     gameState.dice.defend.roll = roll;
@@ -191,6 +192,7 @@ export const confirmChallenge = (
   gameState.dice.main.roll = [1, 1];
   gameState.dice.main.total = 0;
   gameState.dice.main.modifier = [];
+  gameState.dice.main.modValues = [];
   gameState.dice.defend = null;
   gameState.turn.phase = 'play';
   gameState.turn.phaseChanged = true;

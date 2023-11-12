@@ -826,7 +826,7 @@ export const initialState: GameState = {
 
   // PUBLIC
   dice: {
-    main: { roll: [1, 1], modifier: [], total: 0 },
+    main: { roll: [1, 1], modifier: [], modValues: [], total: 0 },
     defend: null
   },
   board: [],

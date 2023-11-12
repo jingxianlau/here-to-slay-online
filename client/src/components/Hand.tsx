@@ -15,7 +15,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
     state: { val: state },
     showHand,
     allowedCards,
-    credentials,
+    credentials: { roomId, userId },
     shownCard
   } = useClientContext();
 
@@ -27,7 +27,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
   const drawFive = () => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
     if (state.turn.player === state.playerNum) {
-      socket.emit('draw-five', credentials.roomId, credentials.userId);
+      socket.emit('draw-five', roomId, userId);
     }
   };
 
@@ -42,28 +42,24 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             card.type === CardType.item ||
             card.type === CardType.magic)
         ) {
-          socket.emit(
-            'prepare-card',
-            credentials.roomId,
-            credentials.userId,
-            card
-          );
+          socket.emit('prepare-card', roomId, userId, card);
           dropHand(showHand, shownCard);
         }
         break;
 
       case 'challenge':
         if (card.type === CardType.challenge) {
-          socket.emit(
-            'challenge',
-            credentials.roomId,
-            credentials.userId,
-            true,
-            card.id
-          );
+          socket.emit('challenge', roomId, userId, true, card.id);
           dropHand(showHand, shownCard);
         }
         break;
+
+      case 'modify':
+        if (card.type === CardType.modifier) {
+          shownCard.set(card);
+          showHand.set(false);
+          showHand.setLocked(true);
+        }
     }
   };
 
