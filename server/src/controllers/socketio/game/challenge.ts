@@ -36,6 +36,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   gameState.players[playerNum].hand = gameState.players[playerNum].hand.filter(
     c => c.id !== card.id
   );
+  gameState.players[playerNum].numCards--;
   gameState.turn.movesLeft--;
   gameState.match.isReady = [];
   for (let i = 0; i < gameState.match.players.length; i++) {

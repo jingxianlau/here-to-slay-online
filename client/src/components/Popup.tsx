@@ -180,7 +180,7 @@ const Popup: React.FC<{
           </div>
         ) : state.turn.phase === 'challenge-roll' ||
           state.turn.phase === 'modify' ? (
-          state.turn.challenger && (
+          state.turn.challenger !== undefined && (
             <>
               <div className='challenge-roll-popup'>
                 <div className='img-container left'>

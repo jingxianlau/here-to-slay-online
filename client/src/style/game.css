@@ -594,13 +594,13 @@ img.click:hover {
   justify-content: space-between;
   align-items: center;
 }
-.popup .small-lg {
+.small-lg {
   width: 45.045vh;
   height: 62.92vh;
   border-radius: 1.8vh;
   user-select: none;
 }
-.popup .small-md {
+.small-md {
   width: 36.732vh;
   height: 51.308vh;
   border-radius: 1.5vh;
@@ -744,7 +744,7 @@ img.click:hover {
   font-size: 6vh;
   margin: 2vh;
 }
-.popup .cancel-button {
+.cancel-button {
   position: relative;
   width: 6vh;
   height: 6vh;
@@ -753,7 +753,7 @@ img.click:hover {
   justify-content: center;
   transition: 0.3s ease-in-out;
 }
-.popup .cancel-button .button {
+.cancel-button .button {
   width: 5vh;
   height: 5vh;
   border: 0.5vh solid #d03131;
@@ -761,7 +761,7 @@ img.click:hover {
   border-radius: 50%;
   transition: 0.3s ease-in-out;
 }
-.popup .button::after {
+.cancel-button .button::after {
   content: '';
   background: url('./assets/cross.png');
   background-size: 4vh;
@@ -773,14 +773,14 @@ img.click:hover {
   height: 5vh;
   transition: 0.3s ease-in-out;
 }
-.popup .cancel-button:hover .button {
+.cancel-button:hover .button {
   cursor: pointer;
   box-shadow: #000 2px 2px 6px 1px;
 }
-.popup .cancel-button:hover .button::after {
+.cancel-button:hover .button::after {
   background-size: 5.5vh;
 }
-.popup .cancel-container {
+.cancel-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -791,7 +791,7 @@ img.click:hover {
   margin-top: -16vh;
   margin-bottom: 10vh;
 }
-.popup .cancel-container h5 {
+.cancel-container h5 {
   margin-top: 0.6vh;
   font-size: 2vh;
 }
@@ -861,6 +861,60 @@ img.click:hover {
   width: 8vh;
   height: 8vh;
   margin-bottom: 3vh;
+}
+
+.discard-pile-popup {
+  position: absolute;
+  top: 0;
+  background: #000000cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: opacity ease-in-out 0.2s;
+}
+.discard-pile-container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+.discard-pile-popup.hide {
+  opacity: 0;
+}
+.discard-pile-popup.show {
+  opacity: 1;
+  width: 100vw;
+  height: 100vh;
+}
+.discard-pile-container .center {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 75vh;
+}
+.discard-pile-container .material-symbols-outlined {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 60vh;
+}
+.discard-pile-container .material-symbols-outlined.hide {
+  opacity: 0;
+}
+.discard-pile-container .material-symbols-outlined {
+  font-size: 10vh;
+  user-select: none;
+  width: 10vh;
+  height: 10vh;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease-in-out;
+}
+.discard-pile-container .material-symbols-outlined.show:hover {
+  cursor: pointer;
+  background-color: #333;
 }
 
 /* HELPER TEXT & TIMER */

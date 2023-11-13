@@ -6,9 +6,13 @@ import useClientContext from '../hooks/useClientContext';
 
 interface MainBoardProps {
   socket: Socket;
+  setShowDiscardPile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
+const MainBoard: React.FC<MainBoardProps> = ({
+  socket,
+  setShowDiscardPile
+}) => {
   const { state } = useClientContext();
 
   const [boardOrder, setBoardOrder] = useState<number[][]>([[], [], []]);
@@ -27,13 +31,20 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
         break;
 
       case 4:
+        board[1].push(-1);
+        board[1].push(state.val.playerNum);
+        board[0].push((state.val.playerNum + 2) % 4);
+        board[0].push((state.val.playerNum + 1) % 4);
+        board[2].push((state.val.playerNum + 3) % 4);
+
+        setBoardOrder(board);
         break;
 
       case 5:
         board[1].push(-1);
         board[1].push(state.val.playerNum);
-        board[0].push((state.val.playerNum + 1) % 5);
         board[0].push((state.val.playerNum + 2) % 5);
+        board[0].push((state.val.playerNum + 1) % 5);
         board[2].push((state.val.playerNum + 3) % 5);
         board[2].push((state.val.playerNum + 4) % 5);
 
@@ -99,7 +110,10 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
               </div>
             ) : (
               <div className='center-board' key={i}>
-                <CenterBoard socket={socket} />
+                <CenterBoard
+                  socket={socket}
+                  setShowDiscardPile={setShowDiscardPile}
+                />
               </div>
             )
           )}

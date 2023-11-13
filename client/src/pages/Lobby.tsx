@@ -57,9 +57,11 @@ const Lobby: React.FC = () => {
           navigate('/game');
         }
 
-        if (state.players.length >= 3) {
-          navigate('/game');
-        }
+        /* DEV V */
+        // if (state.players.length >= 3) {
+        //   navigate('/game');
+        // }
+        /* DEV ^ */
       });
 
       socket.on('start-match', () => {

@@ -1,7 +1,7 @@
 import { nextPlayer, removeCard, rollDice } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
-import { sendGameState, sendState } from '../../../server';
+import { sendGameState } from '../../../server';
 import { CardType, ModifierCard } from '../../../types';
 
 export const modifyRoll = (
@@ -19,13 +19,19 @@ export const modifyRoll = (
 
   if (!modify) {
     state.match.isReady[playerNum] = false;
-    sendState(roomId);
+    sendGameState(roomId);
     if (state.match.isReady.every(val => val === false)) {
       // TODO: use card
       if (state.mainDeck.preparedCard && state.dice.defend) {
         if (state.dice.main.total >= state.dice.defend.total) {
           // fail
           state.mainDeck.preparedCard.successful = false;
+          if (state.mainDeck.preparedCard.card.type === 'hero') {
+            const player = state.mainDeck.preparedCard.card.player;
+            const id = state.mainDeck.preparedCard.card.id;
+            if (!player) return;
+            state.board[player].heroCards.filter(val => val.id !== id);
+          }
           sendGameState(roomId);
 
           state.dice.main.roll = [1, 1];
@@ -33,9 +39,17 @@ export const modifyRoll = (
           state.dice.main.modifier = [];
           state.dice.main.modValues = [];
           delete state.turn.challenger;
+          state.mainDeck.preparedCard = null;
 
           if (state.turn.movesLeft === 0) {
             nextPlayer(roomId);
+            setTimeout(() => {
+              sendGameState(roomId);
+              state.turn.phaseChanged = false;
+            }, 1200);
+          } else {
+            rooms[roomId].state.turn.phase = 'play';
+            rooms[roomId].state.turn.phaseChanged = true;
             setTimeout(() => {
               sendGameState(roomId);
               state.turn.phaseChanged = false;
@@ -104,5 +118,5 @@ export const modifyRoll = (
   }
 
   state.match.isReady.fill(dice === 0 ? true : null);
-  sendState(roomId);
+  sendGameState(roomId);
 };

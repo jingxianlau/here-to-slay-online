@@ -5,9 +5,13 @@ import useClientContext from '../hooks/useClientContext';
 
 interface CenterBoardProps {
   socket: Socket;
+  setShowDiscardPile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
+const CenterBoard: React.FC<CenterBoardProps> = ({
+  socket,
+  setShowDiscardPile
+}) => {
   const { state, credentials, showHand, shownCard } = useClientContext();
 
   function drawTwo() {
@@ -73,6 +77,9 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
               state.val.turn.phase === 'draw' &&
               state.val.turn.player === state.val.playerNum
                 ? 'glow click'
+                : state.val.turn.player === state.val.playerNum &&
+                  state.val.turn.phase === 'play'
+                ? 'click'
                 : ''
             }`}
             onClick={
@@ -98,7 +105,10 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
                   state.val.mainDeck.discardPile.length - 1
                 ].name
               }
-              className='small-card'
+              className='small-card click'
+              onClick={() => {
+                setShowDiscardPile(true);
+              }}
               draggable='false'
             />
           )}

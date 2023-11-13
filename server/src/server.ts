@@ -16,7 +16,6 @@ import { startRoll } from './controllers/socketio/game/startRoll';
 import {
   challenge,
   challengeRoll,
-  confirmChallenge,
   prepareCard
 } from './controllers/socketio/game/challenge';
 import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';

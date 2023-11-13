@@ -15,6 +15,7 @@ import HelperText from '../components/HelperText';
 import ShownCardTop from '../components/ShownCardTop';
 import TopMenu from '../components/TopMenu';
 import { showText } from '../helpers/showText';
+import DiscardPile from '../components/DiscardPile';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Game: React.FC = () => {
   const [rollSummary, setRollSummary] = useState<number[]>([]);
   const [activeDice, setActiveDice] = useState<0 | 1>(0);
   const [showBoard, setShowBoard] = useState(false);
+  const [showDiscardPile, setShowDiscardPile] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -245,13 +247,21 @@ const Game: React.FC = () => {
               <>
                 <TopMenu />
 
-                <MainBoard socket={socket} />
+                <MainBoard
+                  socket={socket}
+                  setShowDiscardPile={setShowDiscardPile}
+                />
 
                 <Popup
                   socket={socket}
                   activeDice={activeDice}
                   setActiveDice={setActiveDice}
                   showBoard={showBoard}
+                />
+
+                <DiscardPile
+                  showDiscardPile={showDiscardPile}
+                  setShowDiscardPile={setShowDiscardPile}
                 />
 
                 <ShownCard />

@@ -78,7 +78,9 @@ export function removeCard(roomId: string, playerNum: number, cardId: string) {
   if (cardIndex === -1) {
     return false;
   } else {
-    rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1);
+    rooms[roomId].state.mainDeck.discardPile.push(
+      rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0]
+    );
     rooms[roomId].state.players[playerNum].numCards--;
     return true;
   }
