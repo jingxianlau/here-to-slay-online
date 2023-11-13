@@ -15,6 +15,13 @@ const ShownCardTop: React.FC = () => {
           ? 'show'
           : 'hide'
       }`}
+      style={
+        shownCard.val && shownCard.val.name === 'help'
+          ? {
+              top: '30vh'
+            }
+          : {}
+      }
     >
       {shownCard.pos === 'top' && shownCard.val && (
         <img

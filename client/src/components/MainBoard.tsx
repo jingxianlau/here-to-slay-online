@@ -66,6 +66,14 @@ const MainBoard: React.FC<MainBoardProps> = ({ socket }) => {
                   marginBottom: arr.length > 1 ? 0 : '120px'
                 }}
               >
+                {boardNum !== state.val.playerNum && (
+                  <div className='num-cards'>
+                    <span className='material-symbols-outlined'>
+                      playing_cards
+                    </span>
+                    <h4>{state.val.players[boardNum].numCards}</h4>
+                  </div>
+                )}
                 {boardNum !== state.val.playerNum ? (
                   <h4
                     style={{

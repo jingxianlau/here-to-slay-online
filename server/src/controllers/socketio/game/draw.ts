@@ -22,6 +22,11 @@ export const drawOne = (roomId: string, userId: string) => {
   gameState.players[playerNum].hand.push(card);
   gameState.players[playerNum].numCards++;
   gameState.turn.movesLeft--;
+
+  if (gameState.turn.movesLeft <= 0) {
+    nextPlayer(roomId);
+  }
+
   sendGameState(roomId);
 };
 

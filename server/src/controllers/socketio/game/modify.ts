@@ -28,10 +28,17 @@ export const modifyRoll = (
           state.mainDeck.preparedCard.successful = false;
           sendGameState(roomId);
 
+          state.dice.main.roll = [1, 1];
+          state.dice.main.total = 0;
+          state.dice.main.modifier = [];
+          state.dice.main.modValues = [];
+          delete state.turn.challenger;
+
           if (state.turn.movesLeft === 0) {
             nextPlayer(roomId);
             setTimeout(() => {
               sendGameState(roomId);
+              state.turn.phaseChanged = false;
             }, 1200);
           }
         } else {
@@ -46,6 +53,7 @@ export const modifyRoll = (
           switch (preppedCard.type) {
             case 'hero':
               preppedCard.freeUse = true;
+              state.turn.phaseChanged = true;
               state.turn.phase === 'play';
               break;
             case 'item':
@@ -53,6 +61,17 @@ export const modifyRoll = (
             case 'magic':
             // use magic
           }
+
+          state.dice.main.roll = [1, 1];
+          state.dice.main.total = 0;
+          state.dice.main.modifier = [];
+          state.dice.main.modValues = [];
+          delete state.turn.challenger;
+
+          setTimeout(() => {
+            sendGameState(roomId);
+            state.turn.phaseChanged = false;
+          }, 1200);
         }
       }
     } else return;

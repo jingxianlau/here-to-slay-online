@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import express from 'express';
 
 import expressServer from './controllers/express/expressServer';
-import { parseState } from './functions/helpers';
+import { parseState, validSender } from './functions/helpers';
 import { rooms } from './rooms';
 
 import {
@@ -27,6 +27,7 @@ import {
   confirmAttack
 } from './controllers/socketio/game/attack';
 import { useEffect } from './controllers/socketio/game/useEffect';
+import { nextPlayer } from './functions/game';
 
 /* EXPRESS SERVER */
 const app = express();
@@ -49,6 +50,14 @@ io.on('connection', socket => {
   socket.on('player-num', playerNum);
 
   /* GAME */
+  // pass
+  socket.on('pass', (roomId: string, userId: string) => {
+    const playerNum = validSender(roomId, userId);
+    if (playerNum === -1) return;
+    nextPlayer(roomId);
+    sendGameState(roomId);
+  });
+
   // start roll
   socket.on('start-roll', startRoll);
 
@@ -61,7 +70,6 @@ io.on('connection', socket => {
   socket.on('prepare-card', prepareCard);
   socket.on('challenge', challenge);
   socket.on('challenge-roll', challengeRoll);
-  socket.on('confirm-challenge', confirmChallenge);
 
   // TODO: modify
   socket.on('modify-roll', modifyRoll);

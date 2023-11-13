@@ -23,6 +23,19 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
       showHand.set(false);
     }, 1200);
   }
+  function drawOne() {
+    if (
+      state.val.turn.phase !== 'play' ||
+      state.val.turn.player !== state.val.playerNum
+    )
+      return;
+
+    socket.emit('draw-one', credentials.roomId, credentials.userId);
+    showHand.set(true);
+    setTimeout(() => {
+      showHand.set(false);
+    }, 1200);
+  }
 
   return (
     <div className='mat'>
@@ -62,15 +75,29 @@ const CenterBoard: React.FC<CenterBoardProps> = ({ socket }) => {
                 ? 'glow click'
                 : ''
             }`}
-            onClick={drawTwo}
+            onClick={
+              state.val.turn.phase === 'draw'
+                ? drawTwo
+                : state.val.turn.phase === 'play'
+                ? drawOne
+                : () => {}
+            }
             draggable='false'
           />
         </div>
         <div className='small discard'>
-          {state.val.mainDeck.discardTop && (
+          {state.val.mainDeck.discardPile.length > 0 && (
             <img
-              src={getImage(state.val.mainDeck.discardTop)}
-              alt={state.val.mainDeck.discardTop.name}
+              src={getImage(
+                state.val.mainDeck.discardPile[
+                  state.val.mainDeck.discardPile.length - 1
+                ]
+              )}
+              alt={
+                state.val.mainDeck.discardPile[
+                  state.val.mainDeck.discardPile.length - 1
+                ].name
+              }
               className='small-card'
               draggable='false'
             />

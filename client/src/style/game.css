@@ -23,6 +23,54 @@ header img {
   position: fixed;
   top: 0;
 }
+
+.game .main-button.pass {
+  top: 1vh;
+  right: 1vh;
+}
+.game .main-button.help {
+  top: 1vh;
+  left: 1vh;
+}
+.game .main-button.help .material-symbols-outlined {
+  font-size: 5vh;
+}
+.game .main-button {
+  position: absolute;
+  width: 5vh;
+  height: 5vh;
+  background-color: #fc7c37;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 0.3vh solid #fc7c37;
+  transition: 0.3s ease-in-out;
+  user-select: none;
+}
+.game .main-button.show {
+  opacity: 1;
+}
+.game .main-button.hide {
+  opacity: 0;
+}
+.game .main-button:hover {
+  box-shadow: #222 0 0 0.5vh 0.5vh;
+  border: 0.3vh solid #222;
+}
+.game .main-button .material-symbols-outlined {
+  font-size: 3.5vh;
+  font-weight: 100;
+  transition-delay: 0.1s;
+}
+.game .main-button.pass .material-symbols-outlined {
+  margin-bottom: 0.2vh;
+}
+.game .main-button.pass:hover .material-symbols-outlined {
+  font-weight: 700;
+}
+
 .dice-box {
   position: relative;
   margin: auto;
@@ -256,6 +304,24 @@ header img {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+}
+
+.player-board {
+  position: relative;
+}
+.player-board .num-cards {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 1vh;
+  top: -0.4vh;
+}
+.player-board .num-cards span.material-symbols-outlined {
+  font-size: 3.5vh;
+  transform: rotate(180deg);
+}
+.player-board .num-cards h4 {
+  font-size: 2.8vh;
 }
 
 .player-board h4 {

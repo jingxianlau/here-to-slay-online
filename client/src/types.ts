@@ -20,14 +20,16 @@ export enum CardType {
   hero = 'hero',
   large = 'large',
   magic = 'magic',
-  item = 'item'
+  item = 'item',
+  help = 'help'
 }
 export const allCards = [
   CardType.modifier,
   CardType.challenge,
   CardType.hero,
   CardType.magic,
-  CardType.item
+  CardType.item,
+  CardType.help
 ];
 
 interface Card {
@@ -62,6 +64,9 @@ export interface LeaderCard extends MonsterCard {
   type: CardType.large;
   class: HeroClass;
 }
+export interface HelpCard extends Card {
+  type: CardType.help;
+}
 export type AnyCard =
   | HeroCard
   | ChallengeCard
@@ -69,7 +74,8 @@ export type AnyCard =
   | ItemCard
   | MagicCard
   | MonsterCard
-  | LeaderCard;
+  | LeaderCard
+  | HelpCard;
 
 export type LargeCard = LeaderCard | MonsterCard;
 
@@ -116,7 +122,7 @@ export interface GameState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
-    discardPile: AnyCard[] | null;
+    discardPile: AnyCard[];
 
     // window for challenging
     preparedCard?: {

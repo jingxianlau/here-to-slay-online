@@ -152,6 +152,8 @@ const Game: React.FC = () => {
             shownCard.setPos(null);
             shownCard.set(null);
 
+            if (!state.mainDeck.preparedCard) return;
+
             if (state.match.isReady.every(val => val === true)) {
               allowedCards.set([CardType.modifier]);
               setActiveDice(0);
@@ -162,6 +164,12 @@ const Game: React.FC = () => {
               allowedCards.set([]);
             } else {
               allowedCards.set([CardType.modifier]);
+            }
+
+            if (state.mainDeck.preparedCard.successful) {
+              showText(showHelperText, 'Card Success');
+            } else {
+              showText(showHelperText, 'Card Failed');
             }
             break;
 
@@ -248,6 +256,30 @@ const Game: React.FC = () => {
                 <Hand socket={socket} />
 
                 <HelperText />
+
+                <div
+                  className={`main-button pass ${
+                    state.turn.player === state.playerNum ? 'show' : 'hide'
+                  }`}
+                  onClick={() =>
+                    socket.emit('pass', credentials.roomId, credentials.userId)
+                  }
+                >
+                  <span className='material-symbols-outlined'>forward</span>
+                </div>
+                <div
+                  className={`main-button help`}
+                  onMouseEnter={() => {
+                    shownCard.set({ name: 'help', type: CardType.help });
+                    shownCard.setPos('top');
+                  }}
+                  onMouseLeave={() => {
+                    shownCard.set(null);
+                    shownCard.setPos(null);
+                  }}
+                >
+                  <span className='material-symbols-outlined'>help</span>
+                </div>
               </>
             )}
           </div>
