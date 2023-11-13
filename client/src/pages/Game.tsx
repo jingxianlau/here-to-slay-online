@@ -34,6 +34,7 @@ const Game: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
   const [activeDice, setActiveDice] = useState<0 | 1>(0);
+  const [showBoard, setShowBoard] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -111,17 +112,21 @@ const Game: React.FC = () => {
           case 'challenge':
             setActiveDice(0);
             showPopup.set(true);
-            shownCard.setLocked(true);
-            shownCard.setPos(null);
-            shownCard.set(null);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
             break;
 
           case 'challenge-roll':
             showPopup.set(true);
             showRoll.set(false);
-            shownCard.setLocked(true);
-            shownCard.setPos(null);
-            shownCard.set(null);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
             if (state.dice.defend && state.dice.defend.total > 0) {
               setActiveDice(1);
             }
@@ -148,9 +153,11 @@ const Game: React.FC = () => {
 
           case 'modify':
             showPopup.set(true);
-            shownCard.setLocked(true);
-            shownCard.setPos(null);
-            shownCard.set(null);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
 
             if (!state.mainDeck.preparedCard) return;
 
@@ -168,7 +175,7 @@ const Game: React.FC = () => {
 
             if (state.mainDeck.preparedCard.successful) {
               showText(showHelperText, 'Card Success');
-            } else {
+            } else if (state.mainDeck.preparedCard.successful === false) {
               showText(showHelperText, 'Card Failed');
             }
             break;
@@ -240,15 +247,12 @@ const Game: React.FC = () => {
 
                 <MainBoard socket={socket} />
 
-                {(state.turn.phase === 'challenge' ||
-                  state.turn.phase === 'challenge-roll' ||
-                  state.turn.phase === 'modify') && (
-                  <Popup
-                    socket={socket}
-                    activeDice={activeDice}
-                    setActiveDice={setActiveDice}
-                  />
-                )}
+                <Popup
+                  socket={socket}
+                  activeDice={activeDice}
+                  setActiveDice={setActiveDice}
+                  showBoard={showBoard}
+                />
 
                 <ShownCard />
                 <ShownCardTop />
@@ -280,7 +284,7 @@ const Game: React.FC = () => {
                   <span className='material-symbols-outlined'>forward</span>
                 </div>
                 <div
-                  className={`main-button help`}
+                  className={`main-button help show`}
                   onMouseEnter={() => {
                     shownCard.set({ name: 'help', type: CardType.help });
                     shownCard.setPos('top');
@@ -291,6 +295,29 @@ const Game: React.FC = () => {
                   }}
                 >
                   <span className='material-symbols-outlined'>help</span>
+                </div>
+                <div
+                  className={`show-board-trigger ${
+                    state.turn.phase === 'attack' ||
+                    state.turn.phase === 'challenge' ||
+                    state.turn.phase === 'challenge-roll' ||
+                    state.turn.phase === 'modify'
+                      ? 'show'
+                      : 'hide'
+                  }`}
+                  onClick={() => {
+                    if (
+                      state.turn.phase === 'attack' ||
+                      state.turn.phase === 'challenge' ||
+                      state.turn.phase === 'challenge-roll' ||
+                      state.turn.phase === 'modify'
+                    ) {
+                      setShowBoard(val => !val);
+                      shownCard.setLocked(val => !val);
+                    }
+                  }}
+                >
+                  <span className='material-symbols-outlined'>flip</span>
                 </div>
               </>
             )}

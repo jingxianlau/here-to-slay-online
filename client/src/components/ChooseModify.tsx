@@ -41,7 +41,7 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
 
   return (
     <div className={`choose-modifier${show ? ' show' : ' hide'}`}>
-      {card && (
+      {card && card.type === 'modifier' && (
         <>
           <div
             className='left'

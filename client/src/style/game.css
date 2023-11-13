@@ -24,6 +24,38 @@ header img {
   top: 0;
 }
 
+.game .show-board-trigger {
+  width: 10vh;
+  height: 10vh;
+  background-color: #fc7c37;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-radius: 0 0 0 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  user-select: none;
+}
+.game .show-board-trigger.show {
+  opacity: 1;
+}
+.game .show-board-trigger.hide {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.game .show-board-trigger span.material-symbols-outlined {
+  margin-bottom: 2.2vh;
+  margin-left: 2.2vh;
+  font-size: 5vh;
+}
+.game .show-board-trigger.show:hover {
+  cursor: pointer;
+  box-shadow: #222 0 0 1vh 1vh;
+}
+
 .game .main-button.pass {
   top: 1vh;
   right: 1vh;
@@ -31,6 +63,9 @@ header img {
 .game .main-button.help {
   top: 1vh;
   left: 1vh;
+}
+.game .main-button.help.show:hover {
+  cursor: help;
 }
 .game .main-button.help .material-symbols-outlined {
   font-size: 5vh;
@@ -44,7 +79,6 @@ header img {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  cursor: pointer;
   border: 0.3vh solid #fc7c37;
   transition: 0.3s ease-in-out;
   user-select: none;
@@ -55,7 +89,8 @@ header img {
 .game .main-button.hide {
   opacity: 0;
 }
-.game .main-button:hover {
+.game .main-button.show:hover {
+  cursor: pointer;
   box-shadow: #222 0 0 0.5vh 0.5vh;
   border: 0.3vh solid #222;
 }
@@ -67,7 +102,7 @@ header img {
 .game .main-button.pass .material-symbols-outlined {
   margin-bottom: 0.2vh;
 }
-.game .main-button.pass:hover .material-symbols-outlined {
+.game .main-button.pass.show:hover .material-symbols-outlined {
   font-weight: 700;
 }
 
@@ -535,11 +570,19 @@ img.click:hover {
   top: 9.5vh;
   border-radius: 5vh;
   box-shadow: #1e1e1e 0 0 10px 10px;
-  transition: ease-in-out 0.2s;
+  transition: opacity ease-in-out 0.2s, top 0.15s;
 
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.popup.show {
+  opacity: 1;
+}
+.popup.hide {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 .popup .img-container.left {
   margin-right: -6vh;

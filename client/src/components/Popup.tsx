@@ -11,7 +11,8 @@ const Popup: React.FC<{
   socket: Socket;
   activeDice: 0 | 1;
   setActiveDice: React.Dispatch<React.SetStateAction<0 | 1>>;
-}> = ({ socket, activeDice, setActiveDice }) => {
+  showBoard: boolean;
+}> = ({ socket, activeDice, setActiveDice, showBoard }) => {
   const {
     state: { val: state },
     credentials: { roomId, userId },
@@ -110,7 +111,19 @@ const Popup: React.FC<{
   }
 
   return (
-    <div className={'popup'} style={{ opacity: showPopup.val ? 1 : 0 }}>
+    <div
+      className={`popup ${
+        state.turn.phase === 'challenge' ||
+        state.turn.phase === 'challenge-roll' ||
+        state.turn.phase === 'modify'
+          ? 'show'
+          : 'hide'
+      }`}
+      style={{
+        opacity: showPopup.val ? 1 : 0,
+        top: showBoard ? '-79vh' : '9.5vh'
+      }}
+    >
       {preppedCard &&
         (state.turn.phase === 'challenge' ? (
           <div className='challenge-popup'>
