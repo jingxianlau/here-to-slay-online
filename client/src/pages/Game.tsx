@@ -259,11 +259,23 @@ const Game: React.FC = () => {
 
                 <div
                   className={`main-button pass ${
-                    state.turn.player === state.playerNum ? 'show' : 'hide'
+                    state.turn.player === state.playerNum &&
+                    (state.turn.phase === 'draw' || state.turn.phase === 'play')
+                      ? 'show'
+                      : 'hide'
                   }`}
-                  onClick={() =>
-                    socket.emit('pass', credentials.roomId, credentials.userId)
-                  }
+                  onClick={() => {
+                    if (
+                      state.turn.phase === 'draw' ||
+                      state.turn.phase === 'play'
+                    ) {
+                      socket.emit(
+                        'pass',
+                        credentials.roomId,
+                        credentials.userId
+                      );
+                    }
+                  }}
                 >
                   <span className='material-symbols-outlined'>forward</span>
                 </div>
