@@ -137,294 +137,342 @@ const heroCards: HeroCard[] = [
     name: 'Dodgy Dealer',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Fuzzy Cheeks',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Greedy Cheeks',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Lucky Bucky',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Mellow Dee',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Napping Nibbles',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Peanut',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Tipsy Tootie',
     class: HeroClass.bard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   // fighters
   {
     name: 'Bad Axe',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Bear Claw',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Beary Wise',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Fury Knuckle',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Heavy Bear',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Pan Chucks',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Qi Bear',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Tough Teddy',
     class: HeroClass.fighter,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   // guardian
   {
     name: 'Calming Voice',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Guiding Light',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Holy Curselifter',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Iron Resolve',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Mighty Blade',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Radiant Horn',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Vibrant Glow',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Wise Shield',
     class: HeroClass.guardian,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   // rangers
   {
     name: 'Bullseye',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Hook',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Lookie Rookie',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Quick Draw',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Serious Grey',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Sharp Fox',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Wildshot',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Wily Red',
     class: HeroClass.ranger,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   // Thieves
   {
     name: 'Kit Napper',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Meowzio',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Plundering Puma',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Shurikitty',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Silent Shadow',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Slippery Paws',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Sly Pickings',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Smooth Mimimeow',
     class: HeroClass.thief,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   // wizard
   {
     name: 'Bun Bun',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Buttons',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Fluffy',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Hopper',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Snowball',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Spooky',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Whiskers',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   },
   {
     name: 'Wiggles',
     class: HeroClass.wizard,
     type: CardType.hero,
-    id: uuid()
+    id: uuid(),
+    freeUse: false
   }
 ];
 
@@ -817,7 +865,6 @@ export const initialState: GameState = {
   secret: {
     deck: deck,
     leaderPile: leaderPile,
-    discardPile: [],
     monsterPile: monsterPile,
     playerIds: [],
     playerSocketIds: []
@@ -832,7 +879,7 @@ export const initialState: GameState = {
   board: [],
   mainDeck: {
     monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
-    discardTop: null,
+    discardPile: [],
     preparedCard: null,
     attackedMonster: null
   },

@@ -78,10 +78,9 @@ export interface GameState {
   secret: {
     deck: AnyCard[] | null;
     leaderPile: LeaderCard[] | null;
-    discardPile: AnyCard[] | null;
     monsterPile: AnyCard[] | null;
   } | null;
-  players: ({ hand: AnyCard[] } | null)[];
+  players: { hand: AnyCard[]; numCards: number }[];
 
   // PUBLIC
   dice: {
@@ -117,7 +116,7 @@ export interface GameState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
-    discardTop: AnyCard | null;
+    discardPile: AnyCard[] | null;
 
     // window for challenging
     preparedCard?: {

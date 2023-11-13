@@ -27,6 +27,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   if (card.type === CardType.hero) {
     gameState.board[playerNum].heroCards.push(card);
   }
+
   gameState.mainDeck.preparedCard = {
     card: card,
     successful: null

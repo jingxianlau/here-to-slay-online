@@ -53,6 +53,12 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
                 shownCard.set(null);
               }, 200);
             }}
+            style={{
+              opacity:
+                (!card.modifier[1] && card.modifier[0] > 0) || card.modifier[1]
+                  ? 1
+                  : 0
+            }}
           >
             +{card.modifier[0]}
           </div>
@@ -91,13 +97,19 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
             onClick={() => {
               setShow(false);
               showHand.setLocked(false);
-              modify(1);
+              modify(card.modifier[1] ? 1 : 0);
               setTimeout(() => {
                 shownCard.set(null);
               }, 200);
             }}
+            style={{
+              opacity:
+                (!card.modifier[1] && card.modifier[0] < 0) || card.modifier[1]
+                  ? 1
+                  : 0
+            }}
           >
-            {card.modifier[1]}
+            {card.modifier[1] ? card.modifier[1] : card.modifier[0]}
           </div>
         </>
       )}

@@ -29,8 +29,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             className='small'
             key={card.id}
             onMouseEnter={() => {
-              shownCard.set(card);
-              shownCard.setPos(col === 0 ? 'right' : 'left');
+              if (!shownCard.locked) {
+                shownCard.set(card);
+                shownCard.setPos(col === 0 ? 'right' : 'left');
+              }
             }}
             onMouseLeave={() => {
               shownCard.set(null);
@@ -64,8 +66,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             className='large'
             key={card.id}
             onMouseEnter={() => {
-              shownCard.set(card);
-              shownCard.setPos(col === 0 ? 'right' : 'left');
+              if (!shownCard.locked) {
+                shownCard.set(card);
+                shownCard.setPos(col === 0 ? 'right' : 'left');
+              }
             }}
             onMouseLeave={() => {
               shownCard.set(null);

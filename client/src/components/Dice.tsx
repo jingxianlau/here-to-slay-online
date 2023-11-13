@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../style/dice.css';
+import { random } from 'lodash';
 
 const Dice: React.FC<{ roll1: number; roll2: number }> = ({ roll1, roll2 }) => {
   const [face1, setFace1] = useState(1);

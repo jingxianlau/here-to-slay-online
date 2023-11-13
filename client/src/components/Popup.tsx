@@ -43,23 +43,7 @@ const Popup: React.FC<{
 
   useEffect(() => {
     if (shownCard.val && shownCard.val.type === CardType.modifier) {
-      if (shownCard.val.modifier.length === 2) {
-        setShow(true);
-      } else {
-        socket.emit(
-          'modify-roll',
-          roomId,
-          userId,
-          {
-            modifier: shownCard.val,
-            effect: 0,
-            dice: activeDice
-          },
-          true
-        );
-        shownCard.set(null);
-        showHand.setLocked(false);
-      }
+      setShow(true);
     } else {
       setShow(false);
       showHand.setLocked(false);
@@ -93,7 +77,6 @@ const Popup: React.FC<{
           showText(showHelperText, 'Roll');
         }
       } else if (state.turn.phase === 'modify') {
-        allowedCards.set([CardType.modifier]);
         showRoll.set(false);
 
         if (state.turn.phaseChanged) {
@@ -196,52 +179,78 @@ const Popup: React.FC<{
                   />
                 </div>
 
-                <div className='dice-box'>
-                  {state.turn.phase === 'modify' && (
-                    <div className='cancel-container'>
-                      <div
-                        className='cancel-button'
-                        onClick={() =>
-                          socket.emit(
-                            'modify-dice',
-                            roomId,
-                            userId,
-                            null,
-                            false
-                          )
-                        }
-                      >
-                        <div className='button'></div>
+                <div
+                  className='dice-box'
+                  style={{
+                    marginTop:
+                      state.turn.phase === 'challenge-roll' ? '24vh' : 'auto'
+                  }}
+                >
+                  {state.turn.phase === 'modify' &&
+                    (state.match.isReady[state.playerNum] !== false ? (
+                      <div className='cancel-container'>
+                        <div
+                          className='cancel-button'
+                          onClick={() => {
+                            socket.emit(
+                              'modify-roll',
+                              roomId,
+                              userId,
+                              null,
+                              false
+                            );
+                            allowedCards.set([]);
+                          }}
+                        >
+                          <div className='button'></div>
+                        </div>
+                        <h5>Don't Modify</h5>
                       </div>
-                      <h5>Don't Modify</h5>
+                    ) : (
+                      <div className='cancel-container'>
+                        <h2 style={{ marginTop: '4vh', marginBottom: '1.2vh' }}>
+                          ...Waiting for Players
+                        </h2>
+                        <h5></h5>
+                      </div>
+                    ))}
+
+                  {state.turn.phase === 'modify' && state.dice.defend && (
+                    <div className='summary'>
+                      <div>
+                        <img src={'./assets/sword.png'} alt={''} />
+                        <h1
+                          style={{
+                            color:
+                              state.dice.main.total > state.dice.defend.total
+                                ? '#fc7c37'
+                                : 'white'
+                          }}
+                        >
+                          {state.dice.main.total}
+                        </h1>
+                      </div>
+
+                      <div>
+                        <h1
+                          style={{
+                            color:
+                              state.dice.defend.total > state.dice.main.total
+                                ? '#fc7c37'
+                                : 'white'
+                          }}
+                        >
+                          {state.dice.defend?.total}
+                        </h1>
+                        <img src={'./assets/shield.png'} alt={''} />
+                      </div>
                     </div>
                   )}
-                  <img
-                    src={
-                      activeDice === 0
-                        ? './assets/sword.png'
-                        : './assets/shield.png'
-                    }
-                    alt={''}
-                  />
+
                   <div className='arrows'>
-                    <span
-                      className={`material-symbols-outlined${
-                        activeDice === 1 &&
-                        state.dice.defend &&
-                        (!state.turn.isRolling ||
-                          (!state.dice.defend?.total &&
-                            !hasRolled.val &&
-                            showRoll.val) ||
-                          (state.dice.defend?.total &&
-                            !hasRolled.val &&
-                            !showRoll.val))
-                          ? ' show'
-                          : ' hide'
-                      }`}
-                      onClick={() => {
-                        if (
-                          activeDice === 1 &&
+                    {activeDice === 1 ? (
+                      <span
+                        className={`material-symbols-outlined${
                           state.dice.defend &&
                           (!state.turn.isRolling ||
                             (!state.dice.defend?.total &&
@@ -250,13 +259,35 @@ const Popup: React.FC<{
                             (state.dice.defend?.total &&
                               !hasRolled.val &&
                               !showRoll.val))
-                        ) {
-                          setActiveDice(0);
-                        }
-                      }}
-                    >
-                      chevron_left
-                    </span>
+                            ? ' show'
+                            : ' hide'
+                        }`}
+                        onClick={() => {
+                          if (
+                            activeDice === 1 &&
+                            state.dice.defend &&
+                            (!state.turn.isRolling ||
+                              (!state.dice.defend?.total &&
+                                !hasRolled.val &&
+                                showRoll.val) ||
+                              (state.dice.defend?.total &&
+                                !hasRolled.val &&
+                                !showRoll.val))
+                          ) {
+                            setActiveDice(0);
+                          }
+                        }}
+                      >
+                        chevron_left
+                      </span>
+                    ) : (
+                      <img
+                        src='./assets/sword.png'
+                        alt={''}
+                        className={`logo`}
+                      />
+                    )}
+
                     <span
                       className='name'
                       style={{
@@ -276,23 +307,10 @@ const Popup: React.FC<{
                         ? state.match.players[state.turn.challenger]
                         : state.match.players[state.turn.player]}
                     </span>
-                    <span
-                      className={`material-symbols-outlined${
-                        activeDice === 0 &&
-                        state.dice.defend &&
-                        (!state.turn.isRolling ||
-                          (!state.dice.defend?.total &&
-                            !hasRolled.val &&
-                            showRoll.val) ||
-                          (state.dice.defend?.total &&
-                            !hasRolled.val &&
-                            !showRoll.val))
-                          ? ' show'
-                          : ' hide'
-                      }`}
-                      onClick={() => {
-                        if (
-                          activeDice === 0 &&
+
+                    {activeDice === 0 ? (
+                      <span
+                        className={`material-symbols-outlined${
                           state.dice.defend &&
                           (!state.turn.isRolling ||
                             (!state.dice.defend?.total &&
@@ -301,14 +319,36 @@ const Popup: React.FC<{
                             (state.dice.defend?.total &&
                               !hasRolled.val &&
                               !showRoll.val))
-                        ) {
-                          setActiveDice(1);
-                        }
-                      }}
-                    >
-                      chevron_right
-                    </span>
+                            ? ' show'
+                            : ' hide'
+                        }`}
+                        onClick={() => {
+                          if (
+                            activeDice === 0 &&
+                            state.dice.defend &&
+                            (!state.turn.isRolling ||
+                              (!state.dice.defend?.total &&
+                                !hasRolled.val &&
+                                showRoll.val) ||
+                              (state.dice.defend?.total &&
+                                !hasRolled.val &&
+                                !showRoll.val))
+                          ) {
+                            setActiveDice(1);
+                          }
+                        }}
+                      >
+                        chevron_right
+                      </span>
+                    ) : (
+                      <img
+                        src='./assets/shield.png'
+                        alt={''}
+                        className={`logo`}
+                      />
+                    )}
                   </div>
+
                   <div
                     onClick={
                       state.turn.isRolling &&
@@ -356,7 +396,7 @@ const Popup: React.FC<{
                     style={{
                       color:
                         state.dice.defend &&
-                        state.dice.defend.total > 0 &&
+                        state.dice.defend.total !== 0 &&
                         ((activeDice === 0 &&
                           state.dice.main.total >= state.dice.defend.total &&
                           state.dice.main.modifier.length === 0) ||
@@ -391,8 +431,8 @@ const Popup: React.FC<{
                     {state.turn.phase === 'modify' &&
                       state.dice.defend &&
                       (activeDice === 0
-                        ? state.dice.main.modValues.map(val => (
-                            <>
+                        ? state.dice.main.modValues.map((val, i) => (
+                            <React.Fragment key={i}>
                               <span
                                 style={{
                                   color: val > 0 ? '#2eee9b' : '#f95151'
@@ -400,10 +440,10 @@ const Popup: React.FC<{
                               >
                                 {val > 0 ? `+${val}` : val}
                               </span>{' '}
-                            </>
+                            </React.Fragment>
                           ))
-                        : state.dice.defend.modValues.map(val => (
-                            <>
+                        : state.dice.defend.modValues.map((val, i) => (
+                            <React.Fragment key={i}>
                               <span
                                 style={{
                                   color: val > 0 ? '#2eee9b' : '#f95151'
@@ -411,7 +451,7 @@ const Popup: React.FC<{
                               >
                                 {val > 0 ? `+${val}` : val}
                               </span>{' '}
-                            </>
+                            </React.Fragment>
                           )))}
                   </h2>
                   <h3

@@ -27,6 +27,7 @@ export interface HeroCard extends Card {
   class: HeroClass;
   items?: ItemCard[];
   id: string;
+  freeUse: boolean;
 }
 export interface ChallengeCard extends Card {
   type: CardType.challenge;
@@ -76,12 +77,11 @@ export interface GameState {
   secret: {
     deck: AnyCard[];
     leaderPile: LeaderCard[];
-    discardPile: AnyCard[];
     monsterPile: MonsterCard[];
     playerIds: string[];
     playerSocketIds: string[];
   };
-  players: { hand: AnyCard[] }[];
+  players: { hand: AnyCard[]; numCards: number }[];
 
   // PUBLIC
   dice: {
@@ -117,7 +117,7 @@ export interface GameState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
-    discardTop: AnyCard | null;
+    discardPile: AnyCard[];
 
     // window for challenging
     preparedCard?: {
@@ -159,10 +159,9 @@ export interface privateState {
   secret: {
     deck: AnyCard[] | null;
     leaderPile: LeaderCard[] | null;
-    discardPile: AnyCard[] | null;
     monsterPile: AnyCard[] | null;
   } | null;
-  players: ({ hand: AnyCard[] } | null)[];
+  players: { hand: AnyCard[]; numCards: number }[];
 
   // PUBLIC
   dice: {
@@ -198,7 +197,7 @@ export interface privateState {
   }[];
   mainDeck: {
     monsters: [MonsterCard, MonsterCard, MonsterCard];
-    discardTop: AnyCard | null;
+    discardPile: AnyCard[];
 
     // window for challenging
     preparedCard?: {

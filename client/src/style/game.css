@@ -565,12 +565,37 @@ img.click:hover {
   align-items: center;
 }
 .popup .dice-box img {
-  width: 8vh;
-  height: 8vh;
-  margin-bottom: 1vh;
+  width: 5vh;
+  height: 5vh;
+}
+.popup .dice-box .summary {
+  display: flex;
+  justify-content: space-between;
+  width: 17vw;
+  margin-bottom: 4vh;
+  margin-top: -10vh;
+}
+.popup .dice-box .summary div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.popup .dice-box .summary img {
+  width: 6vh;
+  height: 6vh;
+}
+.popup .dice-box .summary h1 {
+  margin: 0 1vw;
 }
 .popup .arrows {
-  width: 85%;
+  width: 75%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+}
+.popup .side-modifier .arrows {
+  width: 40%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -655,7 +680,7 @@ img.click:hover {
 }
 .popup .dice-box .cancel-container {
   margin-top: -16vh;
-  margin-bottom: 3vh;
+  margin-bottom: 10vh;
 }
 .popup .cancel-container h5 {
   margin-top: 0.6vh;

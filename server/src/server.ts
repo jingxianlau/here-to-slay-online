@@ -19,7 +19,7 @@ import {
   confirmChallenge,
   prepareCard
 } from './controllers/socketio/game/challenge';
-import { drawFive, drawTwo } from './controllers/socketio/game/draw';
+import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';
 import { modifyRoll } from './controllers/socketio/game/modify';
 import {
   attackMonster,
@@ -53,6 +53,7 @@ io.on('connection', socket => {
   socket.on('start-roll', startRoll);
 
   // draw
+  socket.on('draw-one', drawOne);
   socket.on('draw-two', drawTwo);
   socket.on('draw-five', drawFive);
 

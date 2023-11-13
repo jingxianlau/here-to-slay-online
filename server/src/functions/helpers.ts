@@ -41,7 +41,7 @@ export const addPlayer = (roomId: string, userId: string, username: string) => {
   room.numPlayers++;
   room.state.secret.playerIds.push(userId);
   room.state.match.players.push(username);
-  room.state.players.push({ hand: [] });
+  room.state.players.push({ hand: [], numCards: 0 });
   room.state.board.push({
     classes: {
       fighter: 0,
@@ -70,7 +70,7 @@ export const parseState = (userId: string, state: GameState): privateState => {
   newState.secret = null;
   for (let i = 0; i < numPlayers; i++) {
     if (i !== playerNum) {
-      newState.players[i] = null;
+      newState.players[i].hand = [];
     }
   }
 

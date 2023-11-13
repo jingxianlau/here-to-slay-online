@@ -151,6 +151,18 @@ const Game: React.FC = () => {
             shownCard.setLocked(true);
             shownCard.setPos(null);
             shownCard.set(null);
+
+            if (state.match.isReady.every(val => val === true)) {
+              allowedCards.set([CardType.modifier]);
+              setActiveDice(0);
+            } else if (state.match.isReady.every(val => val === null)) {
+              allowedCards.set([CardType.modifier]);
+              setActiveDice(1);
+            } else if (state.match.isReady[state.playerNum] === false) {
+              allowedCards.set([]);
+            } else {
+              allowedCards.set([CardType.modifier]);
+            }
             break;
 
           case 'play':

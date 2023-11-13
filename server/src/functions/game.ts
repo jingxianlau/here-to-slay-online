@@ -34,6 +34,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       card.player = i;
       state.players[i].hand.push(card);
     }
+    state.players[i].numCards = 5;
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;
     leader.player = i;
@@ -57,9 +58,8 @@ export function rollDice(): [number, number] {
 
 export function reshuffleDeck(roomId: string) {
   const state = rooms[roomId].state;
-  state.secret.deck = shuffle(state.secret.discardPile);
-  state.secret.discardPile = [];
-  state.mainDeck.discardTop = null;
+  state.secret.deck = shuffle(state.mainDeck.discardPile);
+  state.mainDeck.discardPile = [];
 
   return state.secret.deck.pop() as AnyCard;
 }
@@ -79,6 +79,7 @@ export function removeCard(roomId: string, playerNum: number, cardId: string) {
     return false;
   } else {
     rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1);
+    rooms[roomId].state.players[playerNum].numCards--;
     return true;
   }
 }

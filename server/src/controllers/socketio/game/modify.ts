@@ -1,8 +1,8 @@
-import { removeCard, rollDice } from '../../../functions/game';
+import { nextPlayer, removeCard, rollDice } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
-import { sendGameState } from '../../../server';
-import { ModifierCard } from '../../../types';
+import { sendGameState, sendState } from '../../../server';
+import { CardType, ModifierCard } from '../../../types';
 
 export const modifyRoll = (
   roomId: string,
@@ -15,21 +15,54 @@ export const modifyRoll = (
   modify: boolean
 ) => {
   const playerNum = checkCredentials(roomId, userId);
-  const gameState = rooms[roomId].state;
+  const state = rooms[roomId].state;
 
   if (!modify) {
-    gameState.match.isReady[playerNum] = false;
+    state.match.isReady[playerNum] = false;
+    sendState(roomId);
+    if (state.match.isReady.every(val => val === false)) {
+      // TODO: use card
+      if (state.mainDeck.preparedCard && state.dice.defend) {
+        if (state.dice.main.total >= state.dice.defend.total) {
+          // fail
+          state.mainDeck.preparedCard.successful = false;
+          sendGameState(roomId);
 
-    if (gameState.match.isReady.every(val => val === false)) {
-      // DO STUFF
+          if (state.turn.movesLeft === 0) {
+            nextPlayer(roomId);
+            setTimeout(() => {
+              sendGameState(roomId);
+            }, 1200);
+          }
+        } else {
+          state.mainDeck.preparedCard.successful = true;
+          sendGameState(roomId);
+
+          const preppedCard = state.mainDeck.preparedCard.card;
+
+          state.mainDeck.preparedCard = null;
+          state.dice.defend = null;
+
+          switch (preppedCard.type) {
+            case 'hero':
+              preppedCard.freeUse = true;
+              state.turn.phase === 'play';
+              break;
+            case 'item':
+            // use item
+            case 'magic':
+            // use magic
+          }
+        }
+      }
     } else return;
   }
 
   if (
     playerNum === -1 ||
-    gameState.turn.phase !== 'modify' ||
+    state.turn.phase !== 'modify' ||
     !info ||
-    (info.dice === 1 && !gameState.dice.defend) ||
+    (info.dice === 1 && !state.dice.defend) ||
     (info.modifier.modifier.length === 1 && info.effect === 1) ||
     !removeCard(roomId, playerNum, info.modifier.id)
   ) {
@@ -40,16 +73,17 @@ export const modifyRoll = (
 
   if (dice === 0) {
     const mod = modifier.modifier[effect] as number;
-    gameState.dice.main.modifier.push(modifier);
-    gameState.dice.main.modValues.push(mod);
-    gameState.dice.main.total += mod;
+    state.dice.main.modifier.push(modifier);
+    state.dice.main.modValues.push(mod);
+    state.dice.main.total += mod;
   } else {
     const mod = modifier.modifier[effect] as number;
-    if (!gameState.dice.defend) return;
-    gameState.dice.defend.modifier.push(modifier);
-    gameState.dice.defend.modValues.push(mod);
-    gameState.dice.defend.total += mod;
+    if (!state.dice.defend) return;
+    state.dice.defend.modifier.push(modifier);
+    state.dice.defend.modValues.push(mod);
+    state.dice.defend.total += mod;
   }
 
-  sendGameState(roomId);
+  state.match.isReady.fill(dice === 0 ? true : null);
+  sendState(roomId);
 };

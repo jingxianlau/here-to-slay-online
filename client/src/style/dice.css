@@ -107,25 +107,31 @@
 }
 
 .show-1 {
+  border-radius: 2vh;
   transform: rotateX(720deg) rotateZ(-720deg);
 }
 
 .show-6 {
+  border-radius: 2vh;
   transform: rotateY(-450deg) rotateZ(-1440deg);
 }
 
 .show-3 {
+  border-radius: 2vh;
   transform: rotateY(810deg) rotateZ(720deg);
 }
 
 .show-4 {
+  border-radius: 2vh;
   transform: rotateX(-810deg) rotateZ(-1080deg);
 }
 
 .show-5 {
+  border-radius: 2vh;
   transform: rotateX(450deg) rotateZ(-720deg);
 }
 
 .show-2 {
+  border-radius: 2vh;
   transform: rotateX(-900deg) rotateZ(1080deg);
 }

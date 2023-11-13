@@ -4,6 +4,27 @@ import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import { AnyCard } from '../../../types';
 
+export const drawOne = (roomId: string, userId: string) => {
+  const playerNum = validSender(roomId, userId);
+  const gameState = rooms[roomId].state;
+  if (
+    playerNum === -1 ||
+    gameState.turn.movesLeft <= 0 ||
+    gameState.turn.phase !== 'play'
+  )
+    return;
+
+  let card = gameState.secret.deck.pop() as AnyCard;
+  if (!card) {
+    card = reshuffleDeck(roomId);
+  }
+  card.player = playerNum;
+  gameState.players[playerNum].hand.push(card);
+  gameState.players[playerNum].numCards++;
+  gameState.turn.movesLeft--;
+  sendGameState(roomId);
+};
+
 export const drawTwo = (roomId: string, userId: string) => {
   const playerNum = validSender(roomId, userId);
   const gameState = rooms[roomId].state;
@@ -20,6 +41,7 @@ export const drawTwo = (roomId: string, userId: string) => {
     gameState.players[playerNum].hand.push(card);
   }
 
+  gameState.players[playerNum].numCards += 2;
   gameState.turn.phase = 'play';
   gameState.turn.phaseChanged = true;
   sendGameState(roomId);
@@ -38,8 +60,7 @@ export const drawFive = (roomId: string, userId: string) => {
     for (let i = 0; i < numCards; i++) {
       let card = gameState.players[playerNum].hand.pop() as AnyCard;
       delete card.player;
-      gameState.secret.discardPile.push(card);
-      gameState.mainDeck.discardTop = card;
+      gameState.mainDeck.discardPile.push(card);
     }
     sendGameState(roomId);
   }
@@ -58,6 +79,7 @@ export const drawFive = (roomId: string, userId: string) => {
   if (hasCards) {
     nextPlayer(roomId);
   }
+  gameState.players[playerNum].numCards = 5;
   sendGameState(roomId);
   gameState.turn.phaseChanged = false;
 };
