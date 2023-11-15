@@ -1,8 +1,19 @@
 import { rooms } from '../rooms';
-import { AnyCard, GameState, LeaderCard, MonsterCard } from '../types';
+import {
+  AnyCard,
+  CardType,
+  GameState,
+  HeroCard,
+  ItemCard,
+  LeaderCard,
+  MagicCard,
+  MonsterCard
+} from '../types';
 import shuffle from 'lodash.shuffle';
 import random from 'lodash.random';
-import { initialState } from '../cards';
+import { heroCards, initialState } from '../cards';
+import { sendGameState } from '../server';
+import cloneDeep from 'lodash.clonedeep';
 
 export const distributeCards = (state: GameState, numPlayers: number) => {
   // DISTRIBUTE CARDS
@@ -34,7 +45,10 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       card.player = i;
       state.players[i].hand.push(card);
     }
-    state.players[i].numCards = 5;
+    let card2 = cloneDeep(heroCards[0]);
+    card2.player = i;
+    state.players[i].hand.push(card2);
+    state.players[i].numCards = 6;
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;
     leader.player = i;
@@ -73,7 +87,8 @@ function findCard(roomId: string, playerNum: number, cardId: string) {
     c => c.id === cardId
   );
 }
-export function removeCard(roomId: string, playerNum: number, cardId: string) {
+
+export function discardCard(roomId: string, playerNum: number, cardId: string) {
   const cardIndex = findCard(roomId, playerNum, cardId);
   if (cardIndex === -1) {
     return false;
@@ -84,4 +99,79 @@ export function removeCard(roomId: string, playerNum: number, cardId: string) {
     rooms[roomId].state.players[playerNum].numCards--;
     return true;
   }
+}
+
+export function removeCard(
+  roomId: string,
+  playerNum: number,
+  cardId: string
+): -1 | AnyCard {
+  const cardIndex = findCard(roomId, playerNum, cardId);
+  if (cardIndex === -1) return -1;
+  return rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0];
+}
+
+export function swapHands(state: GameState, player1: number, player2: number) {
+  const hand = state.players[player2].hand;
+  const numCards = state.players[player2].numCards;
+  state.players[player2].hand = state.players[player1].hand;
+  state.players[player2].numCards = state.players[player1].numCards;
+  state.players[player1].hand = hand;
+  state.players[player1].numCards = numCards;
+}
+
+export function drawCards(roomId: string, playerNum: number, num: number) {
+  const state = rooms[roomId].state;
+
+  let card = state.secret.deck.pop() as AnyCard;
+  if (!card) {
+    card = reshuffleDeck(roomId);
+  }
+  card.player = playerNum;
+  state.players[playerNum].hand.push(card);
+  state.players[playerNum].numCards++;
+}
+
+export function playCard(
+  roomId: string,
+  playerNum: number,
+  card: HeroCard | MagicCard | ItemCard
+) {
+  const state = rooms[roomId].state;
+  if (card.type === CardType.hero) {
+    state.board[playerNum].heroCards.push(card);
+  }
+
+  state.mainDeck.preparedCard = {
+    card: card,
+    successful: null
+  };
+
+  state.players[playerNum].hand = state.players[playerNum].hand.filter(
+    c => c.id !== card.id
+  );
+  state.players[playerNum].numCards--;
+  state.turn.movesLeft--;
+  state.match.isReady = [];
+  for (let i = 0; i < state.match.players.length; i++) {
+    state.match.isReady.push(i === state.turn.player ? false : null);
+  }
+
+  sendGameState(roomId);
+
+  setTimeout(() => {
+    state.turn.phase = 'challenge';
+    state.turn.phaseChanged = true;
+
+    sendGameState(roomId);
+    state.turn.phaseChanged = false;
+  }, 1200);
+}
+
+export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
+  const length = cards.length;
+  for (let i = 0; i < length; i++) {
+    rooms[roomId].state.players[playerNum].hand.push(cards[i]);
+  }
+  rooms[roomId].state.players[playerNum].numCards += length;
 }

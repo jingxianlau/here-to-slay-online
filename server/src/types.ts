@@ -72,6 +72,14 @@ export interface Room {
   private: boolean;
 }
 
+export const allCards = [
+  CardType.modifier,
+  CardType.challenge,
+  CardType.hero,
+  CardType.magic,
+  CardType.item
+];
+
 export interface GameState {
   // PRIVATE
   secret: {
@@ -148,7 +156,25 @@ export interface GameState {
       | 'attack'
       | 'challenge'
       | 'challenge-roll'
-      | 'modify';
+      | 'modify'
+      | 'use-effect';
+    effect: {
+      action:
+        | 'none'
+        | 'play'
+        | 'choose-boards'
+        | 'choose-own-board'
+        | 'choose-other-boards'
+        | 'choose-player'
+        | 'choose-hand'
+        | 'choose-other-hand'
+        | 'choose-discard';
+      players: number[];
+      val: number;
+      step: number;
+      card: HeroCard | MagicCard | MonsterCard;
+      allowedCards?: CardType[];
+    } | null;
     phaseChanged: boolean;
     isRolling: boolean;
   };
@@ -228,7 +254,25 @@ export interface privateState {
       | 'attack'
       | 'challenge'
       | 'challenge-roll'
-      | 'modify';
+      | 'modify'
+      | 'use-effect';
+    effect: {
+      action:
+        | 'none'
+        | 'play'
+        | 'choose-boards'
+        | 'choose-own-board'
+        | 'choose-other-boards'
+        | 'choose-player'
+        | 'choose-hand'
+        | 'choose-other-hand'
+        | 'choose-discard';
+      players: number[];
+      val: number;
+      step: number;
+      card: HeroCard | MagicCard | MonsterCard;
+      allowedCards?: CardType[];
+    } | null;
     phaseChanged: boolean;
     isRolling: boolean;
   };

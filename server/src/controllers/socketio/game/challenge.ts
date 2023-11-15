@@ -1,7 +1,8 @@
 import {
   hasCard,
   nextPlayer,
-  removeCard,
+  playCard,
+  discardCard,
   rollDice
 } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
@@ -24,34 +25,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     return;
   }
 
-  if (card.type === CardType.hero) {
-    gameState.board[playerNum].heroCards.push(card);
-  }
-
-  gameState.mainDeck.preparedCard = {
-    card: card,
-    successful: null
-  };
-
-  gameState.players[playerNum].hand = gameState.players[playerNum].hand.filter(
-    c => c.id !== card.id
-  );
-  gameState.players[playerNum].numCards--;
-  gameState.turn.movesLeft--;
-  gameState.match.isReady = [];
-  for (let i = 0; i < gameState.match.players.length; i++) {
-    gameState.match.isReady.push(i === gameState.turn.player ? false : null);
-  }
-
-  sendGameState(roomId);
-
-  setTimeout(() => {
-    gameState.turn.phase = 'challenge';
-    gameState.turn.phaseChanged = true;
-
-    sendGameState(roomId);
-    gameState.turn.phaseChanged = false;
-  }, 1200);
+  playCard(roomId, playerNum, card);
 };
 
 export const challenge = (
@@ -80,6 +54,9 @@ export const challenge = (
     sendGameState(roomId);
 
     setTimeout(() => {
+      if (gameState.mainDeck.preparedCard?.card.type === CardType.hero) {
+        gameState.mainDeck.preparedCard.card.freeUse = true;
+      }
       gameState.mainDeck.preparedCard = null;
 
       if (gameState.turn.movesLeft > 0) {
@@ -94,7 +71,7 @@ export const challenge = (
       }
     }, 1200);
   } else if (challenged && cardId) {
-    if (!removeCard(roomId, playerNum, cardId)) {
+    if (!discardCard(roomId, playerNum, cardId)) {
       return;
     }
     sendGameState(roomId);

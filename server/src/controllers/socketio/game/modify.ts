@@ -1,8 +1,9 @@
-import { nextPlayer, removeCard, rollDice } from '../../../functions/game';
-import { checkCredentials, validSender } from '../../../functions/helpers';
+import { nextPlayer, discardCard } from '../../../functions/game';
+import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { CardType, ModifierCard } from '../../../types';
+import { ModifierCard } from '../../../types';
+import { useEffect } from './useEffect';
 
 export const modifyRoll = (
   roomId: string,
@@ -68,24 +69,30 @@ export const modifyRoll = (
             case 'hero':
               preppedCard.freeUse = true;
               state.turn.phaseChanged = true;
-              state.turn.phase === 'play';
+              state.turn.phase = 'play';
+
+              state.dice.main.roll = [1, 1];
+              state.dice.main.total = 0;
+              state.dice.main.modifier = [];
+              state.dice.main.modValues = [];
+              delete state.turn.challenger;
+
+              setTimeout(() => {
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+              }, 1200);
               break;
             case 'item':
-            // use item
+              // use item
+              break;
             case 'magic':
-            // use magic
+              state.dice.main.roll = [1, 1];
+              state.dice.main.total = 0;
+              state.dice.main.modifier = [];
+              state.dice.main.modValues = [];
+              delete state.turn.challenger;
+              useEffect(roomId, userId, preppedCard);
           }
-
-          state.dice.main.roll = [1, 1];
-          state.dice.main.total = 0;
-          state.dice.main.modifier = [];
-          state.dice.main.modValues = [];
-          delete state.turn.challenger;
-
-          setTimeout(() => {
-            sendGameState(roomId);
-            state.turn.phaseChanged = false;
-          }, 1200);
         }
       }
     } else return;
@@ -97,7 +104,7 @@ export const modifyRoll = (
     !info ||
     (info.dice === 1 && !state.dice.defend) ||
     (info.modifier.modifier.length === 1 && info.effect === 1) ||
-    !removeCard(roomId, playerNum, info.modifier.id)
+    !discardCard(roomId, playerNum, info.modifier.id)
   ) {
     return;
   }

@@ -131,7 +131,7 @@ const monsterCards: MonsterCard[] = [
   }
 ];
 
-const heroCards: HeroCard[] = [
+export const heroCards: HeroCard[] = [
   // Bards
   {
     name: 'Dodgy Dealer',
@@ -895,6 +895,7 @@ export const initialState: GameState = {
     player: 0,
     movesLeft: 3,
     phase: 'start-roll',
+    effect: null,
     phaseChanged: false,
     isRolling: false
   }
