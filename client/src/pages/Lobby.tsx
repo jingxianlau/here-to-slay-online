@@ -58,9 +58,9 @@ const Lobby: React.FC = () => {
         }
 
         /* DEV V */
-        // if (state.players.length >= 3) {
-        //   navigate('/game');
-        // }
+        if (state.players.length >= 3) {
+          navigate('/game');
+        }
         /* DEV ^ */
       });
 

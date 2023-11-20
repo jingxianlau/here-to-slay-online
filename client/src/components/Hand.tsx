@@ -19,11 +19,6 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
     shownCard
   } = useClientContext();
 
-  // useEffect(() => {
-  //   if (state.turn.phase === 'challenge') {
-  //   }
-  // }, [state.turn.phase]);
-
   const drawFive = () => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
     if (state.turn.player === state.playerNum) {
@@ -32,7 +27,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
   };
 
   const playCard = (card: AnyCard) => {
-    if (!state || !socket) return;
+    if (!state || !socket || !allowedCard(allowedCards.val, card.type)) return;
 
     switch (state.turn.phase) {
       case 'play':
@@ -40,7 +35,8 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
           state.turn.player === state.playerNum &&
           (card.type === CardType.hero ||
             card.type === CardType.item ||
-            card.type === CardType.magic)
+            card.type === CardType.magic) &&
+          !state.turn.pause
         ) {
           socket.emit('prepare-card', roomId, userId, card);
           dropHand(showHand, shownCard);
@@ -48,7 +44,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
         break;
 
       case 'challenge':
-        if (card.type === CardType.challenge) {
+        if (card.type === CardType.challenge && !state.turn.pause) {
           socket.emit('challenge', roomId, userId, true, card.id);
           dropHand(showHand, shownCard);
         }
@@ -59,6 +55,21 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
           shownCard.set(card);
           showHand.set(false);
           showHand.setLocked(true);
+        }
+        break;
+
+      case 'use-effect':
+        if (
+          state.turn.effect &&
+          state.turn.effect.players.some(val => val === state.playerNum)
+        ) {
+          socket.emit(
+            'use-effect',
+            roomId,
+            userId,
+            state.turn.effect.card,
+            card
+          );
         }
     }
   };

@@ -140,6 +140,7 @@ header img {
   margin-bottom: -3.7vh;
   height: 8vh;
   font-weight: 300;
+  z-index: 100;
 }
 .turn-order div {
   display: inline;
@@ -177,6 +178,7 @@ header img {
   position: absolute;
   background-color: none;
   transition: opacity 0.3s ease-in-out;
+  top: 10vh;
 }
 .shown-card-top.show {
   opacity: 1;
@@ -863,6 +865,7 @@ img.click:hover {
   margin-bottom: 3vh;
 }
 
+/* DISCARD PILE */
 .discard-pile-popup {
   position: absolute;
   top: 0;
@@ -915,6 +918,89 @@ img.click:hover {
 .discard-pile-container .material-symbols-outlined.show:hover {
   cursor: pointer;
   background-color: #333;
+}
+
+/* EFFECT POPUP */
+.effect-popup {
+  position: absolute;
+  left: 7vw;
+  width: 80vw;
+  background-color: #1e1e1e;
+  border-radius: 5vh;
+  box-shadow: #1e1e1e 0 0 10px 10px;
+  transition: opacity ease-in-out 0.2s, top 0.15s;
+  padding: 3vw;
+}
+.effect-popup.hide {
+  width: 0;
+  height: 0;
+  padding: 0;
+  opacity: 0;
+}
+.effect-popup.show {
+  opacity: 1;
+}
+.effect-popup .content {
+  display: flex;
+  align-items: flex-start;
+}
+.effect-popup .options {
+  display: flex;
+  flex-direction: column;
+  margin-right: calc(50% - 40vh);
+  margin-top: 10vh;
+}
+.effect-popup .options .player-select {
+  border: 1px solid #eee;
+  border-radius: 2vh;
+}
+.effect-popup .options .player-select h3 {
+  width: 20vw;
+  padding: 1vh;
+  margin: 1.6vh 0;
+  transition: 0.2s ease-in-out;
+  background-color: #252525;
+  font-weight: 500;
+  cursor: pointer;
+}
+.effect-popup .options .player-select.choose h3:hover,
+.effect-popup .options .player-select h3.chosen {
+  background-color: #fc7c37;
+  font-weight: 1000;
+}
+.effect-popup .options .player-select.watch h3:hover {
+  cursor: default;
+}
+
+.effect-cover {
+  position: absolute;
+  top: 0;
+  background: #000000cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity ease-in-out 0.2s;
+}
+.effect-cover.show {
+  width: 100vw;
+  height: 100vh;
+}
+.effect-cover.hide {
+  opacity: 0;
+}
+.effect-cover .content {
+  position: absolute;
+  top: 1vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  height: 72vh;
+}
+.effect-cover h1 {
+  font-size: 7vh;
+  width: 30vw;
+  margin-right: -1.5vw;
 }
 
 /* HELPER TEXT & TIMER */

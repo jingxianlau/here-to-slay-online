@@ -1,3 +1,4 @@
+import { removeFreeUse } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { heroEffects } from '../../../functions/heroes';
 import { rooms } from '../../../rooms';
@@ -33,11 +34,12 @@ export const useEffect = (
   const cardName = card.name.replaceAll(' ', '-').toLowerCase();
 
   if (state.turn.effect) {
+    // next function in effect
     state.turn.effect.players = state.turn.effect.players.filter(
       val => val !== playerNum
     );
 
-    heroEffects[cardName][++state.turn.effect.step](
+    heroEffects[cardName][state.turn.effect.step](
       roomId,
       state.turn.player,
       returnVal
@@ -50,25 +52,33 @@ export const useEffect = (
     );
 
     if (state.turn.effect.players.length == 0) {
-      heroEffects[cardName][state.turn.effect.step + 1](
+      heroEffects[cardName][++state.turn.effect.step](
         roomId,
         state.turn.player
       );
     }
   } else {
+    // new effect
     state.turn.phase = 'use-effect';
+    state.turn.phaseChanged = true;
     state.turn.effect = {
       action: 'none',
       players: [],
       val: 0,
       step: 0,
-      card: card
+      choice: null,
+      purpose: '',
+      card: card,
+      showHand: false,
+      showBoard: false
     };
     if (card.type === CardType.hero && !card.freeUse) {
       state.turn.movesLeft--;
     } else if (card.type === CardType.hero) {
       card.freeUse = false;
     }
+    removeFreeUse(roomId);
     heroEffects[cardName][0](roomId, playerNum);
+    state.turn.phaseChanged = false;
   }
 };

@@ -1,15 +1,26 @@
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
 import { AnyCard, CardType, GameState, allCards } from '../types';
-import { addCards, drawCards, playCard, removeCard, swapHands } from './game';
+import {
+  addCards,
+  drawCards,
+  nextPlayer,
+  playCard,
+  removeCard,
+  swapHands
+} from './game';
 
 const endEffect = (roomId: string, playerNum: number) => {
-  const state = rooms[roomId].state;
-  state.turn.effect = null;
-  state.turn.phase = 'play';
-  state.turn.phaseChanged = true;
-  sendGameState(roomId);
-  state.turn.phaseChanged = false;
+  setTimeout(() => {
+    const state = rooms[roomId].state;
+    state.turn.effect = null;
+    if (state.turn.movesLeft > 0) {
+      state.turn.phase = 'play';
+      state.turn.phaseChanged = true;
+    } else nextPlayer(roomId);
+    sendGameState(roomId);
+    state.turn.phaseChanged = false;
+  }, 1200);
 };
 
 export const heroEffects: {
@@ -31,6 +42,7 @@ export const heroEffects: {
       state.turn.effect.action = 'choose-player';
       state.turn.effect.players = [playerNum];
       state.turn.effect.val = 1;
+      state.turn.effect.purpose = 'Swap Hands';
 
       sendGameState(roomId);
     },
@@ -38,9 +50,17 @@ export const heroEffects: {
       const state = rooms[roomId].state;
       if (!state.turn.effect || !returnVal || !returnVal.player) return;
       const userNum = returnVal.player;
-      swapHands(state, playerNum, userNum);
+
+      state.turn.effect.choice = [userNum];
+      state.turn.effect.showHand = true;
 
       sendGameState(roomId);
+
+      swapHands(state, playerNum, userNum);
+
+      setTimeout(() => {
+        sendGameState(roomId);
+      }, 600);
     },
     endEffect
   ],
@@ -51,26 +71,33 @@ export const heroEffects: {
       if (!state.turn.effect) return;
       drawCards(roomId, playerNum, 1);
       sendGameState(roomId);
+      state.turn.phaseChanged = false;
 
       state.turn.effect.action = 'choose-hand';
       state.turn.effect.allowedCards = [CardType.hero];
       state.turn.effect.val = 1;
       state.turn.effect.players = [playerNum];
+      state.turn.effect.purpose = 'Play Hero';
       setTimeout(() => {
         sendGameState(roomId);
       }, 1200);
     },
     (roomId, playerNum, returnVal) => {
       const state = rooms[roomId].state;
-      if (
-        !state.turn.effect ||
-        !returnVal ||
-        !returnVal.card ||
-        returnVal.card.type !== CardType.hero
-      )
-        return;
+      if (!state.turn.effect) return;
 
-      playCard(roomId, playerNum, returnVal.card);
+      if (!returnVal?.card) {
+        state.turn.effect.choice = null;
+        sendGameState(roomId);
+      } else if (
+        returnVal &&
+        returnVal.card &&
+        returnVal.card.type === CardType.hero
+      ) {
+        state.turn.effect.choice = [returnVal.card];
+        playCard(roomId, playerNum, returnVal.card, true);
+        sendGameState(roomId);
+      }
     },
     endEffect
   ],
@@ -82,6 +109,7 @@ export const heroEffects: {
 
       state.turn.effect.action = 'choose-hand';
       state.turn.effect.allowedCards = allCards;
+      state.turn.effect.purpose = 'Give Card';
       let players = [];
       for (let i = 0; i < rooms[roomId].numPlayers; i++) {
         if (i !== playerNum) {

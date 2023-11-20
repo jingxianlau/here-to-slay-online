@@ -13,6 +13,5 @@ export const showText = (
   }, timeout);
   setTimeout(() => {
     showHelperText.set(false);
-    showHelperText.setText('');
   }, timeout + 200);
 };

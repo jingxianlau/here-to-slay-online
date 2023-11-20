@@ -16,6 +16,7 @@ import ShownCardTop from '../components/ShownCardTop';
 import TopMenu from '../components/TopMenu';
 import { showText } from '../helpers/showText';
 import DiscardPile from '../components/DiscardPile';
+import EffectPopup from '../components/EffectPopup';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const Game: React.FC = () => {
   const [activeDice, setActiveDice] = useState<0 | 1>(0);
   const [showBoard, setShowBoard] = useState(false);
   const [showDiscardPile, setShowDiscardPile] = useState(false);
+  const [showEffectPopup, setShowEffectPopup] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -64,9 +66,6 @@ const Game: React.FC = () => {
       socket.on('game-state', (state: GameState) => {
         console.log(state);
         setState(state);
-        showHand.setLocked(false);
-        showHelperText.setShowText(false);
-        showHelperText.set(false);
 
         /* PHASES */
         switch (state.turn.phase) {
@@ -74,7 +73,13 @@ const Game: React.FC = () => {
             if (state.match.startRolls.rolls[state.turn.player] !== 0) {
               // new roll
               setTimeout(() => {
-                getRollData();
+                setRollSummary([]);
+                for (let i = 0; i < state.match.startRolls.inList.length; i++) {
+                  let num = state.match.startRolls.inList[i];
+                  if (state.match.startRolls.rolls[num] !== 0) {
+                    setRollSummary(e => [...e, num]);
+                  }
+                }
                 showRoll.set(true);
               }, 1000);
               setTimeout(() => {
@@ -83,7 +88,13 @@ const Game: React.FC = () => {
               }, 3000);
             } else {
               // new round
-              getRollData();
+              setRollSummary([]);
+              for (let i = 0; i < state.match.startRolls.inList.length; i++) {
+                let num = state.match.startRolls.inList[i];
+                if (state.match.startRolls.rolls[num] !== 0) {
+                  setRollSummary(e => [...e, num]);
+                }
+              }
               hasRolled.set(false);
               showRoll.set(false);
             }
@@ -195,17 +206,59 @@ const Game: React.FC = () => {
               showText(showHelperText, 'Play');
             }
             break;
-        }
 
-        /* HELPER FUNCTIONS */
-        function getRollData() {
-          setRollSummary([]);
-          for (let i = 0; i < state.match.startRolls.inList.length; i++) {
-            let num = state.match.startRolls.inList[i];
-            if (state.match.startRolls.rolls[num] !== 0) {
-              setRollSummary(e => [...e, num]);
+          case 'use-effect':
+            if (!state.turn.effect) return;
+            showHand.setLocked(false);
+            shownCard.setLocked(true);
+            if (
+              state.turn.effect.allowedCards &&
+              state.turn.effect.players.some(val => val === state.playerNum)
+            ) {
+              allowedCards.set(state.turn.effect.allowedCards);
+            } else {
+              allowedCards.set([]);
             }
-          }
+
+            if (
+              state.turn.effect.showHand &&
+              (state.turn.effect.choice?.some(val => val === state.playerNum) ||
+                state.turn.player === state.playerNum)
+            ) {
+              showHand.set(true);
+              setTimeout(() => showHand.set(false), 1200);
+            } else if (state.turn.effect.showBoard) {
+            }
+
+            if (state.turn.phaseChanged) {
+              if (state.turn.effect.card.type === CardType.hero) {
+                showText(showHelperText, 'Hero Ability');
+              } else if (state.turn.effect.card.type === CardType.magic) {
+                showText(showHelperText, 'Magic Card');
+              } else {
+                showText(showHelperText, 'Monster Punishment');
+              }
+            }
+
+            switch (state.turn.effect.action) {
+              case 'choose-discard':
+                setShowDiscardPile(true);
+                break;
+              case 'choose-hand':
+                showHand.setLocked(true);
+                showHand.set(true);
+                shownCard.setLocked(false);
+                setShowEffectPopup(true);
+                break;
+              case 'choose-other-hand':
+                setShowEffectPopup(true);
+                break;
+              case 'choose-player':
+                setShowEffectPopup(true);
+                break;
+              default:
+                setShowEffectPopup(false);
+            }
         }
       });
 
@@ -220,26 +273,31 @@ const Game: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ROLL */
-  function roll() {
-    if (
-      !state ||
-      !socket ||
-      state.turn.movesLeft === 0 ||
-      state.turn.phase !== 'start-roll' ||
-      hasRolled.val ||
-      state.turn.player !== state.playerNum
-    )
-      return;
-
-    hasRolled.set(true);
-    socket.emit('start-roll', credentials.roomId, credentials.userId);
-  }
-
   return (
     <>
       {credentials && !isEmpty(state) && socket && (
-        <div onClick={state.turn.isRolling ? roll : () => {}}>
+        <div
+          onClick={
+            state.turn.isRolling && state.turn.phase === 'start-roll'
+              ? () => {
+                  if (
+                    !state ||
+                    !socket ||
+                    hasRolled.val ||
+                    state.turn.player !== state.playerNum
+                  )
+                    return;
+
+                  hasRolled.set(true);
+                  socket.emit(
+                    'start-roll',
+                    credentials.roomId,
+                    credentials.userId
+                  );
+                }
+              : () => {}
+          }
+        >
           <div className='game'>
             {state.turn.phase === 'start-roll' ? (
               <StartRoll rollSummary={rollSummary} />
@@ -258,10 +316,14 @@ const Game: React.FC = () => {
                   setActiveDice={setActiveDice}
                   showBoard={showBoard}
                 />
-
                 <DiscardPile
                   showDiscardPile={showDiscardPile}
                   setShowDiscardPile={setShowDiscardPile}
+                />
+                <EffectPopup
+                  socket={socket}
+                  show={showEffectPopup}
+                  showBoard={showBoard}
                 />
 
                 <ShownCard />
@@ -311,7 +373,8 @@ const Game: React.FC = () => {
                     state.turn.phase === 'attack' ||
                     state.turn.phase === 'challenge' ||
                     state.turn.phase === 'challenge-roll' ||
-                    state.turn.phase === 'modify'
+                    state.turn.phase === 'modify' ||
+                    state.turn.phase === 'use-effect'
                       ? 'show'
                       : 'hide'
                   }`}
@@ -320,10 +383,25 @@ const Game: React.FC = () => {
                       state.turn.phase === 'attack' ||
                       state.turn.phase === 'challenge' ||
                       state.turn.phase === 'challenge-roll' ||
-                      state.turn.phase === 'modify'
+                      state.turn.phase === 'modify' ||
+                      state.turn.phase === 'use-effect'
                     ) {
                       setShowBoard(val => !val);
-                      shownCard.setLocked(val => !val);
+
+                      if (
+                        state.turn.effect &&
+                        state.turn.effect.action === 'choose-hand'
+                      ) {
+                        if (showBoard) {
+                          showHand.set(true);
+                          showHand.setLocked(true);
+                        } else {
+                          showHand.set(false);
+                          showHand.setLocked(false);
+                        }
+                      } else {
+                        shownCard.setLocked(val => !val);
+                      }
                     }
                   }}
                 >

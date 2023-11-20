@@ -78,6 +78,13 @@ export function reshuffleDeck(roomId: string) {
   return state.secret.deck.pop() as AnyCard;
 }
 
+export function removeFreeUse(roomId: string) {
+  const boards = rooms[roomId].state.board;
+  for (let i = 0; i < boards.length; i++) {
+    boards[i].heroCards.forEach(val => (val.freeUse = false));
+  }
+}
+
 export function hasCard(roomId: string, playerNum: number, cardId: string) {
   return rooms[roomId].state.players[playerNum].hand.some(c => c.id === cardId);
 }
@@ -135,7 +142,8 @@ export function drawCards(roomId: string, playerNum: number, num: number) {
 export function playCard(
   roomId: string,
   playerNum: number,
-  card: HeroCard | MagicCard | ItemCard
+  card: HeroCard | MagicCard | ItemCard,
+  free = false
 ) {
   const state = rooms[roomId].state;
   if (card.type === CardType.hero) {
@@ -151,13 +159,19 @@ export function playCard(
     c => c.id !== card.id
   );
   state.players[playerNum].numCards--;
-  state.turn.movesLeft--;
+
+  if (!free) {
+    state.turn.movesLeft--;
+  }
+
   state.match.isReady = [];
   for (let i = 0; i < state.match.players.length; i++) {
     state.match.isReady.push(i === state.turn.player ? false : null);
   }
 
+  state.turn.pause = true;
   sendGameState(roomId);
+  state.turn.pause = false;
 
   setTimeout(() => {
     state.turn.phase = 'challenge';

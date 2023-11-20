@@ -56,7 +56,7 @@ const Popup: React.FC<{
       if (state.turn.phase === 'challenge') {
         if (state.mainDeck.preparedCard?.successful) {
           allowedCards.set([]);
-          showText(showHelperText, 'Card Success');
+          showText(showHelperText, 'Card Success', 500);
         } else {
           if (
             state.turn.player === state.playerNum ||

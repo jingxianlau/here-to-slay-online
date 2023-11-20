@@ -1,4 +1,8 @@
-import { nextPlayer, reshuffleDeck } from '../../../functions/game';
+import {
+  nextPlayer,
+  removeFreeUse,
+  reshuffleDeck
+} from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -13,6 +17,7 @@ export const drawOne = (roomId: string, userId: string) => {
     gameState.turn.phase !== 'play'
   )
     return;
+  removeFreeUse(roomId);
 
   let card = gameState.secret.deck.pop() as AnyCard;
   if (!card) {

@@ -20,13 +20,9 @@ import {
 } from './controllers/socketio/game/challenge';
 import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';
 import { modifyRoll } from './controllers/socketio/game/modify';
-import {
-  attackMonster,
-  attackRoll,
-  confirmAttack
-} from './controllers/socketio/game/attack';
+import { attackMonster, attackRoll } from './controllers/socketio/game/attack';
 import { useEffect } from './controllers/socketio/game/useEffect';
-import { nextPlayer } from './functions/game';
+import { nextPlayer, removeFreeUse } from './functions/game';
 
 /* EXPRESS SERVER */
 const app = express();
@@ -53,6 +49,8 @@ io.on('connection', socket => {
   socket.on('pass', (roomId: string, userId: string) => {
     const playerNum = validSender(roomId, userId);
     if (playerNum === -1) return;
+    removeFreeUse(roomId);
+
     nextPlayer(roomId);
     sendGameState(roomId);
   });
@@ -76,7 +74,6 @@ io.on('connection', socket => {
   // TODO: attack
   socket.on('attack-monster', attackMonster);
   socket.on('attack-roll', attackRoll);
-  socket.on('confirm-attack', confirmAttack);
 
   // TODO: use-effect
   socket.on('use-effect', useEffect);

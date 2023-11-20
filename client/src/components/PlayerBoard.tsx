@@ -15,7 +15,11 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
   col,
   socket
 }) => {
-  const { state, shownCard } = useClientContext();
+  const {
+    state,
+    shownCard,
+    credentials: { roomId, userId }
+  } = useClientContext();
 
   return state.val.board[playerNum].largeCards.length > 0 ? (
     <div
@@ -38,15 +42,30 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
               shownCard.set(null);
               shownCard.setPos(null);
             }}
+            onClick={() => {
+              if (
+                state.val.turn.player === state.val.playerNum &&
+                (card.freeUse || state.val.turn.movesLeft > 0) &&
+                !state.val.turn.pause
+              ) {
+                socket.emit('use-effect', roomId, userId, card);
+              }
+            }}
           >
             <img
               src={getImage(card)}
               alt={card.name}
-              className={
-                card.id === state.val.mainDeck.preparedCard?.card.id
-                  ? 'small-card glow'
-                  : 'small-card'
-              }
+              className={`small-card ${
+                card.id === state.val.mainDeck.preparedCard?.card.id ||
+                (state.val.turn.player === state.val.playerNum && card.freeUse)
+                  ? 'glow'
+                  : ''
+              } ${
+                !state.val.mainDeck.preparedCard &&
+                state.val.turn.player === state.val.playerNum
+                  ? 'click'
+                  : ''
+              }`}
               draggable='false'
             />
           </div>

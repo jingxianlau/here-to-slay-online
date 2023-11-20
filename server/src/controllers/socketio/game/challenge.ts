@@ -3,7 +3,8 @@ import {
   nextPlayer,
   playCard,
   discardCard,
-  rollDice
+  rollDice,
+  removeFreeUse
 } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
@@ -24,7 +25,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   ) {
     return;
   }
-
+  removeFreeUse(roomId);
   playCard(roomId, playerNum, card);
 };
 
@@ -49,11 +50,11 @@ export const challenge = (
   sendGameState(roomId);
 
   if (gameState.match.isReady.every(val => val === false)) {
-    gameState.match.isReady.fill(null);
     gameState.mainDeck.preparedCard.successful = true;
     sendGameState(roomId);
 
     setTimeout(() => {
+      gameState.match.isReady.fill(null);
       if (gameState.mainDeck.preparedCard?.card.type === CardType.hero) {
         gameState.mainDeck.preparedCard.card.freeUse = true;
       }

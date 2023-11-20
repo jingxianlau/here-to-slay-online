@@ -897,6 +897,7 @@ export const initialState: GameState = {
     phase: 'start-roll',
     effect: null,
     phaseChanged: false,
-    isRolling: false
+    isRolling: false,
+    pause: false
   }
 };

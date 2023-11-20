@@ -169,14 +169,19 @@ export interface GameState {
         | 'choose-hand'
         | 'choose-other-hand'
         | 'choose-discard';
-      players: number[];
-      val: number;
-      step: number;
-      card: HeroCard | MagicCard | MonsterCard;
+      players: number[]; // active players who can choose
+      val: number; // num of items to choose
+      step: number; // to access functions in ability array
+      card: HeroCard | MagicCard | MonsterCard; // card in use
+      choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
+      purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
+      showHand: boolean;
+      showBoard: boolean;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;
+    pause: boolean;
   };
 }
 
@@ -267,14 +272,19 @@ export interface privateState {
         | 'choose-hand'
         | 'choose-other-hand'
         | 'choose-discard';
-      players: number[];
-      val: number;
-      step: number;
-      card: HeroCard | MagicCard | MonsterCard;
+      players: number[]; // active players who can choose
+      val: number; // num of items to choose
+      step: number; // to access functions in ability array
+      card: HeroCard | MagicCard | MonsterCard; // card in use
+      choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
+      purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
+      showHand: boolean;
+      showBoard: boolean;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;
+    pause: boolean;
   };
   playerNum: number;
 }

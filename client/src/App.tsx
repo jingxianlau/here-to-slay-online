@@ -24,9 +24,9 @@ function App() {
   }, []);
 
   // DEV
-  // useEffect(() => {
-  //   joinRoom('999999');
-  // }, []);
+  useEffect(() => {
+    joinRoom('999999');
+  }, []);
 
   function changeUsername(name: string) {
     if (name.length > 15) {
