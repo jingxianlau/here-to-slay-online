@@ -68,9 +68,7 @@ export const useEffect = (
       step: 0,
       choice: null,
       purpose: '',
-      card: card,
-      showHand: false,
-      showBoard: false
+      card: card
     };
     if (card.type === CardType.hero && !card.freeUse) {
       state.turn.movesLeft--;

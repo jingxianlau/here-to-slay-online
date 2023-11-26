@@ -8,23 +8,13 @@ const ShownCardTop: React.FC = () => {
   return (
     <div
       className={`shown-card-top ${
-        (shownCard &&
-          shownCard.pos === 'top' &&
-          !shownCard.locked &&
-          shownCard.val) ||
-        (shownCard.val &&
-          shownCard.pos === 'top' &&
-          shownCard.val.name === 'help')
+        shownCard &&
+        shownCard.pos === 'top' &&
+        !shownCard.locked &&
+        shownCard.val
           ? 'show'
           : 'hide'
       }`}
-      style={
-        shownCard.val && shownCard.val.name === 'help'
-          ? {
-              top: '30vh'
-            }
-          : {}
-      }
     >
       {shownCard.pos === 'top' && shownCard.val && (
         <img

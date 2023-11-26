@@ -34,6 +34,8 @@ const Game: React.FC = () => {
 
   // variables
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  const [showHelp, setShowHelp] = useState(false);
   const [rollSummary, setRollSummary] = useState<number[]>([]);
   const [activeDice, setActiveDice] = useState<0 | 1>(0);
   const [showBoard, setShowBoard] = useState(false);
@@ -63,20 +65,24 @@ const Game: React.FC = () => {
         }
       );
 
-      socket.on('game-state', (state: GameState) => {
-        console.log(state);
-        setState(state);
+      socket.on('game-state', (newState: GameState) => {
+        console.log(newState);
+        setState(newState);
 
         /* PHASES */
-        switch (state.turn.phase) {
+        switch (newState.turn.phase) {
           case 'start-roll':
-            if (state.match.startRolls.rolls[state.turn.player] !== 0) {
+            if (newState.match.startRolls.rolls[newState.turn.player] !== 0) {
               // new roll
               setTimeout(() => {
                 setRollSummary([]);
-                for (let i = 0; i < state.match.startRolls.inList.length; i++) {
-                  let num = state.match.startRolls.inList[i];
-                  if (state.match.startRolls.rolls[num] !== 0) {
+                for (
+                  let i = 0;
+                  i < newState.match.startRolls.inList.length;
+                  i++
+                ) {
+                  let num = newState.match.startRolls.inList[i];
+                  if (newState.match.startRolls.rolls[num] !== 0) {
                     setRollSummary(e => [...e, num]);
                   }
                 }
@@ -89,9 +95,13 @@ const Game: React.FC = () => {
             } else {
               // new round
               setRollSummary([]);
-              for (let i = 0; i < state.match.startRolls.inList.length; i++) {
-                let num = state.match.startRolls.inList[i];
-                if (state.match.startRolls.rolls[num] !== 0) {
+              for (
+                let i = 0;
+                i < newState.match.startRolls.inList.length;
+                i++
+              ) {
+                let num = newState.match.startRolls.inList[i];
+                if (newState.match.startRolls.rolls[num] !== 0) {
                   setRollSummary(e => [...e, num]);
                 }
               }
@@ -105,18 +115,14 @@ const Game: React.FC = () => {
             allowedCards.set([]);
 
             if (
-              state.players[state.playerNum]?.hand.length === 0 &&
-              state.turn.player === state.playerNum
+              newState.players[newState.playerNum]?.hand.length === 0 &&
+              newState.turn.player === newState.playerNum
             ) {
               // Get 5 Cards
               showText(showHelperText, 'Draw', 500);
               socket.emit('draw-five', credentials.roomId, credentials.userId);
-              showHand.set(true);
-              setTimeout(() => {
-                showHand.set(false);
-              }, 1200);
             } else {
-              if (state.turn.phaseChanged) {
+              if (newState.turn.phaseChanged) {
                 showText(showHelperText, 'Draw');
               }
             }
@@ -125,6 +131,7 @@ const Game: React.FC = () => {
           case 'challenge':
             setActiveDice(0);
             showPopup.set(true);
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -135,28 +142,29 @@ const Game: React.FC = () => {
           case 'challenge-roll':
             showPopup.set(true);
             showRoll.set(false);
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
               shownCard.set(null);
             }
-            if (state.dice.defend && state.dice.defend.total > 0) {
+            if (newState.dice.defend && newState.dice.defend.total > 0) {
               setActiveDice(1);
             }
 
-            if (state.dice.main.total > 0) {
+            if (newState.dice.main.total > 0) {
               setTimeout(() => {
                 showRoll.set(true);
               }, 1000);
               setTimeout(() => {
-                if (state.dice.defend?.total) {
+                if (newState.dice.defend?.total) {
                   showRoll.set(false);
                 }
                 hasRolled.set(false);
 
                 if (
-                  state.dice.main.total > 0 &&
-                  state.dice.defend?.total === 0
+                  newState.dice.main.total > 0 &&
+                  newState.dice.defend?.total === 0
                 ) {
                   setActiveDice(1);
                 }
@@ -166,81 +174,75 @@ const Game: React.FC = () => {
 
           case 'modify':
             showPopup.set(true);
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
               shownCard.set(null);
             }
 
-            if (!state.mainDeck.preparedCard) return;
+            if (!newState.mainDeck.preparedCard) return;
 
-            if (state.match.isReady.every(val => val === true)) {
+            if (newState.match.isReady.every(val => val === true)) {
               allowedCards.set([CardType.modifier]);
               setActiveDice(0);
-            } else if (state.match.isReady.every(val => val === null)) {
+            } else if (newState.match.isReady.every(val => val === null)) {
               allowedCards.set([CardType.modifier]);
               setActiveDice(1);
-            } else if (state.match.isReady[state.playerNum] === false) {
+            } else if (newState.match.isReady[newState.playerNum] === false) {
               allowedCards.set([]);
             } else {
               allowedCards.set([CardType.modifier]);
             }
 
-            if (state.mainDeck.preparedCard.successful) {
+            if (newState.mainDeck.preparedCard.successful) {
               showText(showHelperText, 'Card Success');
-            } else if (state.mainDeck.preparedCard.successful === false) {
+            } else if (newState.mainDeck.preparedCard.successful === false) {
               showText(showHelperText, 'Card Failed');
             }
             break;
 
           case 'play':
             showPopup.set(false);
+            showHand.setLocked(false);
             shownCard.setLocked(false);
             allowedCards.set([]);
 
-            if (state.turn.player === state.playerNum) {
+            if (newState.turn.player === newState.playerNum) {
               allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
             }
 
-            if (state.turn.phaseChanged) {
+            if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Play');
             }
             break;
 
           case 'use-effect':
-            if (!state.turn.effect) return;
+            if (!newState.turn.effect) return;
             showHand.setLocked(false);
             shownCard.setLocked(true);
             if (
-              state.turn.effect.allowedCards &&
-              state.turn.effect.players.some(val => val === state.playerNum)
+              newState.turn.effect.allowedCards &&
+              newState.turn.effect.players.some(
+                val => val === newState.playerNum
+              )
             ) {
-              allowedCards.set(state.turn.effect.allowedCards);
+              allowedCards.set(newState.turn.effect.allowedCards);
             } else {
               allowedCards.set([]);
             }
 
-            if (
-              state.turn.effect.showHand &&
-              (state.turn.effect.choice?.some(val => val === state.playerNum) ||
-                state.turn.player === state.playerNum)
-            ) {
-              showHand.set(true);
-              setTimeout(() => showHand.set(false), 1200);
-            } else if (state.turn.effect.showBoard) {
-            }
-
-            if (state.turn.phaseChanged) {
-              if (state.turn.effect.card.type === CardType.hero) {
+            if (newState.turn.phaseChanged) {
+              if (newState.turn.effect.card.type === CardType.hero) {
                 showText(showHelperText, 'Hero Ability');
-              } else if (state.turn.effect.card.type === CardType.magic) {
+              } else if (newState.turn.effect.card.type === CardType.magic) {
                 showText(showHelperText, 'Magic Card');
               } else {
                 showText(showHelperText, 'Monster Punishment');
               }
             }
 
-            switch (state.turn.effect.action) {
+            switch (newState.turn.effect.action) {
               case 'choose-discard':
                 setShowDiscardPile(true);
                 break;
@@ -327,9 +329,9 @@ const Game: React.FC = () => {
                 />
 
                 <ShownCard />
-                <ShownCardTop />
 
                 <Hand socket={socket} />
+                <ShownCardTop />
 
                 <HelperText />
 
@@ -358,12 +360,10 @@ const Game: React.FC = () => {
                 <div
                   className={`main-button help show`}
                   onMouseEnter={() => {
-                    shownCard.set({ name: 'help', type: CardType.help });
-                    shownCard.setPos('top');
+                    setShowHelp(true);
                   }}
                   onMouseLeave={() => {
-                    shownCard.set(null);
-                    shownCard.setPos(null);
+                    setShowHelp(false);
                   }}
                 >
                   <span className='material-symbols-outlined'>help</span>
@@ -406,6 +406,25 @@ const Game: React.FC = () => {
                   }}
                 >
                   <span className='material-symbols-outlined'>flip</span>
+                </div>
+
+                <div className={`help-cards${showHelp ? ' show' : ' hide'}`}>
+                  <div className='img-container'>
+                    <img
+                      src='./assets/help/help-front.jpg'
+                      alt='help card 1'
+                      className='small-enlarged'
+                      draggable='false'
+                    />
+                  </div>
+                  <div className='img-container'>
+                    <img
+                      src='./assets/help/help-back.jpg'
+                      alt='help card 2'
+                      className='small-enlarged'
+                      draggable='false'
+                    />
+                  </div>
                 </div>
               </>
             )}

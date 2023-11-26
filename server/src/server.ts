@@ -22,7 +22,7 @@ import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';
 import { modifyRoll } from './controllers/socketio/game/modify';
 import { attackMonster, attackRoll } from './controllers/socketio/game/attack';
 import { useEffect } from './controllers/socketio/game/useEffect';
-import { nextPlayer, removeFreeUse } from './functions/game';
+import { removeFreeUse } from './functions/game';
 
 /* EXPRESS SERVER */
 const app = express();
@@ -51,8 +51,18 @@ io.on('connection', socket => {
     if (playerNum === -1) return;
     removeFreeUse(roomId);
 
-    nextPlayer(roomId);
+    let player = rooms[roomId].state.turn.player;
+    rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
+    rooms[roomId].state.turn.movesLeft = 0;
+    rooms[roomId].state.turn.phase = 'draw';
+    rooms[roomId].state.turn.phaseChanged = true;
+
     sendGameState(roomId);
+
+    setTimeout(() => {
+      rooms[roomId].state.turn.movesLeft = 3;
+      sendGameState(roomId);
+    }, 300);
   });
 
   // start roll

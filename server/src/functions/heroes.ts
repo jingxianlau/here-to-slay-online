@@ -52,7 +52,6 @@ export const heroEffects: {
       const userNum = returnVal.player;
 
       state.turn.effect.choice = [userNum];
-      state.turn.effect.showHand = true;
 
       sendGameState(roomId);
 

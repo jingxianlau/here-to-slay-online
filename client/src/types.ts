@@ -65,9 +65,7 @@ export interface LeaderCard extends MonsterCard {
   type: CardType.large;
   class: HeroClass;
 }
-export interface HelpCard extends Card {
-  type: CardType.help;
-}
+
 export type AnyCard =
   | HeroCard
   | ChallengeCard
@@ -75,8 +73,7 @@ export type AnyCard =
   | ItemCard
   | MagicCard
   | MonsterCard
-  | LeaderCard
-  | HelpCard;
+  | LeaderCard;
 
 export type LargeCard = LeaderCard | MonsterCard;
 
@@ -175,8 +172,6 @@ export interface GameState {
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
-      showHand: boolean;
-      showBoard: boolean;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;

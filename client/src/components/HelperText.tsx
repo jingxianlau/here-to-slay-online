@@ -12,12 +12,10 @@ const HelperText: React.FC = () => {
         !showHelperText.val ? 'disappear' : ''
       } ${showHelperText.showText ? 'show' : 'hide'}`}
     >
-      {showHelperText.val && (
-        <>
-          <h3>{showHelperText.text}</h3>
-          <h4>{state.match.players[state.turn.player]}</h4>
-        </>
-      )}
+      <>
+        <h3>{showHelperText.text}</h3>
+        <h4>{state.match.players[state.turn.player]}</h4>
+      </>
     </div>
   );
 };

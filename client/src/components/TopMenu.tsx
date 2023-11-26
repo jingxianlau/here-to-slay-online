@@ -28,19 +28,31 @@ const TopMenu: React.FC = () => {
       <div className='turn-circles'>
         <div
           className={
-            state.val.turn.movesLeft >= 1 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 1
+              ? 'turn-circle active'
+              : 'turn-circle inactive'
           }
-        ></div>
+        >
+          <img src='./assets/circle-star.svg' />
+        </div>
         <div
           className={
-            state.val.turn.movesLeft >= 2 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 2
+              ? 'turn-circle active'
+              : 'turn-circle inactive'
           }
-        ></div>
+        >
+          <img src='./assets/circle-star.svg' />
+        </div>
         <div
           className={
-            state.val.turn.movesLeft >= 3 ? 'turn-circle active' : 'turn-circle'
+            state.val.turn.movesLeft >= 3
+              ? 'turn-circle active'
+              : 'turn-circle inactive'
           }
-        ></div>
+        >
+          <img src='./assets/circle-star.svg' />
+        </div>
       </div>
     </div>
   );

@@ -45,6 +45,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             onClick={() => {
               if (
                 state.val.turn.player === state.val.playerNum &&
+                state.val.playerNum === playerNum &&
                 (card.freeUse || state.val.turn.movesLeft > 0) &&
                 !state.val.turn.pause
               ) {
@@ -57,7 +58,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
               alt={card.name}
               className={`small-card ${
                 card.id === state.val.mainDeck.preparedCard?.card.id ||
-                (state.val.turn.player === state.val.playerNum && card.freeUse)
+                (state.val.turn.player === state.val.playerNum &&
+                  card.freeUse &&
+                  state.val.playerNum === playerNum)
                   ? 'glow'
                   : ''
               } ${

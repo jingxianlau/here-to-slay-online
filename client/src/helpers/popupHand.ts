@@ -5,7 +5,9 @@ export const popupHand = (
   time = 1200
 ) => {
   showHand.set(true);
+  showHand.setLocked(true);
   setTimeout(() => {
     showHand.set(false);
+    showHand.setLocked(false);
   }, time);
 };

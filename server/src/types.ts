@@ -176,8 +176,6 @@ export interface GameState {
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
-      showHand: boolean;
-      showBoard: boolean;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;
@@ -279,8 +277,6 @@ export interface privateState {
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
-      showHand: boolean;
-      showBoard: boolean;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;

@@ -2,6 +2,7 @@ import React from 'react';
 import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
+import { popupHand } from '../helpers/popupHand';
 
 interface CenterBoardProps {
   socket: Socket;
@@ -22,10 +23,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       return;
 
     socket.emit('draw-two', credentials.roomId, credentials.userId);
-    showHand.set(true);
-    setTimeout(() => {
-      showHand.set(false);
-    }, 1200);
+    popupHand(showHand);
   }
   function drawOne() {
     if (
@@ -35,10 +33,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       return;
 
     socket.emit('draw-one', credentials.roomId, credentials.userId);
-    showHand.set(true);
-    setTimeout(() => {
-      showHand.set(false);
-    }, 1200);
+    popupHand(showHand);
   }
 
   return (

@@ -5,6 +5,7 @@ import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
 import { dropHand } from '../helpers/dropHand';
+import { popupHand } from '../helpers/popupHand';
 
 interface HandProps {
   socket: Socket;
@@ -23,6 +24,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
     if (!state || !socket || state.turn.movesLeft === 0) return;
     if (state.turn.player === state.playerNum) {
       socket.emit('draw-five', roomId, userId);
+      popupHand(showHand);
     }
   };
 

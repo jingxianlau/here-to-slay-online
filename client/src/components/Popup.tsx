@@ -43,6 +43,7 @@ const Popup: React.FC<{
   }, [activeDice, state.dice.main.modifier, state.dice.defend?.modifier]);
 
   useEffect(() => {
+    if (!showPopup.val) return;
     if (shownCard.val && shownCard.val.type === CardType.modifier) {
       setShow(true);
     } else {
