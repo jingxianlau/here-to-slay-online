@@ -17,6 +17,8 @@ import TopMenu from '../components/TopMenu';
 import { showText } from '../helpers/showText';
 import DiscardPile from '../components/DiscardPile';
 import EffectPopup from '../components/EffectPopup';
+import MenuButtons from '../components/MenuButtons';
+import HelpCards from '../components/HelpCards';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -318,114 +320,31 @@ const Game: React.FC = () => {
                   setActiveDice={setActiveDice}
                   showBoard={showBoard}
                 />
-                <DiscardPile
-                  showDiscardPile={showDiscardPile}
-                  setShowDiscardPile={setShowDiscardPile}
-                />
                 <EffectPopup
                   socket={socket}
                   show={showEffectPopup}
                   showBoard={showBoard}
                 />
+                <DiscardPile
+                  showDiscardPile={showDiscardPile}
+                  setShowDiscardPile={setShowDiscardPile}
+                />
 
                 <ShownCard />
+                <ShownCardTop />
 
                 <Hand socket={socket} />
-                <ShownCardTop />
 
                 <HelperText />
 
-                <div
-                  className={`main-button pass ${
-                    state.turn.player === state.playerNum &&
-                    (state.turn.phase === 'draw' || state.turn.phase === 'play')
-                      ? 'show'
-                      : 'hide'
-                  }`}
-                  onClick={() => {
-                    if (
-                      state.turn.phase === 'draw' ||
-                      state.turn.phase === 'play'
-                    ) {
-                      socket.emit(
-                        'pass',
-                        credentials.roomId,
-                        credentials.userId
-                      );
-                    }
-                  }}
-                >
-                  <span className='material-symbols-outlined'>forward</span>
-                </div>
-                <div
-                  className={`main-button help show`}
-                  onMouseEnter={() => {
-                    setShowHelp(true);
-                  }}
-                  onMouseLeave={() => {
-                    setShowHelp(false);
-                  }}
-                >
-                  <span className='material-symbols-outlined'>help</span>
-                </div>
-                <div
-                  className={`show-board-trigger ${
-                    state.turn.phase === 'attack' ||
-                    state.turn.phase === 'challenge' ||
-                    state.turn.phase === 'challenge-roll' ||
-                    state.turn.phase === 'modify' ||
-                    state.turn.phase === 'use-effect'
-                      ? 'show'
-                      : 'hide'
-                  }`}
-                  onClick={() => {
-                    if (
-                      state.turn.phase === 'attack' ||
-                      state.turn.phase === 'challenge' ||
-                      state.turn.phase === 'challenge-roll' ||
-                      state.turn.phase === 'modify' ||
-                      state.turn.phase === 'use-effect'
-                    ) {
-                      setShowBoard(val => !val);
+                <MenuButtons
+                  socket={socket}
+                  showBoard={showBoard}
+                  setShowBoard={setShowBoard}
+                  setShowHelp={setShowHelp}
+                />
 
-                      if (
-                        state.turn.effect &&
-                        state.turn.effect.action === 'choose-hand'
-                      ) {
-                        if (showBoard) {
-                          showHand.set(true);
-                          showHand.setLocked(true);
-                        } else {
-                          showHand.set(false);
-                          showHand.setLocked(false);
-                        }
-                      } else {
-                        shownCard.setLocked(val => !val);
-                      }
-                    }
-                  }}
-                >
-                  <span className='material-symbols-outlined'>flip</span>
-                </div>
-
-                <div className={`help-cards${showHelp ? ' show' : ' hide'}`}>
-                  <div className='img-container'>
-                    <img
-                      src='./assets/help/help-front.jpg'
-                      alt='help card 1'
-                      className='small-enlarged'
-                      draggable='false'
-                    />
-                  </div>
-                  <div className='img-container'>
-                    <img
-                      src='./assets/help/help-back.jpg'
-                      alt='help card 2'
-                      className='small-enlarged'
-                      draggable='false'
-                    />
-                  </div>
-                </div>
+                <HelpCards showHelp={showHelp} />
               </>
             )}
           </div>

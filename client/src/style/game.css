@@ -936,6 +936,10 @@ img.click:hover {
   justify-content: space-between;
   width: 75vh;
 }
+.discard-pile-container h1 {
+  margin-bottom: 0.5vh;
+  margin-top: 6vh;
+}
 .discard-pile-container .material-symbols-outlined {
   display: flex;
   align-items: center;
