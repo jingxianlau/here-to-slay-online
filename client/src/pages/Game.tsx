@@ -318,11 +318,8 @@ const Game: React.FC = () => {
               newState.players[newState.playerNum].numCards > 7
             ) {
               allowedCards.set(allCards);
-              if (!state.turn.phaseChanged) {
-                showHand.set(val => !val);
-                setTimeout(() => {
-                  showHand.set(val => !val);
-                }, 600);
+              if (!newState.turn.phaseChanged) {
+                shownCard.set(null);
               }
             }
             break;

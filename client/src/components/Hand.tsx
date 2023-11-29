@@ -127,7 +127,11 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
               <span className='material-symbols-outlined'>delete_forever</span>
             </div>
           )}
-        <div className={`hand`}>
+        <div
+          className={`hand${
+            state.players[state.playerNum].numCards > 8 ? ' cover' : ' list'
+          }`}
+        >
           {state.players[state.playerNum]?.hand.map((card, i) => (
             <div
               key={i}
@@ -160,6 +164,9 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
                     card.type !== CardType.hero)
                 )
                   playCard(card);
+              }}
+              style={{
+                zIndex: 100 - i
               }}
             >
               <img

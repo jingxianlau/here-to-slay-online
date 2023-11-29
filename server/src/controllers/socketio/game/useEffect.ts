@@ -96,7 +96,10 @@ export const pass = (roomId: string, userId: string) => {
   removeFreeUse(roomId);
 
   rooms[roomId].state.turn.movesLeft = 0;
-  endTurnDiscard(roomId, userId);
+  sendGameState(roomId);
+  setTimeout(() => {
+    endTurnDiscard(roomId, userId);
+  }, 200);
 };
 
 export const endTurnDiscard = (
