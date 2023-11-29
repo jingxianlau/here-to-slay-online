@@ -35,6 +35,16 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
     socket.emit('draw-one', credentials.roomId, credentials.userId);
     popupHand(showHand);
   }
+  function drawEffect() {
+    if (state.val.turn.effect) {
+      socket.emit(
+        'use-effect',
+        credentials.roomId,
+        credentials.userId,
+        state.val.turn.effect.card
+      );
+    }
+  }
 
   return (
     <div className='mat'>
@@ -69,8 +79,14 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             src='./assets/back/back-creme.png'
             alt='flipped card'
             className={`small-card ${
-              state.val.turn.phase === 'draw' &&
-              state.val.turn.player === state.val.playerNum
+              (state.val.turn.phase === 'draw' &&
+                state.val.turn.player === state.val.playerNum) ||
+              (state.val.turn.phase === 'use-effect' &&
+                state.val.turn.effect &&
+                state.val.turn.effect.action === 'draw' &&
+                state.val.turn.effect.players.some(
+                  val => val === state.val.playerNum
+                ))
                 ? 'glow click'
                 : state.val.turn.player === state.val.playerNum &&
                   state.val.turn.phase === 'play'
@@ -82,6 +98,10 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
                 ? drawTwo
                 : state.val.turn.phase === 'play'
                 ? drawOne
+                : state.val.turn.phase === 'use-effect' &&
+                  state.val.turn.effect &&
+                  state.val.turn.effect.action === 'draw'
+                ? drawEffect
                 : () => {}
             }
             draggable='false'

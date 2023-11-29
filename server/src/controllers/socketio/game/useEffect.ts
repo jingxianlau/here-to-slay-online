@@ -39,7 +39,7 @@ export const useEffect = (
       val => val !== playerNum
     );
 
-    heroEffects[cardName][state.turn.effect.step](
+    heroEffects[cardName][++state.turn.effect.step](
       roomId,
       state.turn.player,
       returnVal
@@ -51,13 +51,15 @@ export const useEffect = (
       state.turn.player !== playerNum ? playerNum : undefined
     );
 
-    if (state.turn.effect.players.length == 0) {
+    if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
       heroEffects[cardName][++state.turn.effect.step](
         roomId,
         state.turn.player
       );
+    } else {
+      state.turn.effect.step--;
     }
-  } else {
+  } else if (card.type === CardType.hero && !card.abilityUsed) {
     // new effect
     state.turn.phase = 'use-effect';
     state.turn.phaseChanged = true;
@@ -70,11 +72,12 @@ export const useEffect = (
       purpose: '',
       card: card
     };
-    if (card.type === CardType.hero && !card.freeUse) {
+    if (!card.freeUse) {
       state.turn.movesLeft--;
     } else if (card.type === CardType.hero) {
       card.freeUse = false;
     }
+    card.abilityUsed = true;
     removeFreeUse(roomId);
     heroEffects[cardName][0](roomId, playerNum);
     state.turn.phaseChanged = false;

@@ -96,8 +96,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           show && state.turn.effect ? ' show' : ' hide'
         }`}
         style={{
-          opacity: !showBoard ? 1 : 0,
-          top: !showBoard ? 0 : '100vh'
+          opacity: show && state.turn.effect && !showBoard ? 1 : 0,
+          top: show && state.turn.effect && !showBoard ? 0 : '100vh'
         }}
       >
         <div className='content'>

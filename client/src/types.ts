@@ -43,6 +43,7 @@ export interface HeroCard extends Card {
   class: HeroClass;
   items?: ItemCard[];
   freeUse: boolean;
+  abilityUsed: boolean;
 }
 export interface ChallengeCard extends Card {
   type: CardType.challenge;
@@ -157,6 +158,7 @@ export interface GameState {
     effect: {
       action:
         | 'none'
+        | 'draw'
         | 'play'
         | 'choose-boards'
         | 'choose-own-board'
@@ -230,9 +232,9 @@ export interface ClientStateObj {
   shownCard: {
     val: AnyCard | null;
     set: React.Dispatch<React.SetStateAction<AnyCard | null>>;
-    pos: 'left' | 'right' | 'top' | null;
+    pos: 'left' | 'right' | 'top' | 'center' | null;
     setPos: React.Dispatch<
-      React.SetStateAction<'left' | 'right' | 'top' | null>
+      React.SetStateAction<'left' | 'right' | 'top' | 'center' | null>
     >;
     locked: boolean;
     setLocked: React.Dispatch<React.SetStateAction<boolean>>;

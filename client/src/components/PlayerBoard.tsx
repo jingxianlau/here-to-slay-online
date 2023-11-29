@@ -48,7 +48,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 state.val.playerNum === playerNum &&
                 (card.freeUse || state.val.turn.movesLeft > 0) &&
                 !state.val.turn.pause &&
-                state.val.turn.phase === 'play'
+                state.val.turn.phase === 'play' &&
+                !card.abilityUsed
               ) {
                 socket.emit('use-effect', roomId, userId, card);
               }
@@ -69,7 +70,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 !state.val.mainDeck.preparedCard &&
                 state.val.turn.player === state.val.playerNum &&
                 state.val.playerNum === playerNum &&
-                state.val.turn.phase === 'play'
+                state.val.turn.phase === 'play' &&
+                !card.abilityUsed
                   ? 'click'
                   : ''
               }`}

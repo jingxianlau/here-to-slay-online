@@ -24,7 +24,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [showHand, setShowHand] = useState(false);
   const [handLock, setHandLock] = useState(false);
   const [shownCard, setShownCard] = useState<AnyCard | null>(null);
-  const [pos, setPos] = useState<'left' | 'right' | 'top' | null>(null);
+  const [pos, setPos] = useState<'left' | 'right' | 'top' | 'center' | null>(
+    null
+  );
   const [shownCardLock, setShownCardLock] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   // const { timer, setTargetAchieved } = useEventTimer();

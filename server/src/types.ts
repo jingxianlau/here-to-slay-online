@@ -28,6 +28,7 @@ export interface HeroCard extends Card {
   items?: ItemCard[];
   id: string;
   freeUse: boolean;
+  abilityUsed: boolean;
 }
 export interface ChallengeCard extends Card {
   type: CardType.challenge;
@@ -161,6 +162,7 @@ export interface GameState {
     effect: {
       action:
         | 'none'
+        | 'draw'
         | 'play'
         | 'choose-boards'
         | 'choose-own-board'

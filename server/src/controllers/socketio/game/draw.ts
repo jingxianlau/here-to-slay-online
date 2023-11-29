@@ -63,17 +63,14 @@ export const drawFive = (roomId: string, userId: string) => {
   const gameState = rooms[roomId].state;
   if (playerNum === -1) return;
 
-  const hasCards = gameState.players[playerNum].hand.length > 0;
-  if (hasCards) {
-    gameState.turn.movesLeft = 0;
-    const numCards = gameState.players[playerNum].hand.length;
-    for (let i = 0; i < numCards; i++) {
-      let card = gameState.players[playerNum].hand.pop() as AnyCard;
-      delete card.player;
-      gameState.mainDeck.discardPile.push(card);
-    }
-    sendGameState(roomId);
+  gameState.turn.movesLeft = 0;
+  const numCards = gameState.players[playerNum].hand.length;
+  for (let i = 0; i < numCards; i++) {
+    let card = gameState.players[playerNum].hand.pop() as AnyCard;
+    delete card.player;
+    gameState.mainDeck.discardPile.push(card);
   }
+  sendGameState(roomId);
 
   for (let i = 0; i < 5; i++) {
     let card = gameState.secret.deck.pop() as AnyCard;
@@ -85,11 +82,13 @@ export const drawFive = (roomId: string, userId: string) => {
     card.player = playerNum;
     gameState.players[playerNum].hand.push(card);
   }
-
-  if (hasCards) {
-    nextPlayer(roomId);
-  }
   gameState.players[playerNum].numCards = 5;
-  sendGameState(roomId);
-  gameState.turn.phaseChanged = false;
+  setTimeout(() => {
+    sendGameState(roomId);
+  }, 500);
+  setTimeout(() => {
+    nextPlayer(roomId);
+    sendGameState(roomId);
+    gameState.turn.phaseChanged = false;
+  }, 1700);
 };

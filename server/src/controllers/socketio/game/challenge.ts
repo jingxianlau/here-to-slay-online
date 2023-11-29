@@ -21,7 +21,9 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     !gameState.players[playerNum].hand.some(val => card.id === val.id) ||
     (card.type !== CardType.hero &&
       card.type !== CardType.item &&
-      card.type !== CardType.magic)
+      card.type !== CardType.magic) ||
+    (card.type === CardType.hero &&
+      gameState.board[playerNum].heroCards.length >= 5)
   ) {
     return;
   }

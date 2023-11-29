@@ -38,7 +38,11 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
           (card.type === CardType.hero ||
             card.type === CardType.item ||
             card.type === CardType.magic) &&
-          !state.turn.pause
+          !state.turn.pause &&
+          !(
+            card.type === CardType.hero &&
+            state.board[state.playerNum].heroCards.length >= 5
+          )
         ) {
           socket.emit('prepare-card', roomId, userId, card);
           dropHand(showHand, shownCard);
@@ -135,16 +139,28 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
                   allowedCards.val.length === 5
                     ? 'active'
                     : allowedCard(allowedCards.val, card.type) &&
+                      ((card.type === CardType.hero &&
+                        state.board[state.playerNum].heroCards.length < 5) ||
+                        card.type !== CardType.hero) &&
                       (state.turn.phase === 'challenge' ||
                         state.turn.phase === 'challenge-roll' ||
                         state.turn.phase === 'modify')
                     ? 'active glow'
-                    : allowedCard(allowedCards.val, card.type)
+                    : allowedCard(allowedCards.val, card.type) &&
+                      ((card.type === CardType.hero &&
+                        state.board[state.playerNum].heroCards.length < 5) ||
+                        card.type !== CardType.hero)
                     ? 'active'
                     : 'inactive'
                 }`}
                 onClick={() => {
-                  if (allowedCard(allowedCards.val, card.type)) playCard(card);
+                  if (
+                    allowedCard(allowedCards.val, card.type) &&
+                    ((card.type === CardType.hero &&
+                      state.board[state.playerNum].heroCards.length < 5) ||
+                      card.type !== CardType.hero)
+                  )
+                    playCard(card);
                 }}
                 draggable='false'
               />

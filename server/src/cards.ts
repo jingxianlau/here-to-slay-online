@@ -138,56 +138,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Fuzzy Cheeks',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Greedy Cheeks',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Lucky Bucky',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Mellow Dee',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Napping Nibbles',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Peanut',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Tipsy Tootie',
     class: HeroClass.bard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   // fighters
   {
@@ -195,56 +203,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Bear Claw',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Beary Wise',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Fury Knuckle',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Heavy Bear',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Pan Chucks',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Qi Bear',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Tough Teddy',
     class: HeroClass.fighter,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   // guardian
   {
@@ -252,56 +268,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Guiding Light',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Holy Curselifter',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Iron Resolve',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Mighty Blade',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Radiant Horn',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Vibrant Glow',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Wise Shield',
     class: HeroClass.guardian,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   // rangers
   {
@@ -309,56 +333,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Hook',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Lookie Rookie',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Quick Draw',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Serious Grey',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Sharp Fox',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Wildshot',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Wily Red',
     class: HeroClass.ranger,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   // Thieves
   {
@@ -366,56 +398,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Meowzio',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Plundering Puma',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Shurikitty',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Silent Shadow',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Slippery Paws',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Sly Pickings',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Smooth Mimimeow',
     class: HeroClass.thief,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   // wizard
   {
@@ -423,56 +463,64 @@ export const heroCards: HeroCard[] = [
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Buttons',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Fluffy',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Hopper',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Snowball',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Spooky',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Whiskers',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   },
   {
     name: 'Wiggles',
     class: HeroClass.wizard,
     type: CardType.hero,
     id: uuid(),
-    freeUse: false
+    freeUse: false,
+    abilityUsed: false
   }
 ];
 

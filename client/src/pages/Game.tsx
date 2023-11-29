@@ -19,6 +19,8 @@ import DiscardPile from '../components/DiscardPile';
 import EffectPopup from '../components/EffectPopup';
 import MenuButtons from '../components/MenuButtons';
 import HelpCards from '../components/HelpCards';
+import { popupHand } from '../helpers/popupHand';
+import { isCard } from '../helpers/isCard';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -116,17 +118,8 @@ const Game: React.FC = () => {
             showPopup.set(false);
             allowedCards.set([]);
 
-            if (
-              newState.players[newState.playerNum]?.hand.length === 0 &&
-              newState.turn.player === newState.playerNum
-            ) {
-              // Get 5 Cards
-              showText(showHelperText, 'Draw', 500);
-              socket.emit('draw-five', credentials.roomId, credentials.userId);
-            } else {
-              if (newState.turn.phaseChanged) {
-                showText(showHelperText, 'Draw');
-              }
+            if (newState.turn.phaseChanged) {
+              showText(showHelperText, 'Draw');
             }
             break;
 
@@ -134,6 +127,7 @@ const Game: React.FC = () => {
             setActiveDice(0);
             showPopup.set(true);
             showHand.setLocked(false);
+            showHand.set(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -221,6 +215,7 @@ const Game: React.FC = () => {
 
           case 'use-effect':
             if (!newState.turn.effect) return;
+
             showHand.setLocked(false);
             shownCard.setLocked(true);
             if (
@@ -234,6 +229,7 @@ const Game: React.FC = () => {
               allowedCards.set([]);
             }
 
+            let timeout = false;
             if (newState.turn.phaseChanged) {
               if (newState.turn.effect.card.type === CardType.hero) {
                 showText(showHelperText, 'Hero Ability');
@@ -242,27 +238,51 @@ const Game: React.FC = () => {
               } else {
                 showText(showHelperText, 'Monster Punishment');
               }
+              timeout = true;
             }
 
-            switch (newState.turn.effect.action) {
-              case 'choose-discard':
-                setShowDiscardPile(true);
-                break;
-              case 'choose-hand':
-                showHand.setLocked(true);
-                showHand.set(true);
-                shownCard.setLocked(false);
-                setShowEffectPopup(true);
-                break;
-              case 'choose-other-hand':
-                setShowEffectPopup(true);
-                break;
-              case 'choose-player':
-                setShowEffectPopup(true);
-                break;
-              default:
-                setShowEffectPopup(false);
-            }
+            setTimeout(
+              () => {
+                if (newState.turn.effect) {
+                  switch (newState.turn.effect.action) {
+                    case 'choose-discard':
+                      setShowDiscardPile(true);
+                      break;
+                    case 'choose-hand':
+                      showHand.setLocked(true);
+                      showHand.set(true);
+                      shownCard.setLocked(false);
+                      setShowEffectPopup(true);
+
+                      if (newState.turn.effect.choice !== null) {
+                        if (newState.turn.effect.choice[0] === 0) {
+                          showText(showHelperText, 'No Card Picked');
+                        } else if (isCard(newState.turn.effect.choice[0])) {
+                          setShowEffectPopup(false);
+                          showHand.set(false);
+                          shownCard.set(newState.turn.effect.choice[0]);
+                          shownCard.setPos('center');
+                          shownCard.setLocked(true);
+                        }
+                      }
+                      break;
+                    case 'choose-other-hand':
+                      setShowEffectPopup(true);
+                      break;
+                    case 'choose-player':
+                      setShowEffectPopup(true);
+                      break;
+                    default:
+                      if (newState.turn.effect) {
+                        showText(showHelperText, newState.turn.effect.purpose);
+                      }
+                      setShowEffectPopup(false);
+                      shownCard.setLocked(false);
+                  }
+                }
+              },
+              timeout ? 1200 : 0
+            );
         }
       });
 
@@ -314,20 +334,20 @@ const Game: React.FC = () => {
                   setShowDiscardPile={setShowDiscardPile}
                 />
 
-                <Popup
-                  socket={socket}
-                  activeDice={activeDice}
-                  setActiveDice={setActiveDice}
-                  showBoard={showBoard}
+                <DiscardPile
+                  showDiscardPile={showDiscardPile}
+                  setShowDiscardPile={setShowDiscardPile}
                 />
                 <EffectPopup
                   socket={socket}
                   show={showEffectPopup}
                   showBoard={showBoard}
                 />
-                <DiscardPile
-                  showDiscardPile={showDiscardPile}
-                  setShowDiscardPile={setShowDiscardPile}
+                <Popup
+                  socket={socket}
+                  activeDice={activeDice}
+                  setActiveDice={setActiveDice}
+                  showBoard={showBoard}
                 />
 
                 <ShownCard />

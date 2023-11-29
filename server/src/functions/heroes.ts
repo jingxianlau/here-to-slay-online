@@ -10,14 +10,16 @@ import {
   swapHands
 } from './game';
 
-const endEffect = (roomId: string, playerNum: number) => {
+const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
   setTimeout(() => {
     const state = rooms[roomId].state;
     state.turn.effect = null;
-    if (state.turn.movesLeft > 0) {
-      state.turn.phase = 'play';
-      state.turn.phaseChanged = true;
-    } else nextPlayer(roomId);
+    if (updatePhase) {
+      if (state.turn.movesLeft > 0) {
+        state.turn.phase = 'play';
+        state.turn.phaseChanged = true;
+      } else nextPlayer(roomId);
+    }
     sendGameState(roomId);
     state.turn.phaseChanged = false;
   }, 1200);
@@ -56,38 +58,51 @@ export const heroEffects: {
       sendGameState(roomId);
 
       swapHands(state, playerNum, userNum);
+      state.turn.effect.val--;
 
       setTimeout(() => {
         sendGameState(roomId);
       }, 600);
     },
-    endEffect
+    (roomId, playerNum) => endEffect(roomId, playerNum)
   ],
   // draw card and play hero;
   'fuzzy-cheeks': [
     (roomId, playerNum) => {
       const state = rooms[roomId].state;
       if (!state.turn.effect) return;
-      drawCards(roomId, playerNum, 1);
+      state.turn.effect.action = 'draw';
+      state.turn.effect.allowedCards = [];
+      state.turn.effect.val = 1;
+      state.turn.effect.players = [playerNum];
+      state.turn.effect.purpose = 'Draw Card';
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
-
+    },
+    (roomId, playerNum) => {
+      const state = rooms[roomId].state;
+      if (!state.turn.effect) return;
+      drawCards(roomId, playerNum, 1);
+      state.turn.effect.val--;
+    },
+    (roomId, playerNum) => {
+      const state = rooms[roomId].state;
+      if (!state.turn.effect) return;
       state.turn.effect.action = 'choose-hand';
       state.turn.effect.allowedCards = [CardType.hero];
       state.turn.effect.val = 1;
       state.turn.effect.players = [playerNum];
       state.turn.effect.purpose = 'Play Hero';
-      setTimeout(() => {
-        sendGameState(roomId);
-      }, 1200);
+      sendGameState(roomId);
     },
     (roomId, playerNum, returnVal) => {
       const state = rooms[roomId].state;
       if (!state.turn.effect) return;
 
       if (!returnVal?.card) {
-        state.turn.effect.choice = null;
+        state.turn.effect.choice = [0];
+        state.turn.effect.val--;
         sendGameState(roomId);
+        endEffect(roomId, playerNum);
       } else if (
         returnVal &&
         returnVal.card &&
@@ -95,10 +110,10 @@ export const heroEffects: {
       ) {
         state.turn.effect.choice = [returnVal.card];
         playCard(roomId, playerNum, returnVal.card, true);
-        sendGameState(roomId);
+        state.turn.effect.val--;
       }
     },
-    endEffect
+    (roomId, playerNum) => endEffect(roomId, playerNum, false)
   ],
   // each must give a card to player
   'greedy-cheeks': [
@@ -130,6 +145,6 @@ export const heroEffects: {
 
       sendGameState(roomId);
     },
-    endEffect
+    (roomId, playerNum) => endEffect(roomId, playerNum)
   ]
 };
