@@ -4,12 +4,12 @@ import '../style/game.css';
 import '../style/index.css';
 import { useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
-import { CardType, GameState } from '../types';
+import { CardType, GameState, allCards } from '../types';
 import StartRoll from '../components/StartRoll';
 import MainBoard from '../components/MainBoard';
 import Hand from '../components/Hand';
 import ShownCard from '../components/ShownCard';
-import Popup from '../components/Popup';
+import ChallengePopup from '../components/ChallengePopup';
 import useClientContext from '../hooks/useClientContext';
 import HelperText from '../components/HelperText';
 import ShownCardTop from '../components/ShownCardTop';
@@ -19,8 +19,8 @@ import DiscardPile from '../components/DiscardPile';
 import EffectPopup from '../components/EffectPopup';
 import MenuButtons from '../components/MenuButtons';
 import HelpCards from '../components/HelpCards';
-import { popupHand } from '../helpers/popupHand';
 import { isCard } from '../helpers/isCard';
+import DiscardPopup from '../components/DiscardPopup';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -43,8 +43,10 @@ const Game: React.FC = () => {
   const [rollSummary, setRollSummary] = useState<number[]>([]);
   const [activeDice, setActiveDice] = useState<0 | 1>(0);
   const [showBoard, setShowBoard] = useState(false);
+
   const [showDiscardPile, setShowDiscardPile] = useState(false);
   const [showEffectPopup, setShowEffectPopup] = useState(false);
+  const [showDiscardPopup, setShowDiscardPopup] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -72,6 +74,7 @@ const Game: React.FC = () => {
       socket.on('game-state', (newState: GameState) => {
         console.log(newState);
         setState(newState);
+        setShowBoard(_ => false);
 
         /* PHASES */
         switch (newState.turn.phase) {
@@ -116,6 +119,13 @@ const Game: React.FC = () => {
 
           case 'draw':
             showPopup.set(false);
+            setShowEffectPopup(false);
+            setShowDiscardPopup(false);
+            showHand.setLocked(false);
+            showHand.set(false);
+            shownCard.setLocked(false);
+            shownCard.set(null);
+            shownCard.setPos(null);
             allowedCards.set([]);
 
             if (newState.turn.phaseChanged) {
@@ -200,6 +210,7 @@ const Game: React.FC = () => {
 
           case 'play':
             showPopup.set(false);
+            setShowEffectPopup(false);
             showHand.setLocked(false);
             shownCard.setLocked(false);
             allowedCards.set([]);
@@ -215,9 +226,12 @@ const Game: React.FC = () => {
 
           case 'use-effect':
             if (!newState.turn.effect) return;
-
             showHand.setLocked(false);
-            shownCard.setLocked(true);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
             if (
               newState.turn.effect.allowedCards &&
               newState.turn.effect.players.some(
@@ -283,6 +297,37 @@ const Game: React.FC = () => {
               },
               timeout ? 1200 : 0
             );
+            break;
+
+          case 'end-turn-discard':
+            setShowDiscardPopup(true);
+            allowedCards.set([]);
+
+            if (newState.turn.phaseChanged) {
+              showText(showHelperText, 'Discard');
+            }
+
+            if (!showBoard) {
+              showHand.set(false);
+              showHand.setLocked(true);
+              showHand.set(true);
+              showHand.setLocked(true);
+            }
+            if (
+              newState.turn.player === newState.playerNum &&
+              newState.players[newState.playerNum].numCards > 7
+            ) {
+              allowedCards.set(allCards);
+              if (!state.turn.phaseChanged) {
+                showHand.set(val => !val);
+                setTimeout(() => {
+                  showHand.set(val => !val);
+                }, 600);
+              }
+            }
+            break;
+
+          case 'attack':
         }
       });
 
@@ -343,7 +388,8 @@ const Game: React.FC = () => {
                   show={showEffectPopup}
                   showBoard={showBoard}
                 />
-                <Popup
+                <DiscardPopup show={showDiscardPopup} showBoard={showBoard} />
+                <ChallengePopup
                   socket={socket}
                   activeDice={activeDice}
                   setActiveDice={setActiveDice}
@@ -353,7 +399,7 @@ const Game: React.FC = () => {
                 <ShownCard />
                 <ShownCardTop />
 
-                <Hand socket={socket} />
+                <Hand socket={socket} showBoard={showBoard} />
 
                 <HelperText />
 

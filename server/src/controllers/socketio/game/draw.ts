@@ -1,12 +1,9 @@
-import {
-  nextPlayer,
-  removeFreeUse,
-  reshuffleDeck
-} from '../../../functions/game';
+import { removeFreeUse, reshuffleDeck } from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import { AnyCard } from '../../../types';
+import { endTurnDiscard } from './useEffect';
 
 export const drawOne = (roomId: string, userId: string) => {
   const playerNum = validSender(roomId, userId);
@@ -29,7 +26,7 @@ export const drawOne = (roomId: string, userId: string) => {
   gameState.turn.movesLeft--;
 
   if (gameState.turn.movesLeft <= 0) {
-    nextPlayer(roomId);
+    endTurnDiscard(roomId, userId);
   }
 
   sendGameState(roomId);
@@ -87,8 +84,6 @@ export const drawFive = (roomId: string, userId: string) => {
     sendGameState(roomId);
   }, 500);
   setTimeout(() => {
-    nextPlayer(roomId);
-    sendGameState(roomId);
-    gameState.turn.phaseChanged = false;
+    endTurnDiscard(roomId, userId);
   }, 1700);
 };

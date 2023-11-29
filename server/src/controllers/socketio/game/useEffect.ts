@@ -1,7 +1,12 @@
-import { removeFreeUse } from '../../../functions/game';
-import { checkCredentials } from '../../../functions/helpers';
+import {
+  discardCard,
+  nextPlayer,
+  removeFreeUse
+} from '../../../functions/game';
+import { checkCredentials, validSender } from '../../../functions/helpers';
 import { heroEffects } from '../../../functions/heroes';
 import { rooms } from '../../../rooms';
+import { sendGameState } from '../../../server';
 import {
   AnyCard,
   CardType,
@@ -81,5 +86,51 @@ export const useEffect = (
     removeFreeUse(roomId);
     heroEffects[cardName][0](roomId, playerNum);
     state.turn.phaseChanged = false;
+  }
+};
+
+// misc functions that i have no idea where to put
+export const pass = (roomId: string, userId: string) => {
+  const playerNum = validSender(roomId, userId);
+  if (playerNum === -1) return;
+  removeFreeUse(roomId);
+
+  rooms[roomId].state.turn.movesLeft = 0;
+  endTurnDiscard(roomId, userId);
+};
+
+export const endTurnDiscard = (
+  roomId: string,
+  userId: string,
+  returnVal?: AnyCard
+) => {
+  const playerNum = validSender(roomId, userId);
+  const state = rooms[roomId].state;
+  if (state.turn.player !== playerNum) return;
+
+  if (
+    state.turn.phase === 'end-turn-discard' &&
+    returnVal &&
+    state.turn.toDiscard
+  ) {
+    discardCard(roomId, playerNum, returnVal.id);
+    sendGameState(roomId);
+    if (state.players[playerNum].hand.length <= 7) {
+      setTimeout(() => {
+        state.turn.toDiscard = 0;
+        nextPlayer(roomId);
+      }, 2000);
+    }
+  } else {
+    // new effect
+    if (state.players[playerNum].numCards > 7) {
+      state.turn.phase = 'end-turn-discard';
+      state.turn.toDiscard = state.players[playerNum].numCards - 7;
+      state.turn.phaseChanged = true;
+      sendGameState(roomId);
+      state.turn.phaseChanged = false;
+    } else {
+      nextPlayer(roomId);
+    }
   }
 };

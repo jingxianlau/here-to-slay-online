@@ -7,7 +7,7 @@ import useClientContext from '../hooks/useClientContext';
 import { showText } from '../helpers/showText';
 import ChooseModify from './ChooseModify';
 
-const Popup: React.FC<{
+const ChallengePopup: React.FC<{
   socket: Socket;
   activeDice: 0 | 1;
   setActiveDice: React.Dispatch<React.SetStateAction<0 | 1>>;
@@ -132,7 +132,7 @@ const Popup: React.FC<{
               <img
                 src={getImage(preppedCard.card)}
                 alt={preppedCard.card.name}
-                className='small-lg'
+                className='small-xl'
                 draggable='false'
               />
             </div>
@@ -141,7 +141,7 @@ const Popup: React.FC<{
                 state.turn.player === state.playerNum ||
                 state.match.isReady[state.playerNum] != null
                   ? ''
-                  : 'cross'
+                  : 'cross-lg'
               }`}
               onClick={() => {
                 if (state.match.isReady[state.playerNum] == null) {
@@ -153,7 +153,7 @@ const Popup: React.FC<{
               <img
                 src='./assets/challenge/challenge.png'
                 alt='challenge'
-                className='small-md center-img'
+                className='small-lg center-img'
                 draggable='false'
               />
             </div>
@@ -188,7 +188,7 @@ const Popup: React.FC<{
                   <img
                     src={getImage(preppedCard.card)}
                     alt={preppedCard.card.name}
-                    className='small-lg'
+                    className='small-xl'
                     draggable='false'
                   />
                 </div>
@@ -505,7 +505,7 @@ const Popup: React.FC<{
                         <img
                           src={getImage(modifiers[activeModifier])}
                           alt={modifiers[activeModifier].name}
-                          className='small-lg'
+                          className='small-xl'
                           draggable='false'
                         />
                       </div>
@@ -608,4 +608,4 @@ const Popup: React.FC<{
   );
 };
 
-export default Popup;
+export default ChallengePopup;

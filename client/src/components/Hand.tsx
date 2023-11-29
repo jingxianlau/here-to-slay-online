@@ -9,9 +9,10 @@ import { popupHand } from '../helpers/popupHand';
 
 interface HandProps {
   socket: Socket;
+  showBoard: boolean;
 }
 
-const Hand: React.FC<HandProps> = ({ socket }) => {
+const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
   const {
     state: { val: state },
     showHand,
@@ -77,6 +78,17 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
             card
           );
         }
+        break;
+
+      case 'end-turn-discard':
+        if (
+          state.turn.player === state.playerNum &&
+          state.players[state.playerNum].numCards > 7
+        ) {
+          socket.emit('end-turn-discard', roomId, userId, card);
+          shownCard.set(null);
+          shownCard.setPos(null);
+        }
     }
   };
 
@@ -94,7 +106,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
         }
       }}
     >
-      {!showHand.val && (
+      {!showHand.val && !showHand.locked && (
         <>
           <h5>
             <span>Hand</span>
@@ -115,7 +127,7 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
               <span className='material-symbols-outlined'>delete_forever</span>
             </div>
           )}
-        <div className='hand'>
+        <div className={`hand`}>
           {state.players[state.playerNum]?.hand.map((card, i) => (
             <div
               key={i}
@@ -130,6 +142,24 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
                   shownCard.set(null);
                   shownCard.setPos(null);
                 }
+              }}
+              className={`img-container${
+                state.turn.phase === 'end-turn-discard' &&
+                state.turn.player === state.playerNum &&
+                allowedCards.val.length > 0 &&
+                state.players[state.playerNum].numCards > 7 &&
+                !showBoard
+                  ? ' cross-md'
+                  : ''
+              }`}
+              onClick={() => {
+                if (
+                  allowedCard(allowedCards.val, card.type) &&
+                  ((card.type === CardType.hero &&
+                    state.board[state.playerNum].heroCards.length < 5) ||
+                    card.type !== CardType.hero)
+                )
+                  playCard(card);
               }}
             >
               <img
@@ -153,15 +183,6 @@ const Hand: React.FC<HandProps> = ({ socket }) => {
                     ? 'active'
                     : 'inactive'
                 }`}
-                onClick={() => {
-                  if (
-                    allowedCard(allowedCards.val, card.type) &&
-                    ((card.type === CardType.hero &&
-                      state.board[state.playerNum].heroCards.length < 5) ||
-                      card.type !== CardType.hero)
-                  )
-                    playCard(card);
-                }}
                 draggable='false'
               />
             </div>

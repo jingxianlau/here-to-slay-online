@@ -943,6 +943,7 @@ export const initialState: GameState = {
     player: 0,
     movesLeft: 3,
     phase: 'start-roll',
+    toDiscard: 0,
     effect: null,
     phaseChanged: false,
     isRolling: false,

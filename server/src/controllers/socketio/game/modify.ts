@@ -1,9 +1,9 @@
-import { nextPlayer, discardCard } from '../../../functions/game';
+import { discardCard } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import { ModifierCard } from '../../../types';
-import { useEffect } from './useEffect';
+import { endTurnDiscard, useEffect } from './useEffect';
 
 export const modifyRoll = (
   roomId: string,
@@ -43,11 +43,7 @@ export const modifyRoll = (
           state.mainDeck.preparedCard = null;
 
           if (state.turn.movesLeft === 0) {
-            nextPlayer(roomId);
-            setTimeout(() => {
-              sendGameState(roomId);
-              state.turn.phaseChanged = false;
-            }, 1200);
+            endTurnDiscard(roomId, userId);
           } else {
             rooms[roomId].state.turn.phase = 'play';
             rooms[roomId].state.turn.phaseChanged = true;

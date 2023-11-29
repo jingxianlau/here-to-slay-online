@@ -148,6 +148,7 @@ export interface GameState {
     timeElapsed: number;
     phase:
       | 'start-roll'
+      | 'end-turn-discard'
       | 'draw'
       | 'play'
       | 'attack'
@@ -155,6 +156,11 @@ export interface GameState {
       | 'challenge-roll'
       | 'modify'
       | 'use-effect';
+
+    /* ONLY FOR 'end-turn-discard' PHASE */
+    toDiscard: number;
+    /* ONLY FOR 'end-turn-discard' PHASE */
+
     effect: {
       action:
         | 'none'

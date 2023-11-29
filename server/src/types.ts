@@ -152,6 +152,7 @@ export interface GameState {
     movesLeft: 0 | 1 | 2 | 3;
     phase:
       | 'start-roll'
+      | 'end-turn-discard'
       | 'draw'
       | 'play'
       | 'attack'
@@ -159,6 +160,11 @@ export interface GameState {
       | 'challenge-roll'
       | 'modify'
       | 'use-effect';
+
+    /* ONLY FOR 'end-turn-discard' PHASE */
+    toDiscard: number;
+    /* ONLY FOR 'end-turn-discard' PHASE */
+
     effect: {
       action:
         | 'none'
@@ -254,6 +260,7 @@ export interface privateState {
     movesLeft: 1 | 2 | 3;
     phase:
       | 'start-roll'
+      | 'end-turn-discard'
       | 'draw'
       | 'play'
       | 'attack'
@@ -261,6 +268,11 @@ export interface privateState {
       | 'challenge-roll'
       | 'modify'
       | 'use-effect';
+
+    /* ONLY FOR 'end-turn-discard' PHASE */
+    toDiscard: number;
+    /* ONLY FOR 'end-turn-discard' PHASE */
+
     effect: {
       action:
         | 'none'

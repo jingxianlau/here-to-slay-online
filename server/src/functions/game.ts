@@ -61,6 +61,8 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
 
 export function nextPlayer(roomId: string) {
   let player = rooms[roomId].state.turn.player;
+  if (rooms[roomId].state.players[player].hand.length > 7) return;
+
   const newPlayer = (player + 1) % rooms[roomId].numPlayers;
   rooms[roomId].state.turn.player = newPlayer;
   rooms[roomId].state.turn.movesLeft = 3;
@@ -71,6 +73,9 @@ export function nextPlayer(roomId: string) {
   for (let i = 0; i < heroes.length; i++) {
     heroes.forEach(val => (val.abilityUsed = false));
   }
+
+  sendGameState(roomId);
+  rooms[roomId].state.turn.phaseChanged = false;
 }
 
 export function rollDice(): [number, number] {

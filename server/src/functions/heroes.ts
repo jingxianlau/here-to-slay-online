@@ -1,3 +1,4 @@
+import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
 import { AnyCard, CardType, GameState, allCards } from '../types';
@@ -18,11 +19,11 @@ const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
       if (state.turn.movesLeft > 0) {
         state.turn.phase = 'play';
         state.turn.phaseChanged = true;
-      } else nextPlayer(roomId);
+        sendGameState(roomId);
+        state.turn.phaseChanged = false;
+      } else endTurnDiscard(roomId, state.secret.playerIds[playerNum]);
     }
-    sendGameState(roomId);
-    state.turn.phaseChanged = false;
-  }, 1200);
+  }, 2400);
 };
 
 export const heroEffects: {

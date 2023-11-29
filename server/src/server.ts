@@ -21,7 +21,11 @@ import {
 import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';
 import { modifyRoll } from './controllers/socketio/game/modify';
 import { attackMonster, attackRoll } from './controllers/socketio/game/attack';
-import { useEffect } from './controllers/socketio/game/useEffect';
+import {
+  endTurnDiscard,
+  pass,
+  useEffect
+} from './controllers/socketio/game/useEffect';
 import { removeFreeUse } from './functions/game';
 
 /* EXPRESS SERVER */
@@ -46,24 +50,7 @@ io.on('connection', socket => {
 
   /* GAME */
   // pass
-  socket.on('pass', (roomId: string, userId: string) => {
-    const playerNum = validSender(roomId, userId);
-    if (playerNum === -1) return;
-    removeFreeUse(roomId);
-
-    let player = rooms[roomId].state.turn.player;
-    rooms[roomId].state.turn.player = (player + 1) % rooms[roomId].numPlayers;
-    rooms[roomId].state.turn.movesLeft = 0;
-    rooms[roomId].state.turn.phase = 'draw';
-    rooms[roomId].state.turn.phaseChanged = true;
-
-    sendGameState(roomId);
-
-    setTimeout(() => {
-      rooms[roomId].state.turn.movesLeft = 3;
-      sendGameState(roomId);
-    }, 300);
-  });
+  socket.on('pass', pass);
 
   // start roll
   socket.on('start-roll', startRoll);
@@ -87,6 +74,9 @@ io.on('connection', socket => {
 
   // TODO: use-effect
   socket.on('use-effect', useEffect);
+
+  // end-turn-discard
+  socket.on('end-turn-discard', endTurnDiscard);
 });
 
 /* 

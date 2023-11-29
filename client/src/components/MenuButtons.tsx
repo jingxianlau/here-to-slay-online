@@ -56,7 +56,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
           state.turn.phase === 'challenge' ||
           state.turn.phase === 'challenge-roll' ||
           state.turn.phase === 'modify' ||
-          state.turn.phase === 'use-effect'
+          state.turn.phase === 'use-effect' ||
+          state.turn.phase === 'end-turn-discard'
             ? 'show'
             : 'hide'
         }`}
@@ -66,13 +67,15 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
             state.turn.phase === 'challenge' ||
             state.turn.phase === 'challenge-roll' ||
             state.turn.phase === 'modify' ||
-            state.turn.phase === 'use-effect'
+            state.turn.phase === 'use-effect' ||
+            state.turn.phase === 'end-turn-discard'
           ) {
             setShowBoard(val => !val);
 
             if (
-              state.turn.effect &&
-              state.turn.effect.action === 'choose-hand'
+              (state.turn.effect &&
+                state.turn.effect.action === 'choose-hand') ||
+              state.turn.phase === 'end-turn-discard'
             ) {
               if (showBoard) {
                 showHand.set(true);
