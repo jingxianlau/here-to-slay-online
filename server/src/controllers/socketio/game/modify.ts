@@ -39,6 +39,7 @@ export const modifyRoll = (
           state.dice.main.total = 0;
           state.dice.main.modifier = [];
           state.dice.main.modValues = [];
+          state.dice.defend = null;
           delete state.turn.challenger;
           state.mainDeck.preparedCard = null;
 

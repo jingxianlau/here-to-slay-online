@@ -146,6 +146,7 @@ const Game: React.FC = () => {
             break;
 
           case 'challenge-roll':
+            setActiveDice(0);
             showPopup.set(true);
             showRoll.set(false);
             showHand.setLocked(false);

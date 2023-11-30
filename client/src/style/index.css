@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -14,7 +16,8 @@ code {
 
 /* DARK THEME */
 * {
-  font-family: 'Source Sans 3';
+  font-family: 'Lilita One';
+  font-weight: 300;
   color: white;
 }
 body {
@@ -22,15 +25,15 @@ body {
 }
 label {
   padding: 6px;
-  font-size: 18px;
+  font-size: 2.5vh;
 }
 input {
   background-color: #555;
   border-radius: 15px;
   border: 2px solid #252525;
-  padding: 8px 15px;
-  width: 270px;
-  font-size: 16px;
+  padding: 0.6vw 1vw;
+  width: 17.5vw;
+  font-size: 2vh;
 }
 .checkbox {
   width: 20px;
@@ -41,18 +44,63 @@ input:focus {
 }
 button {
   background-color: #fc7c37;
-  border-radius: 15px;
-  padding: 9px 0;
-  width: 150px;
-  border: 3px solid #252525;
-  font-size: 20px;
+  border-radius: 0.85vw;
+  padding: 0.6vw 0;
+  width: 9.2vw;
+  margin: 0.3vw;
+  border: none;
+  font-size: 2.5vh;
   transition: 0.25s;
+  box-shadow: 0 0.7vw #e15c15;
+}
+button.circular {
+  border-radius: 50%;
+  padding: 1vw 0;
+  width: 6vh;
+  height: 5.2vh;
+  margin-right: 1vw;
+  border: none;
+  font-size: 2.5vh;
+  transition: 0.25s;
+  box-shadow: 0 0.7vw #e15c15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 button:hover {
   cursor: pointer;
-  box-shadow: #111 2px 2px 3px 2px;
-  background-color: #f86a1d;
   font-weight: 800;
+  box-shadow: 0 0.6vw #ca500f;
+  transform: translateY(0.1vw);
+}
+button:focus-visible {
+  box-shadow: 0 0.5vw #ca500f;
+  background-color: #e15c15;
+  transform: translateY(0.2vw);
+  font-weight: 800;
+  outline: none;
+}
+button:active {
+  box-shadow: 0 0.35vw rgb(138, 52, 6);
+  transform: translateY(0.35vw);
+}
+button.danger {
+  background-color: #fe2e2e;
+  box-shadow: 0 0.7vw #e81b1b;
+}
+button.danger:hover {
+  box-shadow: 0 0.6vw #d31313;
+}
+button.danger:focus-visible {
+  box-shadow: 0 0.5vw #d31313;
+  background-color: #e81b1b;
+  transform: translateY(0.2vw);
+  font-weight: 800;
+  outline: none;
+}
+button.danger:active {
+  box-shadow: 0 0.35vw #a00d0d;
+  transform: translateY(6px);
 }
 
 /* HOMEPAGE */
@@ -61,10 +109,10 @@ button:hover {
 }
 
 .rooms {
-  border-radius: 15px;
-  font-size: 20px;
+  border-radius: 1vw;
+  font-size: 2.1lvh;
   border: 1px solid;
-  width: 300px;
+  width: 19.2vw;
   margin-top: 10px;
   display: flex;
   flex-direction: column;
@@ -72,29 +120,29 @@ button:hover {
 }
 
 .room {
-  padding: 4px 20px;
+  padding: 0.6vw 1vw;
   border: 2px solid transparent;
+  transition: 0.25s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .room:hover {
   cursor: pointer;
   border: 2px solid #fc7c37;
 }
 .room:nth-child(1) {
-  border-radius: 15px 15px 0 0;
+  border-radius: 1vw 1vw 0 0;
 }
 .room:last-child {
-  border-radius: 0 0 15px 15px;
+  border-radius: 0 0 1vw 1vw;
 }
 .room:only-child {
-  border-radius: 15px;
+  border-radius: 1vw;
 }
 
 .room div {
   display: inline-block;
-}
-.room div:nth-child(2) {
-  position: absolute;
-  right: 20px;
 }
 
 .rooms .room:nth-child(odd) {
@@ -113,15 +161,38 @@ button:hover {
   margin-top: 12px;
 }
 
+.lobby h1 {
+  font-size: 6vh;
+  margin-top: 4.2vh;
+  margin-right: 1vw;
+  margin-bottom: 3vh;
+}
+.lobby .name {
+  display: flex;
+  align-items: center;
+  margin-top: -5vh;
+}
+.lobby .name span.material-symbols-outlined {
+  font-size: 3.5vh;
+  font-weight: 800;
+}
 .lobby .details h2 {
-  margin-top: -15px;
+  margin-top: -2vh;
+  margin-bottom: 1vh;
+  font-size: 3.5vh;
 }
 
 .player-list {
-  width: 260px;
+  width: 20vw;
+  font-size: 2.5vh;
 }
 
 .player-list .player {
   display: flex;
   justify-content: space-between;
+}
+.player-list .player .uname {
+  width: 12vw;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

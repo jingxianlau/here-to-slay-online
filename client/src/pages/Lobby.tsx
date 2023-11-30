@@ -100,7 +100,12 @@ const Lobby: React.FC = () => {
         <h5 className='lobby-id'>Lobby ID: {credentials.roomId}</h5>
         <div className='lobby'>
           <div className='details'>
-            <h1>{matchState?.players[playerNum]}</h1>
+            <div className='name'>
+              <h1>{matchState?.players[playerNum]}</h1>
+              <button className='danger circular' onClick={leaveRoom}>
+                <span className='material-symbols-outlined'>logout</span>
+              </button>
+            </div>
             {matchState && (
               <h2
                 style={{
@@ -113,8 +118,6 @@ const Lobby: React.FC = () => {
           </div>
           <button onClick={getReady}>{isReady ? 'Not Ready' : 'Ready!'}</button>
           <br />
-          <button onClick={leaveRoom}>Leave</button>
-          <br />
           <br />
           <div className='player-list'>
             {matchState &&
@@ -122,7 +125,7 @@ const Lobby: React.FC = () => {
                 (uname, num) =>
                   num !== playerNum && (
                     <div className='player' key={num}>
-                      <h3>{uname}</h3>
+                      <h3 className='uname'>{uname}</h3>
                       <h3
                         style={{
                           color: matchState.isReady[

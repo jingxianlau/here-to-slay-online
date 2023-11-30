@@ -330,12 +330,18 @@ header img {
   user-select: none;
   transition: ease-in-out 0.25s;
 }
-.hand img.small-md.glow {
+.hand .img-container img.small-md.glow {
   width: 19.402vh;
   height: 27.101vh;
   margin: 0 1.8vh;
 }
-.hand.list img.small-md {
+.hand.list .img-container img.small-md.glow {
+  width: 19.402vh;
+  height: 27.101vh;
+  margin: 0 1.8vh;
+  box-shadow: #fc7c37 0 0 1.2vh 1.2vh;
+}
+.hand.list .img-container img.small-md {
   margin: 0 0.3vh;
 }
 .hand.cover img.small-md {
@@ -774,6 +780,9 @@ img.click:hover {
 }
 .popup .arrows .name {
   font-size: 2.4vh;
+  width: 20vh;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .popup .arrows .material-symbols-outlined.hide {
   opacity: 0;
@@ -1141,7 +1150,7 @@ img.click:hover {
 }
 .helper-text-container h3 {
   margin-left: 1vw;
-  margin-top: 17.8vw;
+  margin-top: 18.5vw;
   font-size: 5.5vw;
   font-weight: 1000;
 }
@@ -1153,7 +1162,7 @@ img.click:hover {
 }
 .helper-text-container h4 {
   margin-left: 1vw;
-  margin-top: -6.5vw;
+  margin-top: -5.5vw;
   font-size: 1.8vw;
   font-weight: 300;
 }

@@ -236,7 +236,7 @@ const ChallengePopup: React.FC<{
                         <h1
                           style={{
                             color:
-                              state.dice.main.total > state.dice.defend.total
+                              state.dice.main.total >= state.dice.defend.total
                                 ? '#fc7c37'
                                 : 'white'
                           }}
