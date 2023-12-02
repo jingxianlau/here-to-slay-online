@@ -20,7 +20,7 @@ import {
 } from './controllers/socketio/game/challenge';
 import { drawFive, drawOne, drawTwo } from './controllers/socketio/game/draw';
 import { modifyRoll } from './controllers/socketio/game/modify';
-import { attackMonster, attackRoll } from './controllers/socketio/game/attack';
+import { attackRoll } from './controllers/socketio/game/attack';
 import {
   endTurnDiscard,
   pass,
@@ -66,13 +66,13 @@ io.on('connection', socket => {
   socket.on('challenge', challenge);
   socket.on('challenge-roll', challengeRoll);
 
-  // TODO: modify
+  // modify
   socket.on('modify-roll', modifyRoll);
 
-  // TODO: attack
+  // attack
   socket.on('attack-roll', attackRoll);
 
-  // TODO: use-effect
+  // use-effect
   socket.on('use-effect-roll', useEffectRoll);
   socket.on('use-effect', useEffect);
 

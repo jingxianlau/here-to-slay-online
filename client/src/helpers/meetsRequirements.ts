@@ -1,9 +1,12 @@
 import {
   GameState,
+  HeroCard,
   HeroClass,
   LargeCard,
   LeaderCard,
-  monsterRequirements
+  MonsterCard,
+  monsterRequirements,
+  rollRequirements
 } from '../types';
 import { shortenName } from './getImage';
 
@@ -46,4 +49,28 @@ export const meetsRequirements = (monster: LargeCard, state: GameState) => {
     }
   }
   return true;
+};
+
+export const meetsRollRequirements = (
+  type: 'fail' | 'pass',
+  card: HeroCard | MonsterCard,
+  roll: number
+) => {
+  let req;
+  req = rollRequirements[card.name.replaceAll(' ', '-').toLowerCase()][type];
+  if (!req) return false;
+
+  if (req < 0) {
+    if (roll <= Math.abs(req)) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if (roll >= req) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 };

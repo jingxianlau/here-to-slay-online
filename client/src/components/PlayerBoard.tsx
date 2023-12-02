@@ -53,7 +53,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                   state.turn.phase === 'play' &&
                   !card.abilityUsed
                 ) {
-                  socket.emit('use-effect', roomId, userId, card);
+                  socket.emit('use-effect-roll', roomId, userId, card);
                 }
               }}
             >
@@ -75,6 +75,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                   state.turn.phase === 'play' &&
                   !card.abilityUsed
                     ? 'click'
+                    : playerNum === state.playerNum
+                    ? 'deny'
                     : ''
                 }`}
                 draggable='false'

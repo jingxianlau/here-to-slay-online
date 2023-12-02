@@ -70,7 +70,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
                 state.val.turn.phase === 'play' &&
                 state.val.turn.player === state.val.playerNum &&
                 !state.val.turn.pause
-                  ? meetsRequirements(card, state.val)
+                  ? meetsRequirements(card, state.val) &&
+                    state.val.turn.movesLeft >= 2
                     ? 'pointer'
                     : 'not-allowed'
                   : 'default'

@@ -52,22 +52,34 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
       </div>
       <button
         className={`circular show-board-trigger ${
-          state.turn.phase === 'attack' ||
+          state.turn.phase === 'attack-roll' ||
           state.turn.phase === 'challenge' ||
           state.turn.phase === 'challenge-roll' ||
           state.turn.phase === 'modify' ||
-          state.turn.phase === 'use-effect' ||
+          (state.turn.phase === 'use-effect' &&
+            state.turn.effect &&
+            (state.turn.effect.action === 'choose-player' ||
+              state.turn.effect.action === 'choose-hand' ||
+              state.turn.effect.action === 'choose-other-hand' ||
+              state.turn.effect.action === 'choose-discard')) ||
+          state.turn.phase === 'use-effect-roll' ||
           state.turn.phase === 'end-turn-discard'
             ? 'show'
             : 'hide'
         }`}
         onClick={() => {
           if (
-            state.turn.phase === 'attack' ||
+            state.turn.phase === 'attack-roll' ||
             state.turn.phase === 'challenge' ||
             state.turn.phase === 'challenge-roll' ||
             state.turn.phase === 'modify' ||
-            state.turn.phase === 'use-effect' ||
+            (state.turn.phase === 'use-effect' &&
+              state.turn.effect &&
+              (state.turn.effect.action === 'choose-player' ||
+                state.turn.effect.action === 'choose-hand' ||
+                state.turn.effect.action === 'choose-other-hand' ||
+                state.turn.effect.action === 'choose-discard')) ||
+            state.turn.phase === 'use-effect-roll' ||
             state.turn.phase === 'end-turn-discard'
           ) {
             setShowBoard(val => !val);

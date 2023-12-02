@@ -13,8 +13,9 @@ export const attackRoll = (
   const gameState = rooms[roomId].state;
   if (
     playerNum === -1 ||
-    gameState.dice.main.total === 0 ||
-    gameState.turn.player !== playerNum
+    gameState.dice.main.total !== 0 ||
+    gameState.turn.player !== playerNum ||
+    (gameState.turn.phase !== 'play' && gameState.turn.phase !== 'attack-roll')
   ) {
     return;
   }
@@ -39,8 +40,14 @@ export const attackRoll = (
       gameState.turn.phaseChanged = false;
     }, 3000);
   } else {
+    if (gameState.turn.movesLeft < 2) return;
+
     gameState.turn.phase = 'attack-roll';
+    gameState.turn.phaseChanged = true;
     gameState.mainDeck.preparedCard = { card: monster, successful: null };
+    gameState.turn.movesLeft -= 2;
+    gameState.turn.isRolling = true;
     sendGameState(roomId);
+    gameState.turn.phaseChanged = false;
   }
 };

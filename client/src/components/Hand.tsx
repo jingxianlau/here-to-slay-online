@@ -133,6 +133,7 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
               <span className='material-symbols-outlined'>delete_forever</span>
             </div>
           )}
+
         <div
           className={`hand${
             state.players[state.playerNum].numCards > 8 ? ' cover' : ' list'
@@ -206,6 +207,33 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
             </div>
           )}
         </div>
+
+        {state.turn.phase === 'use-effect' &&
+          state.turn.effect &&
+          state.turn.effect.players.some(val => val === state.playerNum) &&
+          state.turn.effect.action === 'choose-hand' && (
+            <div
+              className='skip'
+              onClick={() => {
+                if (
+                  state.turn.effect &&
+                  state.turn.effect.players.some(
+                    val => val === state.playerNum
+                  ) &&
+                  state.turn.effect.action === 'choose-hand'
+                ) {
+                  socket.emit(
+                    'use-effect',
+                    roomId,
+                    userId,
+                    state.turn.effect.card
+                  );
+                }
+              }}
+            >
+              <span className='material-symbols-outlined'>start</span>
+            </div>
+          )}
       </div>
     </div>
   );

@@ -22,6 +22,8 @@ import HelpCards from '../components/HelpCards';
 import { isCard } from '../helpers/isCard';
 import DiscardPopup from '../components/DiscardPopup';
 import ConfirmPopup from '../components/ConfirmPopup';
+import RollPopup from '../components/RollPopup';
+import { meetsRollRequirements } from '../helpers/meetsRequirements';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +34,6 @@ const Game: React.FC = () => {
     showRoll,
     hasRolled,
     showPopup,
-    chosenCard,
     showHand,
     shownCard,
     showHelperText
@@ -49,6 +50,7 @@ const Game: React.FC = () => {
   const [showDiscardPile, setShowDiscardPile] = useState(false);
   const [showEffectPopup, setShowEffectPopup] = useState(false);
   const [showDiscardPopup, setShowDiscardPopup] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -181,6 +183,44 @@ const Game: React.FC = () => {
             }
             break;
 
+          case 'attack-roll':
+            showRoll.set(false);
+            showHand.setLocked(false);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
+
+            if (newState.dice.main.total > 0) {
+              setTimeout(() => {
+                showRoll.set(true);
+              }, 1000);
+              setTimeout(() => {
+                hasRolled.set(false);
+              }, 3000);
+            }
+            break;
+
+          case 'use-effect-roll':
+            showRoll.set(false);
+            showHand.setLocked(false);
+            if (!showBoard) {
+              shownCard.setLocked(true);
+              shownCard.setPos(null);
+              shownCard.set(null);
+            }
+
+            if (newState.dice.main.total > 0) {
+              setTimeout(() => {
+                showRoll.set(true);
+              }, 1000);
+              setTimeout(() => {
+                hasRolled.set(false);
+              }, 3000);
+            }
+            break;
+
           case 'modify':
             showPopup.set(true);
             showHand.setLocked(false);
@@ -204,10 +244,32 @@ const Game: React.FC = () => {
               allowedCards.set([CardType.modifier]);
             }
 
-            if (newState.mainDeck.preparedCard.successful) {
-              showText(showHelperText, 'Card Success');
-            } else if (newState.mainDeck.preparedCard.successful === false) {
-              showText(showHelperText, 'Card Failed');
+            if (newState.dice.defend) {
+              if (newState.mainDeck.preparedCard.successful) {
+                showText(showHelperText, 'Card Success');
+              } else if (newState.mainDeck.preparedCard.successful === false) {
+                showText(showHelperText, 'Card Failed');
+              }
+            } else {
+              if (newState.mainDeck.preparedCard.card.type === CardType.hero) {
+                if (newState.mainDeck.preparedCard.successful === false) {
+                  showText(showHelperText, 'Ability Failed');
+                }
+              } else if (
+                newState.mainDeck.preparedCard.card.type === CardType.large
+              ) {
+                if (newState.mainDeck.preparedCard.successful) {
+                  showText(showHelperText, 'Monster Slain');
+                } else if (
+                  !meetsRollRequirements(
+                    'fail',
+                    newState.mainDeck.preparedCard.card,
+                    newState.dice.main.total
+                  )
+                ) {
+                  showText(showHelperText, 'Attack Failed');
+                }
+              }
             }
             break;
 
@@ -326,8 +388,6 @@ const Game: React.FC = () => {
               }
             }
             break;
-
-          case 'attack':
         }
       });
 
@@ -395,6 +455,7 @@ const Game: React.FC = () => {
                   setActiveDice={setActiveDice}
                   showBoard={showBoard}
                 />
+                <RollPopup socket={socket} showBoard={showBoard} />
 
                 <ShownCard />
                 <ShownCardTop />

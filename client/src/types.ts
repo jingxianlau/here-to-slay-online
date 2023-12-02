@@ -147,7 +147,6 @@ export interface GameState {
       | 'draw'
       | 'play'
       | 'attack-roll'
-      | 'attack'
       | 'challenge'
       | 'challenge-roll'
       | 'use-effect-roll'
@@ -302,4 +301,81 @@ export const monsterRequirements: {
     { req: 1, hero: HeroClass.thief },
     { req: 1, hero: 'hero' }
   ]
+};
+
+export const rollRequirements: {
+  [key: string]: { pass: number; fail?: number };
+} = {
+  // HEROES
+  // bard
+  'dodgy-dealer': { pass: 9 },
+  'fuzzy-cheeks': { pass: 8 },
+  'greedy-cheeks': { pass: 8 },
+  'lucky-bucky': { pass: 7 },
+  'mellow-dee': { pass: 7 },
+  'napping-nibbles': { pass: 2 },
+  peanut: { pass: 7 },
+  'tipsy-tootie': { pass: 6 },
+  // fighter
+  'bad-axe': { pass: 8 },
+  'bear-claw': { pass: 7 },
+  'beary-wise': { pass: 7 },
+  'fury-knuckle': { pass: 5 },
+  'heavy-bear': { pass: 5 },
+  'pan-chucks': { pass: 8 },
+  'qi-bear': { pass: 10 },
+  'tough-teddy': { pass: 4 },
+  // guardian
+  'calming-voice': { pass: 9 },
+  'guiding-light': { pass: 7 },
+  'holy-curselifter': { pass: 5 },
+  'iron-resolve': { pass: 8 },
+  'mighty-blade': { pass: 8 },
+  'radiant-horn': { pass: 6 },
+  'vibrant-glow': { pass: 9 },
+  'wise-shield': { pass: 6 },
+  // ranger
+  bullseye: { pass: 7 },
+  hook: { pass: 6 },
+  'lookie-rookie': { pass: 5 },
+  'quick-draw': { pass: 8 },
+  'serious-grey': { pass: 9 },
+  'sharp-fox': { pass: 5 },
+  wildshot: { pass: 8 },
+  'wily-red': { pass: 10 },
+  // thief
+  'kit-napper': { pass: 9 },
+  meowzio: { pass: 10 },
+  'plundering-puma': { pass: 6 },
+  shurikitty: { pass: 9 },
+  'silent-shadow': { pass: 8 },
+  'slippery-paws': { pass: 6 },
+  'sly-pickings': { pass: 6 },
+  'smooth-mimimeow': { pass: 7 },
+  // wizard
+  'bun-bun': { pass: 5 },
+  buttons: { pass: 6 },
+  fluffy: { pass: 10 },
+  hopper: { pass: 7 },
+  snowball: { pass: 6 },
+  spooky: { pass: 10 },
+  whiskers: { pass: 11 },
+  wiggles: { pass: 10 },
+
+  // MONSTERS
+  'abyss-queen': { pass: 8, fail: -5 },
+  'anuran-cauldron': { pass: 7, fail: -6 },
+  'arctic-aries': { pass: 10, fail: -6 },
+  bloodwing: { pass: 9, fail: -6 },
+  'corrupted-sabretooth': { pass: 9, fail: -6 },
+  'crowned-serpent': { pass: 10, fail: -7 },
+  'dark-dragon-king': { pass: 8, fail: -7 },
+  dracos: { pass: 8, fail: -5 },
+  malamammoth: { pass: 8, fail: -4 },
+  'mega-slime': { pass: 8, fail: -7 },
+  orthus: { pass: 8, fail: -4 },
+  'rex-major': { pass: 8, fail: -4 },
+  terratuga: { pass: 11, fail: -7 },
+  'titan-wyvern': { pass: 8, fail: -4 },
+  'warworn-owlbear': { pass: 8, fail: -4 }
 };

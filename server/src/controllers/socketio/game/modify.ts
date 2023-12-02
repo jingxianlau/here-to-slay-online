@@ -49,7 +49,10 @@ export const modifyRoll = (
 
     // EFFECT AFTERWARDS
     if (state.match.isReady.every(val => val === false)) {
-      // TODO: use card
+      state.match.isReady.fill(null);
+      const cardUserId = state.secret.playerIds[state.turn.player];
+
+      // use card
       if (state.mainDeck.preparedCard) {
         // challenge
         if (
@@ -80,7 +83,7 @@ export const modifyRoll = (
             state.mainDeck.preparedCard = null;
 
             if (state.turn.movesLeft === 0) {
-              endTurnDiscard(roomId, userId);
+              endTurnDiscard(roomId, cardUserId);
             } else {
               rooms[roomId].state.turn.phase = 'play';
               rooms[roomId].state.turn.phaseChanged = true;
@@ -121,7 +124,7 @@ export const modifyRoll = (
               state.dice.main.modifier = [];
               state.dice.main.modValues = [];
               delete state.turn.challenger;
-              useEffect(roomId, userId, preppedCard);
+              useEffect(roomId, cardUserId, preppedCard);
             }
           }
         }
@@ -137,10 +140,6 @@ export const modifyRoll = (
             meetsRollRequirements('pass', preppedCard, state.dice.main.total)
           ) {
             // monster slain
-            state.dice.main.roll = [1, 1];
-            state.dice.main.total = 0;
-            state.dice.main.modifier = [];
-            state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = true;
             state.board[state.turn.player].largeCards.push(preppedCard);
             state.mainDeck.monsters.map((val, i) => {
@@ -149,13 +148,22 @@ export const modifyRoll = (
                   state.secret.monsterPile.pop() as MonsterCard;
               }
             });
-            state.mainDeck.preparedCard = null;
             sendGameState(roomId);
+            state.mainDeck.preparedCard = null;
             setTimeout(() => {
-              state.turn.phaseChanged = true;
-              state.turn.phase = 'play';
-              sendGameState(roomId);
-              state.turn.phaseChanged = false;
+              state.dice.main.roll = [1, 1];
+              state.dice.main.total = 0;
+              state.dice.main.modifier = [];
+              state.dice.main.modValues = [];
+
+              if (state.turn.movesLeft === 0) {
+                endTurnDiscard(roomId, cardUserId);
+              } else {
+                state.turn.phase = 'play';
+                state.turn.phaseChanged = true;
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+              }
             }, 1200);
           } else if (
             meetsRollRequirements('fail', preppedCard, state.dice.main.total)
@@ -166,20 +174,26 @@ export const modifyRoll = (
             state.dice.main.modifier = [];
             state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = false;
-            state.mainDeck.preparedCard = null;
-            setTimeout(() => {
-              useEffect(roomId, userId, preppedCard);
-            }, 1200);
+            useEffect(roomId, cardUserId, preppedCard);
           } else {
             // neutral
             state.mainDeck.preparedCard.successful = false;
-            state.mainDeck.preparedCard = null;
             sendGameState(roomId);
+            state.mainDeck.preparedCard = null;
             setTimeout(() => {
-              state.turn.phaseChanged = true;
-              state.turn.phase = 'play';
-              sendGameState(roomId);
-              state.turn.phaseChanged = false;
+              state.dice.main.roll = [1, 1];
+              state.dice.main.total = 0;
+              state.dice.main.modifier = [];
+              state.dice.main.modValues = [];
+
+              if (state.turn.movesLeft === 0) {
+                endTurnDiscard(roomId, cardUserId);
+              } else {
+                state.turn.phase = 'play';
+                state.turn.phaseChanged = true;
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+              }
             }, 1200);
           }
         }
@@ -191,30 +205,36 @@ export const modifyRoll = (
           state.mainDeck.preparedCard.card.player !== undefined
         ) {
           const preppedCard = state.mainDeck.preparedCard.card;
-          state.dice.main.roll = [1, 1];
-          state.dice.main.total = 0;
-          state.dice.main.modifier = [];
-          state.dice.main.modValues = [];
 
           if (
             meetsRollRequirements('pass', preppedCard, state.dice.main.total)
           ) {
             // pass
+            state.dice.main.roll = [1, 1];
+            state.dice.main.total = 0;
+            state.dice.main.modifier = [];
+            state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = true;
-            state.mainDeck.preparedCard = null;
-            setTimeout(() => {
-              useEffect(roomId, userId, preppedCard);
-            }, 1200);
+            useEffect(roomId, cardUserId, preppedCard);
           } else {
             // fail
             state.mainDeck.preparedCard.successful = false;
-            state.mainDeck.preparedCard = null;
             sendGameState(roomId);
+            state.mainDeck.preparedCard = null;
             setTimeout(() => {
-              state.turn.phaseChanged = true;
-              state.turn.phase = 'play';
-              sendGameState(roomId);
-              state.turn.phaseChanged = false;
+              state.dice.main.roll = [1, 1];
+              state.dice.main.total = 0;
+              state.dice.main.modifier = [];
+              state.dice.main.modValues = [];
+
+              if (state.turn.movesLeft === 0) {
+                endTurnDiscard(roomId, cardUserId);
+              } else {
+                state.turn.phase = 'play';
+                state.turn.phaseChanged = true;
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+              }
             }, 1200);
           }
         }

@@ -161,7 +161,6 @@ export interface privateState {
       | 'draw'
       | 'play'
       | 'attack-roll'
-      | 'attack'
       | 'challenge'
       | 'challenge-roll'
       | 'use-effect-roll'

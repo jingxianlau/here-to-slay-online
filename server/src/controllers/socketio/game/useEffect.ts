@@ -29,8 +29,10 @@ export const useEffectRoll = (
   const gameState = rooms[roomId].state;
   if (
     playerNum === -1 ||
-    gameState.dice.main.total === 0 ||
-    gameState.turn.player !== playerNum
+    gameState.dice.main.total !== 0 ||
+    gameState.turn.player !== playerNum ||
+    (gameState.turn.phase !== 'play' &&
+      gameState.turn.phase !== 'use-effect-roll')
   ) {
     return;
   }
@@ -54,9 +56,26 @@ export const useEffectRoll = (
       gameState.turn.phaseChanged = false;
     }, 3000);
   } else {
+    if (gameState.turn.movesLeft < 1 || heroCard.abilityUsed) return;
+
     gameState.turn.phase = 'use-effect-roll';
+    gameState.turn.phaseChanged = true;
     gameState.mainDeck.preparedCard = { card: heroCard, successful: null };
+
+    if (!heroCard.freeUse) {
+      gameState.turn.movesLeft--;
+    } else {
+      removeFreeUse(roomId);
+    }
+    gameState.board[playerNum].heroCards.forEach(val => {
+      if (val.id === heroCard.id) {
+        val.abilityUsed = true;
+      }
+    });
+
+    gameState.turn.isRolling = true;
     sendGameState(roomId);
+    gameState.turn.phaseChanged = false;
   }
 };
 
@@ -74,8 +93,9 @@ export const useEffect = (
         !state.turn.effect.players.some(val => val === playerNum) ||
         state.turn.effect.card.id !== card.id)) ||
     (!state.turn.effect && state.turn.player !== playerNum)
-  )
+  ) {
     return;
+  }
 
   const cardName = card.name.replaceAll(' ', '-').toLowerCase();
 
@@ -103,12 +123,17 @@ export const useEffect = (
       state.turn.effect.step--;
     }
   } else if (
-    (card.type === CardType.hero && !card.abilityUsed) ||
-    (card.type === CardType.large && card.player === undefined)
+    state.mainDeck.preparedCard?.card.id === card.id &&
+    ((card.type === CardType.hero && state.mainDeck.preparedCard?.successful) ||
+      (card.type === CardType.large &&
+        card.player === undefined &&
+        !state.mainDeck.preparedCard.successful)) &&
+    state.turn.phase === 'modify'
   ) {
     // new effect
     state.turn.phase = 'use-effect';
     state.turn.phaseChanged = true;
+    state.mainDeck.preparedCard = null;
     state.turn.effect = {
       action: 'none',
       players: [],
@@ -119,16 +144,6 @@ export const useEffect = (
       card: card
     };
 
-    if (card.type === CardType.hero) {
-      if (!card.freeUse) {
-        state.turn.movesLeft--;
-      } else {
-        card.freeUse = false;
-      }
-      card.abilityUsed = true;
-    }
-
-    removeFreeUse(roomId);
     abilities[cardName][0](roomId, playerNum);
     state.turn.phaseChanged = false;
   }

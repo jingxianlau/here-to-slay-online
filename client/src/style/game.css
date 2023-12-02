@@ -320,6 +320,28 @@ header img {
 .bottomMenu .discard:hover span.material-symbols-outlined {
   font-size: 6.5vh;
 }
+.bottomMenu .skip {
+  position: absolute;
+  width: 8vh;
+  height: 8vh;
+  background-color: #fc7c37;
+  border-radius: 50%;
+  right: 1vw;
+  bottom: 2vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.bottomMenu .skip span.material-symbols-outlined {
+  font-size: 5vh;
+  transition: 0.3s;
+  user-select: none;
+}
+.bottomMenu .skip:hover span.material-symbols-outlined {
+  font-size: 6.5vh;
+}
+
 .hand {
   display: flex;
   align-items: flex-end;
@@ -631,6 +653,9 @@ img.glow {
 img.click:hover {
   cursor: pointer;
 }
+img.deny:hover {
+  cursor: not-allowed;
+}
 
 .img-container {
   position: relative;
@@ -677,10 +702,12 @@ img.click:hover {
   justify-content: center;
   align-items: center;
 }
-.popup.show {
+.popup.show,
+.popup.show .roll-popup {
   opacity: 1;
 }
-.popup.hide {
+.popup.hide,
+.popup.hide .roll-popup {
   opacity: 0;
   width: 0;
   height: 0;
@@ -691,6 +718,12 @@ img.click:hover {
 .challenge-popup,
 .challenge-roll-popup {
   width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.popup.show .roll-popup {
+  width: 90%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -980,7 +1013,7 @@ div.cross {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  z-index: 3;
+  z-index: 100;
   transition: opacity ease-in-out 0.2s;
 }
 .confirm-card.hide {
