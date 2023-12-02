@@ -44,11 +44,3 @@ export const attackRoll = (
     sendGameState(roomId);
   }
 };
-
-export const attackMonster = (
-  roomId: string,
-  userId: string,
-  monsterId: string
-) => {
-  removeFreeUse(roomId);
-};

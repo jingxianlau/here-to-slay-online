@@ -1,9 +1,34 @@
+import { rollRequirements } from '../../../functions/abilities';
 import { discardCard, removeBoard } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { CardType, ModifierCard, MonsterCard } from '../../../types';
+import { CardType, HeroCard, ModifierCard, MonsterCard } from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
+
+export const meetsRollRequirements = (
+  type: 'fail' | 'pass',
+  card: HeroCard | MonsterCard,
+  roll: number
+) => {
+  let req;
+  req = rollRequirements[card.name.replaceAll(' ', '-').toLowerCase()][type];
+  if (!req) return false;
+
+  if (req < 0) {
+    if (roll <= Math.abs(req)) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if (roll >= req) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
 
 export const modifyRoll = (
   roomId: string,
@@ -107,13 +132,15 @@ export const modifyRoll = (
           state.mainDeck.preparedCard.card.player === undefined
         ) {
           const preppedCard = state.mainDeck.preparedCard.card;
-          state.dice.main.roll = [1, 1];
-          state.dice.main.total = 0;
-          state.dice.main.modifier = [];
-          state.dice.main.modValues = [];
 
-          // TODO: ROLL REQUIREMENTS
-          if (state.turn) {
+          if (
+            meetsRollRequirements('pass', preppedCard, state.dice.main.total)
+          ) {
+            // monster slain
+            state.dice.main.roll = [1, 1];
+            state.dice.main.total = 0;
+            state.dice.main.modifier = [];
+            state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = true;
             state.board[state.turn.player].largeCards.push(preppedCard);
             state.mainDeck.monsters.map((val, i) => {
@@ -130,15 +157,31 @@ export const modifyRoll = (
               sendGameState(roomId);
               state.turn.phaseChanged = false;
             }, 1200);
-          } else {
+          } else if (
+            meetsRollRequirements('fail', preppedCard, state.dice.main.total)
+          ) {
             // punishment
+            state.dice.main.roll = [1, 1];
+            state.dice.main.total = 0;
+            state.dice.main.modifier = [];
+            state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = false;
             state.mainDeck.preparedCard = null;
             setTimeout(() => {
               useEffect(roomId, userId, preppedCard);
             }, 1200);
+          } else {
+            // neutral
+            state.mainDeck.preparedCard.successful = false;
+            state.mainDeck.preparedCard = null;
+            sendGameState(roomId);
+            setTimeout(() => {
+              state.turn.phaseChanged = true;
+              state.turn.phase = 'play';
+              sendGameState(roomId);
+              state.turn.phaseChanged = false;
+            }, 1200);
           }
-          useEffect(roomId, userId, preppedCard);
         }
 
         // hero ability
@@ -153,14 +196,17 @@ export const modifyRoll = (
           state.dice.main.modifier = [];
           state.dice.main.modValues = [];
 
-          // TODO: ROLL REQUIREMENTS
-          if (state.turn) {
+          if (
+            meetsRollRequirements('pass', preppedCard, state.dice.main.total)
+          ) {
+            // pass
             state.mainDeck.preparedCard.successful = true;
             state.mainDeck.preparedCard = null;
             setTimeout(() => {
               useEffect(roomId, userId, preppedCard);
             }, 1200);
           } else {
+            // fail
             state.mainDeck.preparedCard.successful = false;
             state.mainDeck.preparedCard = null;
             sendGameState(roomId);

@@ -24,7 +24,8 @@ import { attackMonster, attackRoll } from './controllers/socketio/game/attack';
 import {
   endTurnDiscard,
   pass,
-  useEffect
+  useEffect,
+  useEffectRoll
 } from './controllers/socketio/game/useEffect';
 import { removeFreeUse } from './functions/game';
 
@@ -69,10 +70,10 @@ io.on('connection', socket => {
   socket.on('modify-roll', modifyRoll);
 
   // TODO: attack
-  socket.on('attack-monster', attackMonster);
   socket.on('attack-roll', attackRoll);
 
   // TODO: use-effect
+  socket.on('use-effect-roll', useEffectRoll);
   socket.on('use-effect', useEffect);
 
   // end-turn-discard
