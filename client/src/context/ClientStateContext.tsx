@@ -24,6 +24,8 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [showHand, setShowHand] = useState(false);
   const [handLock, setHandLock] = useState(false);
   const [shownCard, setShownCard] = useState<AnyCard | null>(null);
+  const [chosenCard, setChosenCard] = useState<AnyCard | null>(null);
+  const [showChosenCard, setShowChosenCard] = useState(false);
   const [pos, setPos] = useState<'left' | 'right' | 'top' | 'center' | null>(
     null
   );
@@ -58,6 +60,12 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
     showPopup: {
       val: showPopup,
       set: setShowPopup
+    },
+    chosenCard: {
+      val: chosenCard,
+      set: setChosenCard,
+      show: showChosenCard,
+      setShow: setShowChosenCard
     },
     showHand: {
       val: showHand,

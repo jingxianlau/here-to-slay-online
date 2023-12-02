@@ -20,9 +20,9 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
   setShow
 }) => {
   const {
-    shownCard,
     showHand,
-    credentials: { roomId, userId }
+    credentials: { roomId, userId },
+    chosenCard
   } = useClientContext();
 
   function modify(effect: 0 | 1) {
@@ -46,12 +46,17 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
           <div
             className='left'
             onClick={() => {
-              setShow(false);
-              showHand.setLocked(false);
-              modify(0);
-              setTimeout(() => {
-                shownCard.set(null);
-              }, 200);
+              if (
+                (!card.modifier[1] && card.modifier[0] > 0) ||
+                card.modifier[1]
+              ) {
+                setShow(false);
+                showHand.setLocked(false);
+                modify(0);
+                setTimeout(() => {
+                  chosenCard.set(null);
+                }, 200);
+              }
             }}
             style={{
               opacity:
@@ -77,30 +82,35 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
               />
             </div>
             <div className='cancel-container'>
-              <div
-                className='cancel-button'
+              <button
+                className='circular danger cancel'
                 onClick={() => {
                   setShow(false);
                   showHand.setLocked(false);
                   setTimeout(() => {
-                    shownCard.set(null);
+                    chosenCard.set(null);
                   }, 200);
                 }}
               >
-                <div className='button'></div>
-              </div>
+                <span className='material-symbols-outlined'>close</span>
+              </button>
               <h5>Cancel</h5>
             </div>
           </div>
           <div
             className='right'
             onClick={() => {
-              setShow(false);
-              showHand.setLocked(false);
-              modify(card.modifier[1] ? 1 : 0);
-              setTimeout(() => {
-                shownCard.set(null);
-              }, 200);
+              if (
+                (!card.modifier[1] && card.modifier[0] < 0) ||
+                card.modifier[1]
+              ) {
+                setShow(false);
+                showHand.setLocked(false);
+                modify(card.modifier[1] ? 1 : 0);
+                setTimeout(() => {
+                  chosenCard.set(null);
+                }, 200);
+              }
             }}
             style={{
               opacity:

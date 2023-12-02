@@ -23,10 +23,10 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // // DEV
-  // useEffect(() => {
-  //   joinRoom('999999');
-  // }, []);
+  // DEV
+  useEffect(() => {
+    joinRoom('999999');
+  }, []);
 
   function changeUsername(name: string) {
     if (name.length > 15) {

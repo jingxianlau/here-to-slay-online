@@ -30,7 +30,7 @@ export const modifyRoll = (
           if (state.mainDeck.preparedCard.card.type === 'hero') {
             const player = state.mainDeck.preparedCard.card.player;
             const id = state.mainDeck.preparedCard.card.id;
-            if (!player) return;
+            if (player === undefined) return;
             state.board[player].heroCards.filter(val => val.id !== id);
           }
           sendGameState(roomId);

@@ -21,6 +21,7 @@ import MenuButtons from '../components/MenuButtons';
 import HelpCards from '../components/HelpCards';
 import { isCard } from '../helpers/isCard';
 import DiscardPopup from '../components/DiscardPopup';
+import ConfirmPopup from '../components/ConfirmPopup';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Game: React.FC = () => {
     showRoll,
     hasRolled,
     showPopup,
+    chosenCard,
     showHand,
     shownCard,
     showHelperText
@@ -397,7 +399,11 @@ const Game: React.FC = () => {
                 <ShownCard />
                 <ShownCardTop />
 
-                <Hand socket={socket} showBoard={showBoard} />
+                <Hand
+                  socket={socket}
+                  showBoard={showBoard}
+                  setShowBoard={setShowBoard}
+                />
 
                 <HelperText />
 
@@ -409,6 +415,8 @@ const Game: React.FC = () => {
                 />
 
                 <HelpCards showHelp={showHelp} />
+
+                <ConfirmPopup socket={socket} />
               </>
             )}
           </div>

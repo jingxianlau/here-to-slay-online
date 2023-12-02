@@ -24,8 +24,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
 
   return (
     <>
-      <div
-        className={`main-button pass ${
+      <button
+        className={`circular pass ${
           state.turn.player === state.playerNum &&
           (state.turn.phase === 'draw' || state.turn.phase === 'play')
             ? 'show'
@@ -38,9 +38,9 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
         }}
       >
         <span className='material-symbols-outlined'>forward</span>
-      </div>
+      </button>
       <div
-        className={`main-button help show`}
+        className={`help-trigger show`}
         onMouseEnter={() => {
           setShowHelp(true);
         }}
@@ -50,8 +50,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
       >
         <span className='material-symbols-outlined'>help</span>
       </div>
-      <div
-        className={`show-board-trigger ${
+      <button
+        className={`circular show-board-trigger ${
           state.turn.phase === 'attack' ||
           state.turn.phase === 'challenge' ||
           state.turn.phase === 'challenge-roll' ||
@@ -91,7 +91,7 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
         }}
       >
         <span className='material-symbols-outlined'>flip</span>
-      </div>
+      </button>
     </>
   );
 };

@@ -21,7 +21,7 @@ const ChallengePopup: React.FC<{
     showRoll,
     hasRolled,
     showHelperText,
-    shownCard,
+    chosenCard,
     showHand
   } = useClientContext();
 
@@ -44,13 +44,17 @@ const ChallengePopup: React.FC<{
 
   useEffect(() => {
     if (!showPopup.val) return;
-    if (shownCard.val && shownCard.val.type === CardType.modifier) {
+    if (
+      chosenCard.val &&
+      chosenCard.val.type === CardType.modifier &&
+      !showBoard
+    ) {
       setShow(true);
     } else {
       setShow(false);
       showHand.setLocked(false);
     }
-  }, [shownCard.val]);
+  }, [chosenCard.val]);
 
   useEffect(() => {
     if (showPopup.val) {
@@ -203,8 +207,8 @@ const ChallengePopup: React.FC<{
                   {state.turn.phase === 'modify' &&
                     (state.match.isReady[state.playerNum] !== false ? (
                       <div className='cancel-container'>
-                        <div
-                          className='cancel-button'
+                        <button
+                          className='cancel circular danger'
                           onClick={() => {
                             socket.emit(
                               'modify-roll',
@@ -216,13 +220,15 @@ const ChallengePopup: React.FC<{
                             allowedCards.set([]);
                           }}
                         >
-                          <div className='button'></div>
-                        </div>
+                          <span className='material-symbols-outlined'>
+                            close
+                          </span>
+                        </button>
                         <h5>Don't Modify</h5>
                       </div>
                     ) : (
                       <div className='cancel-container'>
-                        <h2 style={{ marginTop: '4vh', marginBottom: '1.2vh' }}>
+                        <h2 style={{ marginTop: '5vh', marginBottom: '1.6vh' }}>
                           ...Waiting for Players
                         </h2>
                         <h5></h5>
@@ -595,7 +601,7 @@ const ChallengePopup: React.FC<{
               <ChooseModify
                 socket={socket}
                 dice={activeDice}
-                card={shownCard.val as ModifierCard}
+                card={chosenCard.val as ModifierCard}
                 show={show}
                 setShow={setShow}
               />

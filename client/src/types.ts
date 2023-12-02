@@ -228,6 +228,13 @@ export interface ClientStateObj {
     set: React.Dispatch<React.SetStateAction<boolean>>;
   };
 
+  chosenCard: {
+    val: AnyCard | null;
+    set: React.Dispatch<React.SetStateAction<AnyCard | null>>;
+    show: boolean;
+    setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
   showHand: {
     val: boolean;
     set: React.Dispatch<React.SetStateAction<boolean>>;

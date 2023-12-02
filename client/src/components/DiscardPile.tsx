@@ -13,7 +13,6 @@ const DiscardPile: React.FC<{
   const [num, setNum] = useState(state.mainDeck.discardPile.length - 1);
   useEffect(() => {
     if (showDiscardPile) {
-      console.log(num);
       setNum(state.mainDeck.discardPile.length - 1);
     }
   }, [showDiscardPile]);
@@ -60,14 +59,14 @@ const DiscardPile: React.FC<{
               </span>
             </div>
             <div className='cancel-container'>
-              <div
-                className='cancel-button'
+              <button
+                className='cancel circular danger'
                 onClick={() => {
                   setShowDiscardPile(false);
                 }}
               >
-                <div className='button'></div>
-              </div>
+                <span className='material-symbols-outlined'>close</span>
+              </button>
               <h5>Close</h5>
             </div>
           </div>

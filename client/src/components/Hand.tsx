@@ -10,13 +10,15 @@ import { popupHand } from '../helpers/popupHand';
 interface HandProps {
   socket: Socket;
   showBoard: boolean;
+  setShowBoard: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
+const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
   const {
     state: { val: state },
     showHand,
     allowedCards,
+    chosenCard,
     credentials: { roomId, userId },
     shownCard
   } = useClientContext();
@@ -45,21 +47,28 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
             state.board[state.playerNum].heroCards.length >= 5
           )
         ) {
-          socket.emit('prepare-card', roomId, userId, card);
+          chosenCard.set(card);
+          chosenCard.setShow(true);
           dropHand(showHand, shownCard);
+          showHand.setLocked(true);
         }
         break;
 
       case 'challenge':
         if (card.type === CardType.challenge && !state.turn.pause) {
-          socket.emit('challenge', roomId, userId, true, card.id);
+          chosenCard.set(card);
+          chosenCard.setShow(true);
           dropHand(showHand, shownCard);
+          showHand.setLocked(true);
         }
         break;
 
       case 'modify':
         if (card.type === CardType.modifier) {
-          shownCard.set(card);
+          setShowBoard(false);
+          shownCard.setLocked(true);
+          shownCard.set(null);
+          chosenCard.set(card);
           showHand.set(false);
           showHand.setLocked(true);
         }
@@ -70,13 +79,10 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard }) => {
           state.turn.effect &&
           state.turn.effect.players.some(val => val === state.playerNum)
         ) {
-          socket.emit(
-            'use-effect',
-            roomId,
-            userId,
-            state.turn.effect.card,
-            card
-          );
+          chosenCard.set(card);
+          chosenCard.setShow(true);
+          dropHand(showHand, shownCard);
+          showHand.setLocked(true);
         }
         break;
 

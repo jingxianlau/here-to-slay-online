@@ -50,8 +50,25 @@ button {
   margin: 0.3vw;
   border: none;
   font-size: 2.5vh;
-  transition: 0.25s;
+  transition: transform 0.25s, box-shadow 0.25s, font-weight 0.25s;
   box-shadow: 0 0.7vw #e15c15;
+}
+button:hover {
+  cursor: pointer;
+  /* font-weight: 800; */
+  box-shadow: 0 0.55vw #ca500f;
+  transform: translateY(0.15vw);
+}
+button:focus-visible {
+  box-shadow: 0 0.35vw #ca500f;
+  background-color: #e15c15;
+  transform: translateY(0.35vw);
+  font-weight: 800;
+  outline: none;
+}
+button:active {
+  box-shadow: 0 0.2vw rgb(138, 52, 6);
+  transform: translateY(0.5vw);
 }
 button.circular {
   border-radius: 50%;
@@ -62,45 +79,56 @@ button.circular {
   border: none;
   font-size: 2.5vh;
   transition: 0.25s;
-  box-shadow: 0 0.7vw #e15c15;
+  box-shadow: 0 0.55vw #e15c15;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-button:hover {
-  cursor: pointer;
-  font-weight: 800;
-  box-shadow: 0 0.6vw #ca500f;
-  transform: translateY(0.1vw);
+button.circular:hover {
+  box-shadow: 0 0.4vw #ca500f;
+  transform: translateY(0.15vw);
 }
-button:focus-visible {
-  box-shadow: 0 0.5vw #ca500f;
-  background-color: #e15c15;
-  transform: translateY(0.2vw);
-  font-weight: 800;
-  outline: none;
+button.circular:focus-visible {
+  box-shadow: 0 0.25vw #ca500f;
+  transform: translateY(0.3vw);
 }
-button:active {
-  box-shadow: 0 0.35vw rgb(138, 52, 6);
-  transform: translateY(0.35vw);
+button.circular:active {
+  box-shadow: 0 0.15vw rgb(138, 52, 6);
+  transform: translateY(0.4vw);
 }
 button.danger {
   background-color: #fe2e2e;
   box-shadow: 0 0.7vw #e81b1b;
 }
 button.danger:hover {
-  box-shadow: 0 0.6vw #d31313;
+  box-shadow: 0 0.55vw #d31313;
 }
 button.danger:focus-visible {
-  box-shadow: 0 0.5vw #d31313;
+  box-shadow: 0 0.35vw #d31313;
   background-color: #e81b1b;
   transform: translateY(0.2vw);
   font-weight: 800;
   outline: none;
 }
 button.danger:active {
-  box-shadow: 0 0.35vw #a00d0d;
+  box-shadow: 0 0.2vw #a00d0d;
   transform: translateY(6px);
+}
+button.circular.danger {
+  background-color: #fe2e2e;
+  box-shadow: 0 0.55vw #e81b1b;
+}
+button.circular.danger:hover {
+  box-shadow: 0 0.4vw #d31313;
+  transform: translateY(0.15vw);
+}
+button.circular.danger:focus-visible {
+  box-shadow: 0 0.25vw #d31313;
+  transform: translateY(0.3vw);
+}
+button.circular.danger:active {
+  box-shadow: 0 0.15vw #a00d0d;
+  transform: translateY(0.4vw);
 }
 
 /* HOMEPAGE */
