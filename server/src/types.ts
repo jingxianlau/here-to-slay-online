@@ -81,7 +81,7 @@ export const allCards = [
   CardType.item
 ];
 
-export interface GameState {
+export interface GameState extends privateState {
   // PRIVATE
   secret: {
     deck: AnyCard[];
@@ -89,105 +89,6 @@ export interface GameState {
     monsterPile: MonsterCard[];
     playerIds: string[];
     playerSocketIds: string[];
-  };
-  players: { hand: AnyCard[]; numCards: number }[];
-
-  // PUBLIC
-  dice: {
-    main: {
-      roll: [number, number];
-      modifier: ModifierCard[];
-      modValues: number[];
-      total: number;
-    };
-
-    // for challenging
-    defend: {
-      roll: [number, number];
-      modifier: ModifierCard[];
-      modValues: number[];
-      total: number;
-    } | null;
-  };
-  board: {
-    // for win condition (6 diff classes)
-    classes: {
-      fighter: number;
-      bard: number;
-      guardian: number;
-      ranger: number;
-      thief: number;
-      wizard: number;
-    };
-
-    // players' public board
-    heroCards: HeroCard[];
-    largeCards: LargeCard[];
-  }[];
-  mainDeck: {
-    monsters: [MonsterCard, MonsterCard, MonsterCard];
-    discardPile: AnyCard[];
-
-    // window for challenging
-    preparedCard?: {
-      card: HeroCard | ItemCard | MagicCard;
-      successful: null | boolean;
-    } | null;
-    attackedMonster?: {
-      card: MonsterCard;
-      successful: null | boolean;
-    } | null;
-  };
-
-  // MATCH VARIABLES
-  match: {
-    gameStarted: boolean;
-    players: string[];
-    isReady: (boolean | null)[];
-    startRolls: { maxVal: number; inList: number[]; rolls: number[] };
-  };
-  turn: {
-    player: number;
-    challenger?: number;
-    movesLeft: 0 | 1 | 2 | 3;
-    phase:
-      | 'start-roll'
-      | 'end-turn-discard'
-      | 'draw'
-      | 'play'
-      | 'attack'
-      | 'challenge'
-      | 'challenge-roll'
-      | 'modify'
-      | 'use-effect';
-
-    /* ONLY FOR 'end-turn-discard' PHASE */
-    toDiscard: number;
-    /* ONLY FOR 'end-turn-discard' PHASE */
-
-    effect: {
-      action:
-        | 'none'
-        | 'draw'
-        | 'play'
-        | 'choose-boards'
-        | 'choose-own-board'
-        | 'choose-other-boards'
-        | 'choose-player'
-        | 'choose-hand'
-        | 'choose-other-hand'
-        | 'choose-discard';
-      players: number[]; // active players who can choose
-      val: number; // num of items to choose
-      step: number; // to access functions in ability array
-      card: HeroCard | MagicCard | MonsterCard; // card in use
-      choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
-      purpose: string; // message (e.g. destroy, swap deck etc.)
-      allowedCards?: CardType[];
-    } | null;
-    phaseChanged: boolean;
-    isRolling: boolean;
-    pause: boolean;
   };
 }
 
@@ -238,11 +139,7 @@ export interface privateState {
 
     // window for challenging
     preparedCard?: {
-      card: HeroCard | ItemCard | MagicCard;
-      successful: null | boolean;
-    } | null;
-    attackedMonster?: {
-      card: MonsterCard;
+      card: HeroCard | ItemCard | MagicCard | MonsterCard;
       successful: null | boolean;
     } | null;
   };
@@ -257,17 +154,19 @@ export interface privateState {
   turn: {
     player: number;
     challenger?: number;
-    movesLeft: 1 | 2 | 3;
+    movesLeft: 0 | 1 | 2 | 3;
     phase:
       | 'start-roll'
       | 'end-turn-discard'
       | 'draw'
       | 'play'
+      | 'attack-roll'
       | 'attack'
       | 'challenge'
       | 'challenge-roll'
-      | 'modify'
-      | 'use-effect';
+      | 'use-effect-roll'
+      | 'use-effect'
+      | 'modify';
 
     /* ONLY FOR 'end-turn-discard' PHASE */
     toDiscard: number;
@@ -276,6 +175,7 @@ export interface privateState {
     effect: {
       action:
         | 'none'
+        | 'draw'
         | 'play'
         | 'choose-boards'
         | 'choose-own-board'

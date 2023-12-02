@@ -201,3 +201,9 @@ export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
   }
   rooms[roomId].state.players[playerNum].numCards += length;
 }
+
+export function removeBoard(roomId: string, playerNum: number, card: HeroCard) {
+  const state = rooms[roomId].state;
+  state.board[playerNum].classes[card.class]--;
+  state.board[playerNum].heroCards.filter(val => val.id !== card.id);
+}

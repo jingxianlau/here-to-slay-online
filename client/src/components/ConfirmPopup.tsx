@@ -18,7 +18,7 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
   } = useClientContext();
 
   const playCard = () => {
-    if (card) {
+    if (card && !state.turn.pause) {
       switch (state.turn.phase) {
         case 'play':
           if (

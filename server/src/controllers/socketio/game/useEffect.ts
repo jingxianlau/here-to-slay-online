@@ -1,10 +1,11 @@
 import {
   discardCard,
   nextPlayer,
-  removeFreeUse
+  removeFreeUse,
+  rollDice
 } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
-import { heroEffects } from '../../../functions/heroes';
+import { abilities } from '../../../functions/abilities';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import {
@@ -18,6 +19,46 @@ import {
 function isCard(object: AnyCard | number | null): object is AnyCard {
   return typeof object !== 'number' && object !== null;
 }
+
+export const useEffectRoll = (
+  roomId: string,
+  userId: string,
+  heroCard: HeroCard
+) => {
+  const playerNum = validSender(roomId, userId);
+  const gameState = rooms[roomId].state;
+  if (
+    playerNum === -1 ||
+    gameState.dice.main.total === 0 ||
+    gameState.turn.player !== playerNum
+  ) {
+    return;
+  }
+
+  if (
+    gameState.turn.phase === 'use-effect-roll' &&
+    gameState.mainDeck.preparedCard &&
+    gameState.mainDeck.preparedCard.card.type === CardType.hero
+  ) {
+    const roll = rollDice();
+    const val = roll[0] + roll[1];
+    gameState.dice.main.roll = roll;
+    gameState.dice.main.total = val;
+    sendGameState(roomId);
+
+    setTimeout(() => {
+      gameState.turn.phaseChanged = true;
+      gameState.turn.phase = 'modify';
+      gameState.turn.isRolling = false;
+      sendGameState(roomId);
+      gameState.turn.phaseChanged = false;
+    }, 3000);
+  } else {
+    gameState.turn.phase = 'use-effect-roll';
+    gameState.mainDeck.preparedCard = { card: heroCard, successful: null };
+    sendGameState(roomId);
+  }
+};
 
 export const useEffect = (
   roomId: string,
@@ -44,7 +85,7 @@ export const useEffect = (
       val => val !== playerNum
     );
 
-    heroEffects[cardName][++state.turn.effect.step](
+    abilities[cardName][++state.turn.effect.step](
       roomId,
       state.turn.player,
       returnVal
@@ -57,14 +98,14 @@ export const useEffect = (
     );
 
     if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
-      heroEffects[cardName][++state.turn.effect.step](
-        roomId,
-        state.turn.player
-      );
+      abilities[cardName][++state.turn.effect.step](roomId, state.turn.player);
     } else {
       state.turn.effect.step--;
     }
-  } else if (card.type === CardType.hero && !card.abilityUsed) {
+  } else if (
+    (card.type === CardType.hero && !card.abilityUsed) ||
+    (card.type === CardType.large && card.player === undefined)
+  ) {
     // new effect
     state.turn.phase = 'use-effect';
     state.turn.phaseChanged = true;
@@ -77,14 +118,18 @@ export const useEffect = (
       purpose: '',
       card: card
     };
-    if (!card.freeUse) {
-      state.turn.movesLeft--;
-    } else if (card.type === CardType.hero) {
-      card.freeUse = false;
+
+    if (card.type === CardType.hero) {
+      if (!card.freeUse) {
+        state.turn.movesLeft--;
+      } else {
+        card.freeUse = false;
+      }
+      card.abilityUsed = true;
     }
-    card.abilityUsed = true;
+
     removeFreeUse(roomId);
-    heroEffects[cardName][0](roomId, playerNum);
+    abilities[cardName][0](roomId, playerNum);
     state.turn.phaseChanged = false;
   }
 };

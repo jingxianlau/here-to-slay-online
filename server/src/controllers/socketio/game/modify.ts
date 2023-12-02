@@ -1,8 +1,8 @@
-import { discardCard } from '../../../functions/game';
+import { discardCard, removeBoard } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { ModifierCard } from '../../../types';
+import { CardType, ModifierCard, MonsterCard } from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
 
 export const modifyRoll = (
@@ -21,50 +21,62 @@ export const modifyRoll = (
   if (!modify) {
     state.match.isReady[playerNum] = false;
     sendGameState(roomId);
+
+    // EFFECT AFTERWARDS
     if (state.match.isReady.every(val => val === false)) {
       // TODO: use card
-      if (state.mainDeck.preparedCard && state.dice.defend) {
-        if (state.dice.main.total >= state.dice.defend.total) {
-          // fail
-          state.mainDeck.preparedCard.successful = false;
-          if (state.mainDeck.preparedCard.card.type === 'hero') {
-            const player = state.mainDeck.preparedCard.card.player;
-            const id = state.mainDeck.preparedCard.card.id;
-            if (player === undefined) return;
-            state.board[player].heroCards.filter(val => val.id !== id);
-          }
-          sendGameState(roomId);
+      if (state.mainDeck.preparedCard) {
+        // challenge
+        if (
+          state.dice.defend &&
+          state.mainDeck.preparedCard.card &&
+          state.mainDeck.preparedCard.card.player !== undefined
+        ) {
+          if (state.dice.main.total >= state.dice.defend.total) {
+            // fail
+            state.mainDeck.preparedCard.successful = false;
+            if (state.mainDeck.preparedCard.card.type === 'hero') {
+              const player = state.mainDeck.preparedCard.card.player;
+              if (player === undefined) return;
+              removeBoard(
+                roomId,
+                state.mainDeck.preparedCard.card.player,
+                state.mainDeck.preparedCard.card
+              );
+            }
+            sendGameState(roomId);
 
-          state.dice.main.roll = [1, 1];
-          state.dice.main.total = 0;
-          state.dice.main.modifier = [];
-          state.dice.main.modValues = [];
-          state.dice.defend = null;
-          delete state.turn.challenger;
-          state.mainDeck.preparedCard = null;
+            state.dice.main.roll = [1, 1];
+            state.dice.main.total = 0;
+            state.dice.main.modifier = [];
+            state.dice.main.modValues = [];
+            state.dice.defend = null;
+            delete state.turn.challenger;
+            state.mainDeck.preparedCard = null;
 
-          if (state.turn.movesLeft === 0) {
-            endTurnDiscard(roomId, userId);
+            if (state.turn.movesLeft === 0) {
+              endTurnDiscard(roomId, userId);
+            } else {
+              rooms[roomId].state.turn.phase = 'play';
+              rooms[roomId].state.turn.phaseChanged = true;
+              setTimeout(() => {
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+              }, 1200);
+            }
           } else {
-            rooms[roomId].state.turn.phase = 'play';
-            rooms[roomId].state.turn.phaseChanged = true;
-            setTimeout(() => {
-              sendGameState(roomId);
-              state.turn.phaseChanged = false;
-            }, 1200);
-          }
-        } else {
-          state.mainDeck.preparedCard.successful = true;
-          sendGameState(roomId);
+            state.mainDeck.preparedCard.successful = true;
+            sendGameState(roomId);
 
-          const preppedCard = state.mainDeck.preparedCard.card;
+            const preppedCard = state.mainDeck.preparedCard.card;
 
-          state.mainDeck.preparedCard = null;
-          state.dice.defend = null;
+            state.mainDeck.preparedCard = null;
+            state.dice.defend = null;
 
-          switch (preppedCard.type) {
-            case 'hero':
-              preppedCard.freeUse = true;
+            if (preppedCard.type === 'hero' || preppedCard.type === 'item') {
+              if (preppedCard.type === 'hero') {
+                preppedCard.freeUse = true;
+              }
               state.turn.phaseChanged = true;
               state.turn.phase = 'play';
 
@@ -78,17 +90,86 @@ export const modifyRoll = (
                 sendGameState(roomId);
                 state.turn.phaseChanged = false;
               }, 1200);
-              break;
-            case 'item':
-              // use item
-              break;
-            case 'magic':
+            } else if (preppedCard.type === 'magic') {
               state.dice.main.roll = [1, 1];
               state.dice.main.total = 0;
               state.dice.main.modifier = [];
               state.dice.main.modValues = [];
               delete state.turn.challenger;
               useEffect(roomId, userId, preppedCard);
+            }
+          }
+        }
+
+        // attack monster
+        else if (
+          state.mainDeck.preparedCard.card.type === CardType.large &&
+          state.mainDeck.preparedCard.card.player === undefined
+        ) {
+          const preppedCard = state.mainDeck.preparedCard.card;
+          state.dice.main.roll = [1, 1];
+          state.dice.main.total = 0;
+          state.dice.main.modifier = [];
+          state.dice.main.modValues = [];
+
+          // TODO: ROLL REQUIREMENTS
+          if (state.turn) {
+            state.mainDeck.preparedCard.successful = true;
+            state.board[state.turn.player].largeCards.push(preppedCard);
+            state.mainDeck.monsters.map((val, i) => {
+              if (val.id === preppedCard.id) {
+                state.mainDeck.monsters[i] =
+                  state.secret.monsterPile.pop() as MonsterCard;
+              }
+            });
+            state.mainDeck.preparedCard = null;
+            sendGameState(roomId);
+            setTimeout(() => {
+              state.turn.phaseChanged = true;
+              state.turn.phase = 'play';
+              sendGameState(roomId);
+              state.turn.phaseChanged = false;
+            }, 1200);
+          } else {
+            // punishment
+            state.mainDeck.preparedCard.successful = false;
+            state.mainDeck.preparedCard = null;
+            setTimeout(() => {
+              useEffect(roomId, userId, preppedCard);
+            }, 1200);
+          }
+          useEffect(roomId, userId, preppedCard);
+        }
+
+        // hero ability
+        else if (
+          state.mainDeck.preparedCard &&
+          state.mainDeck.preparedCard.card.type === CardType.hero &&
+          state.mainDeck.preparedCard.card.player !== undefined
+        ) {
+          const preppedCard = state.mainDeck.preparedCard.card;
+          state.dice.main.roll = [1, 1];
+          state.dice.main.total = 0;
+          state.dice.main.modifier = [];
+          state.dice.main.modValues = [];
+
+          // TODO: ROLL REQUIREMENTS
+          if (state.turn) {
+            state.mainDeck.preparedCard.successful = true;
+            state.mainDeck.preparedCard = null;
+            setTimeout(() => {
+              useEffect(roomId, userId, preppedCard);
+            }, 1200);
+          } else {
+            state.mainDeck.preparedCard.successful = false;
+            state.mainDeck.preparedCard = null;
+            sendGameState(roomId);
+            setTimeout(() => {
+              state.turn.phaseChanged = true;
+              state.turn.phase = 'play';
+              sendGameState(roomId);
+              state.turn.phaseChanged = false;
+            }, 1200);
           }
         }
       }

@@ -190,7 +190,8 @@ header img {
   background-color: #1e1e1e;
   transition: 0.3s ease-in-out 75ms;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 .shown-card-top {
@@ -251,11 +252,32 @@ header img {
   box-shadow: #1e1e1e 0 0 25px 25px;
 }
 
-.large-enlarged {
+.shown-card .large-enlarged {
   width: 46vh;
   height: 78.5vh;
   border-radius: 2vh;
   user-select: none;
+}
+
+.shown-card .requirements {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: -3vh;
+}
+.shown-card .requirements .requirement img {
+  width: 4.5vh;
+  height: 4.5vh;
+  margin-right: 0.8vh;
+}
+.shown-card .requirements .requirement h1 {
+  font-size: 4vh;
+}
+.shown-card .requirements .requirement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .small-enlarged {
@@ -414,7 +436,7 @@ header img {
   width: 44.1vh;
   height: 30.4vh;
   position: relative;
-  border-radius: 2vh;
+  border-radius: 2.2vh;
 }
 
 .bottom-row {
@@ -434,14 +456,14 @@ header img {
   width: 57.3vh;
   height: 39.5vh;
   position: relative;
-  border-radius: 3vh;
+  border-radius: 3.2vh;
 }
 .own-board .small {
   border: 0.25vh solid #fff;
   background-color: #0000003a;
   width: 10.6vh;
   height: 14.9vh;
-  border-radius: 0.5vh;
+  border-radius: 0.75vh;
 
   display: flex;
   justify-content: center;
@@ -452,7 +474,7 @@ header img {
   background-color: #0000003a;
   width: 11.8vh;
   height: 20.3vh;
-  border-radius: 0.8vh;
+  border-radius: 0.75vh;
 
   display: flex;
   justify-content: center;
@@ -461,13 +483,13 @@ header img {
 .own-board img.small-card {
   width: 10.6vh;
   height: 14.9vh;
-  border-radius: 0.4vh;
+  border-radius: 0.5vh;
   user-select: none;
 }
 .own-board img.large-card {
   width: 11.8vh;
   height: 20.3vh;
-  border-radius: 0.6vh;
+  border-radius: 0.5vh;
   user-select: none;
 }
 
@@ -481,7 +503,7 @@ header img {
 }
 .center-board .mat .cards {
   height: 16vh;
-  width: 50vh;
+  width: 48.5vh;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -504,7 +526,7 @@ header img {
   display: flex;
   justify-content: space-between;
   rotate: 270deg;
-  margin-left: -1.8vh;
+  margin-left: -3.5vh;
   margin-right: -1vh;
 }
 .small-cards .small {
@@ -516,7 +538,7 @@ header img {
   background-color: #0000003a;
   width: 8.19vh;
   height: 11.44vh;
-  border-radius: 0.3vh;
+  border-radius: 0.5vh;
 
   display: flex;
   justify-content: center;
@@ -592,7 +614,7 @@ header img {
 img.small-card {
   width: 8.19vh;
   height: 11.44vh;
-  border-radius: 0.2vh;
+  border-radius: 0.35vh;
   user-select: none;
   transition: ease-out 0.5s;
 }

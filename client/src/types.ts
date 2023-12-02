@@ -107,12 +107,12 @@ export interface GameState {
   board: {
     // for win condition (6 diff classes)
     classes: {
-      FIGHTER: number;
-      BARD: number;
-      GUARDIAN: number;
-      RANGER: number;
-      THIEF: number;
-      WIZARD: number;
+      fighter: number;
+      bard: number;
+      guardian: number;
+      ranger: number;
+      thief: number;
+      wizard: number;
     };
 
     // players' public board
@@ -125,11 +125,7 @@ export interface GameState {
 
     // window for challenging
     preparedCard?: {
-      card: HeroCard | ItemCard | MagicCard;
-      successful: null | boolean;
-    } | null;
-    attackedMonster?: {
-      card: MonsterCard;
+      card: HeroCard | ItemCard | MagicCard | MonsterCard;
       successful: null | boolean;
     } | null;
   };
@@ -138,24 +134,25 @@ export interface GameState {
   match: {
     gameStarted: boolean;
     players: string[];
-    isReady: boolean[];
+    isReady: (boolean | null)[];
     startRolls: { maxVal: number; inList: number[]; rolls: number[] };
   };
   turn: {
     player: number;
     challenger?: number;
     movesLeft: 0 | 1 | 2 | 3;
-    timeElapsed: number;
     phase:
       | 'start-roll'
       | 'end-turn-discard'
       | 'draw'
       | 'play'
+      | 'attack-roll'
       | 'attack'
       | 'challenge'
       | 'challenge-roll'
-      | 'modify'
-      | 'use-effect';
+      | 'use-effect-roll'
+      | 'use-effect'
+      | 'modify';
 
     /* ONLY FOR 'end-turn-discard' PHASE */
     toDiscard: number;
@@ -268,3 +265,41 @@ export interface ClientStateObj {
     setShowText: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }
+
+export const monsterRequirements: {
+  [key: string]: { req: number; hero: HeroClass | 'hero' }[];
+} = {
+  'abyss-queen': [{ req: 2, hero: 'hero' }],
+  'anuran-cauldron': [{ req: 3, hero: 'hero' }],
+  'arctic-aries': [{ req: 1, hero: 'hero' }],
+  bloodwing: [{ req: 2, hero: 'hero' }],
+  'corrupted-sabretooth': [{ req: 3, hero: 'hero' }],
+  'crowned-serpent': [{ req: 2, hero: 'hero' }],
+  'dark-dragon-king': [
+    { req: 1, hero: HeroClass.bard },
+    { req: 1, hero: 'hero' }
+  ],
+  dracos: [{ req: 1, hero: 'hero' }],
+  malamammoth: [
+    { req: 1, hero: HeroClass.ranger },
+    { req: 1, hero: 'hero' }
+  ],
+  'mega-slime': [{ req: 4, hero: 'hero' }],
+  orthus: [
+    { req: 1, hero: HeroClass.wizard },
+    { req: 1, hero: 'hero' }
+  ],
+  'rex-major': [
+    { req: 1, hero: HeroClass.guardian },
+    { req: 1, hero: 'hero' }
+  ],
+  terratuga: [{ req: 1, hero: 'hero' }],
+  'titan-wyvern': [
+    { req: 1, hero: HeroClass.fighter },
+    { req: 1, hero: 'hero' }
+  ],
+  'warworn-owlbear': [
+    { req: 1, hero: HeroClass.thief },
+    { req: 1, hero: 'hero' }
+  ]
+};

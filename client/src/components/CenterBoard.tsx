@@ -3,6 +3,7 @@ import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { popupHand } from '../helpers/popupHand';
+import { meetsRequirements } from '../helpers/meetsRequirements';
 
 interface CenterBoardProps {
   socket: Socket;
@@ -18,7 +19,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
   function drawTwo() {
     if (
       state.val.turn.phase !== 'draw' ||
-      state.val.turn.player !== state.val.playerNum
+      state.val.turn.player !== state.val.playerNum ||
+      state.val.turn.pause
     )
       return;
 
@@ -28,7 +30,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
   function drawOne() {
     if (
       state.val.turn.phase !== 'play' ||
-      state.val.turn.player !== state.val.playerNum
+      state.val.turn.player !== state.val.playerNum ||
+      state.val.turn.pause
     )
       return;
 
@@ -61,6 +64,16 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             onMouseLeave={() => {
               shownCard.set(null);
               shownCard.setPos(null);
+            }}
+            style={{
+              cursor:
+                state.val.turn.phase === 'play' &&
+                state.val.turn.player === state.val.playerNum &&
+                !state.val.turn.pause
+                  ? meetsRequirements(card, state.val)
+                    ? 'pointer'
+                    : 'not-allowed'
+                  : 'default'
             }}
           >
             <img

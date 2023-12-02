@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { getImage } from '../helpers/getImage';
+import { getImage, shortenName } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
+import { CardType, HeroClass, LeaderCard, monsterRequirements } from '../types';
+import { restOfCards } from '../helpers/meetsRequirements';
 
 interface ShownCardProps {}
 
 const ShownCard: React.FC<ShownCardProps> = () => {
-  const { shownCard } = useClientContext();
+  const {
+    shownCard,
+    state: { val: state }
+  } = useClientContext();
   const [lastPos, setLastPos] = useState<
     'left' | 'right' | 'top' | 'center' | null
   >(null);
@@ -41,6 +46,52 @@ const ShownCard: React.FC<ShownCardProps> = () => {
             }
             draggable='false'
           />
+        )}
+
+      {shownCard.val &&
+        shownCard.val.type === CardType.large &&
+        shownCard.val.player === undefined && (
+          <div className='requirements'>
+            {monsterRequirements[shortenName(shownCard.val)].map(
+              (val, i) =>
+                shownCard.val && (
+                  <div className='requirement' key={i}>
+                    <img
+                      src={`./assets/icons/${val.hero}.png`}
+                      alt={val.hero}
+                    />
+                    <h1>
+                      <span
+                        style={{
+                          color: (
+                            val.hero !== 'hero'
+                              ? state.board[state.playerNum].classes[
+                                  val.hero
+                                ] >= val.req
+                              : restOfCards(
+                                  monsterRequirements[
+                                    shortenName(shownCard.val)
+                                  ],
+                                  state
+                                ) >= val.req
+                          )
+                            ? '#2eee9b'
+                            : '#f95151'
+                        }}
+                      >
+                        {val.hero !== 'hero'
+                          ? state.board[state.playerNum].classes[val.hero]
+                          : restOfCards(
+                              monsterRequirements[shortenName(shownCard.val)],
+                              state
+                            )}
+                      </span>
+                      /{val.req}
+                    </h1>
+                  </div>
+                )
+            )}
+          </div>
         )}
     </div>
   );

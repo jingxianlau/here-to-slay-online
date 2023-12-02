@@ -1,7 +1,7 @@
 import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
-import { AnyCard, CardType, GameState, allCards } from '../types';
+import { AnyCard, CardType, GameState, HeroClass, allCards } from '../types';
 import {
   addCards,
   drawCards,
@@ -26,7 +26,7 @@ const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
   }, 2400);
 };
 
-export const heroEffects: {
+export const abilities: {
   [key: string]: ((
     roomId: string,
     playerNum: number,
@@ -147,5 +147,43 @@ export const heroEffects: {
       sendGameState(roomId);
     },
     (roomId, playerNum) => endEffect(roomId, playerNum)
+  ]
+};
+
+export const monsterRequirements: {
+  [key: string]: { req: number; hero: HeroClass | 'hero' }[];
+} = {
+  'abyss-queen': [{ req: 2, hero: 'hero' }],
+  'anuran-cauldron': [{ req: 3, hero: 'hero' }],
+  'arctic-aries': [{ req: 1, hero: 'hero' }],
+  bloodwing: [{ req: 2, hero: 'hero' }],
+  'corrupted-sabretooth': [{ req: 3, hero: 'hero' }],
+  'crowned-serpent': [{ req: 2, hero: 'hero' }],
+  'dark-dragon-king': [
+    { req: 1, hero: HeroClass.bard },
+    { req: 1, hero: 'hero' }
+  ],
+  dracos: [{ req: 1, hero: 'hero' }],
+  malamammoth: [
+    { req: 1, hero: HeroClass.ranger },
+    { req: 1, hero: 'hero' }
+  ],
+  'mega-slime': [{ req: 4, hero: 'hero' }],
+  orthus: [
+    { req: 1, hero: HeroClass.wizard },
+    { req: 1, hero: 'hero' }
+  ],
+  'rex-major': [
+    { req: 1, hero: HeroClass.guardian },
+    { req: 1, hero: 'hero' }
+  ],
+  terratuga: [{ req: 1, hero: 'hero' }],
+  'titan-wyvern': [
+    { req: 1, hero: HeroClass.fighter },
+    { req: 1, hero: 'hero' }
+  ],
+  'warworn-owlbear': [
+    { req: 1, hero: HeroClass.thief },
+    { req: 1, hero: 'hero' }
   ]
 };
