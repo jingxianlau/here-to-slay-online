@@ -296,6 +296,7 @@ header img {
 .small-enlarged.hero {
   position: absolute;
   z-index: 2;
+  box-shadow: #1c1c1c 0 -1vh 2vh 3vh;
 }
 .small-enlarged.hero.own {
   top: 13vh;
@@ -306,6 +307,7 @@ header img {
 .small-enlarged.item {
   position: absolute;
   z-index: 1;
+  box-shadow: #fc7c37 0 0 1.2vh 1.2vh;
 }
 .small-enlarged.hero.other {
   top: 15vh;
@@ -536,11 +538,11 @@ header img {
   user-select: none;
 }
 .own-board img.small-card.item {
-  top: 7.5vh;
+  top: 7.68vh;
 }
 img.small-card.item {
   z-index: 1;
-  top: 5.3vh;
+  top: 5.38vh;
 }
 img.small-card.hero {
   z-index: 2;
@@ -759,6 +761,10 @@ img.deny:hover {
 }
 .popup .img-container.left {
   margin-right: -6vh;
+  width: 45.045vh;
+  height: 62.92vh;
+  display: flex;
+  flex-direction: column;
 }
 .challenge-popup,
 .challenge-roll-popup {
@@ -778,6 +784,27 @@ img.deny:hover {
   height: 62.92vh;
   border-radius: 2vh;
   user-select: none;
+}
+.small-xl.challenge-hero {
+  position: absolute;
+  top: -5.5vh;
+  z-index: 6;
+  transition: 0.3s ease-in-out;
+  opacity: 0.35;
+}
+.small-xl.challenge-hero:hover {
+  opacity: 1;
+  z-index: 7;
+}
+.small-xl.challenge-hero:hover + .small-xl.challenge-item {
+  opacity: 0.35;
+  /* z-index: 7; */
+}
+.small-xl.challenge-item {
+  position: absolute;
+  top: 6.1vh;
+  z-index: 6;
+  transition: 0.3s ease-in-out;
 }
 .small-lg {
   width: 36.732vh;

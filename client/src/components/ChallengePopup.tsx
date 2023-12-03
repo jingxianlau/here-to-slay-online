@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CardType, GameState, ModifierCard } from '../types';
+import { CardType, GameState, HeroCard, ModifierCard } from '../types';
 import { Socket } from 'socket.io-client';
 import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
@@ -29,6 +29,9 @@ const ChallengePopup: React.FC<{
   const [modifiers, setModifiers] = useState<ModifierCard[]>([]);
   const [show, setShow] = useState(false);
 
+  // item cards
+  const [heroCardPlayer, setHeroCardPlayer] = useState(0);
+
   const preppedCard = state.mainDeck.preparedCard;
 
   useEffect(() => {
@@ -55,6 +58,22 @@ const ChallengePopup: React.FC<{
       showHand.setLocked(false);
     }
   }, [chosenCard.val]);
+
+  useEffect(() => {
+    if (
+      preppedCard &&
+      preppedCard.card.type === CardType.item &&
+      showPopup.val
+    ) {
+      setHeroCardPlayer(
+        state.board.findIndex(val =>
+          val.heroCards.some(
+            card => card.item && card.item.id === preppedCard.card.id
+          )
+        )
+      );
+    }
+  }, [state.mainDeck.preparedCard]);
 
   useEffect(() => {
     if (showPopup.val) {
@@ -133,12 +152,42 @@ const ChallengePopup: React.FC<{
         (state.turn.phase === 'challenge' ? (
           <div className='challenge-popup'>
             <div className='img-container left'>
-              <img
-                src={getImage(preppedCard.card)}
-                alt={preppedCard.card.name}
-                className='small-xl'
-                draggable='false'
-              />
+              {preppedCard.card.type !== CardType.item ? (
+                <img
+                  src={getImage(preppedCard.card)}
+                  alt={preppedCard.card.name}
+                  className='small-xl'
+                  draggable='false'
+                />
+              ) : (
+                heroCardPlayer !== -1 && (
+                  <>
+                    <img
+                      src={getImage(
+                        state.board[heroCardPlayer].heroCards.find(
+                          val => val.item && val.item.id === preppedCard.card.id
+                        ) as HeroCard
+                      )}
+                      alt={
+                        (
+                          state.board[heroCardPlayer].heroCards.find(
+                            val =>
+                              val.item && val.item.id === preppedCard.card.id
+                          ) as HeroCard
+                        ).name
+                      }
+                      className='small-xl challenge-hero'
+                      draggable='false'
+                    />
+                    <img
+                      src={getImage(preppedCard.card)}
+                      alt={preppedCard.card.name}
+                      className='small-xl challenge-item'
+                      draggable='false'
+                    />
+                  </>
+                )
+              )}
             </div>
             <div
               className={`img-container ${
@@ -189,12 +238,44 @@ const ChallengePopup: React.FC<{
             <>
               <div className='challenge-roll-popup'>
                 <div className='img-container left'>
-                  <img
-                    src={getImage(preppedCard.card)}
-                    alt={preppedCard.card.name}
-                    className='small-xl'
-                    draggable='false'
-                  />
+                  {preppedCard.card.type !== CardType.item ? (
+                    <img
+                      src={getImage(preppedCard.card)}
+                      alt={preppedCard.card.name}
+                      className='small-xl'
+                      draggable='false'
+                    />
+                  ) : (
+                    heroCardPlayer !== -1 && (
+                      <>
+                        <img
+                          src={getImage(
+                            state.board[heroCardPlayer].heroCards.find(
+                              val =>
+                                val.item && val.item.id === preppedCard.card.id
+                            ) as HeroCard
+                          )}
+                          alt={
+                            (
+                              state.board[heroCardPlayer].heroCards.find(
+                                val =>
+                                  val.item &&
+                                  val.item.id === preppedCard.card.id
+                              ) as HeroCard
+                            ).name
+                          }
+                          className='small-xl challenge-hero'
+                          draggable='false'
+                        />
+                        <img
+                          src={getImage(preppedCard.card)}
+                          alt={preppedCard.card.name}
+                          className='small-xl challenge-item'
+                          draggable='false'
+                        />
+                      </>
+                    )
+                  )}
                 </div>
 
                 <div
