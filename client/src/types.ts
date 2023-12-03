@@ -55,6 +55,7 @@ export interface ModifierCard extends Card {
 export interface ItemCard extends Card {
   type: CardType.item;
   heroId?: string;
+  category: 'cursed' | 'blessed' | HeroClass;
 }
 export interface MagicCard extends Card {
   type: CardType.magic;
@@ -63,7 +64,6 @@ export interface MonsterCard extends Card {
   type: CardType.large;
 }
 export interface LeaderCard extends MonsterCard {
-  type: CardType.large;
   class: HeroClass;
 }
 

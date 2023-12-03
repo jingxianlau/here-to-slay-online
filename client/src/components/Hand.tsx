@@ -127,9 +127,9 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
         {state.turn.player === state.playerNum &&
           state.turn.movesLeft === 3 &&
           state.turn.phase === 'play' && (
-            <div className='discard' onClick={drawFive}>
+            <button className='danger circular discard' onClick={drawFive}>
               <span className='material-symbols-outlined'>delete_forever</span>
-            </div>
+            </button>
           )}
 
         <div
@@ -210,8 +210,8 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           state.turn.effect &&
           state.turn.effect.players.some(val => val === state.playerNum) &&
           state.turn.effect.action === 'choose-hand' && (
-            <div
-              className='skip'
+            <button
+              className='circular skip'
               onClick={() => {
                 if (
                   state.turn.effect &&
@@ -230,7 +230,7 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
               }}
             >
               <span className='material-symbols-outlined'>start</span>
-            </div>
+            </button>
           )}
       </div>
     </div>

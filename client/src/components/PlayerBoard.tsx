@@ -30,7 +30,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
         <div className='top-row'>
           {state.board[playerNum].heroCards.map(card => (
             <div
-              className='small'
+              className={`small ${
+                card.item && `item-attached ${card.item.category}`
+              }`}
               key={card.id}
               onMouseEnter={() => {
                 if (!shownCard.locked) {
@@ -56,12 +58,20 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                     chosenCard.set(card);
                     chosenCard.setShow(true);
                     chosenCard.setCustomText('Ability');
-                  } else if (state.turn.phase === 'choose-hero') {
+                  } else if (state.turn.phase === 'choose-hero' && !card.item) {
                     chosenCard.set(card);
                     chosenCard.setShow(true);
                     chosenCard.setCustomText('Select');
                   }
                 }
+              }}
+              style={{
+                filter:
+                  state.turn.phase === 'choose-hero' &&
+                  state.turn.player === state.playerNum &&
+                  card.item
+                    ? 'brightness(35%)'
+                    : 'none'
               }}
             >
               <img
@@ -82,7 +92,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                     state.turn.phase === 'play' &&
                     !card.abilityUsed) ||
                   (state.turn.phase === 'choose-hero' &&
-                    state.turn.player === state.playerNum)
+                    state.turn.player === state.playerNum &&
+                    !card.item)
                     ? 'click'
                     : playerNum === state.playerNum
                     ? 'deny'

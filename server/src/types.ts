@@ -32,26 +32,22 @@ export interface HeroCard extends Card {
 }
 export interface ChallengeCard extends Card {
   type: CardType.challenge;
-  id: string;
 }
 export interface ModifierCard extends Card {
   type: CardType.modifier;
   modifier: [number, number] | [number];
   diceId?: 1 | 2;
-  id: string;
 }
 export interface ItemCard extends Card {
   type: CardType.item;
   heroId?: string;
-  id: string;
+  category: 'cursed' | 'blessed' | HeroClass;
 }
 export interface MagicCard extends Card {
   type: CardType.magic;
-  id: string;
 }
 export interface MonsterCard extends Card {
   type: CardType.large;
-  id: string;
 }
 export interface LeaderCard extends MonsterCard {
   class: HeroClass;

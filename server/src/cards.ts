@@ -528,77 +528,92 @@ const itemCards: ItemCard[] = [
   {
     name: 'Bard Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.bard
   },
   {
     name: 'Decoy Doll',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'blessed'
   },
   {
     name: 'Fighter Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.fighter
   },
   {
     name: 'Guardian Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.guardian
   },
   {
     name: 'Particularly Rusty Coin',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'blessed'
   },
   {
     name: 'Particularly Rusty Coin',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'blessed'
   },
   {
     name: 'Ranger Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.ranger
   },
   {
     name: 'Really Big Ring',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'blessed'
   },
   {
     name: 'Really Big Ring',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'blessed'
   },
   {
     name: 'Thief Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.thief
   },
   {
     name: 'Wizard Mask',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: HeroClass.wizard
   },
   {
     name: 'Suspiciously Shiny Coin',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'cursed'
   },
   {
     name: "Curse of the Snake's Eyes",
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'cursed'
   },
   {
     name: "Curse of the Snake's Eyes",
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'cursed'
   },
   {
     name: 'Sealing Key',
     type: CardType.item,
-    id: uuid()
+    id: uuid(),
+    category: 'cursed'
   }
 ];
 
@@ -928,8 +943,7 @@ export const initialState: GameState = {
   mainDeck: {
     monsters: [monsterPile[0], monsterPile[0], monsterPile[0]],
     discardPile: [],
-    preparedCard: null,
-    attackedMonster: null
+    preparedCard: null
   },
 
   // MATCH VARIABLES

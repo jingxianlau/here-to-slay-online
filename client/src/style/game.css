@@ -330,45 +330,13 @@ header img {
 }
 .bottomMenu .discard {
   position: absolute;
-  width: 8vh;
-  height: 8vh;
-  background-color: #fc7c37;
-  border-radius: 50%;
   left: 1vw;
   bottom: 2vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.bottomMenu .discard span.material-symbols-outlined {
-  font-size: 5vh;
-  transition: 0.3s;
-  user-select: none;
-}
-.bottomMenu .discard:hover span.material-symbols-outlined {
-  font-size: 6.5vh;
 }
 .bottomMenu .skip {
   position: absolute;
-  width: 8vh;
-  height: 8vh;
-  background-color: #fc7c37;
-  border-radius: 50%;
   right: 1vw;
   bottom: 2vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.bottomMenu .skip span.material-symbols-outlined {
-  font-size: 5vh;
-  transition: 0.3s;
-  user-select: none;
-}
-.bottomMenu .skip:hover span.material-symbols-outlined {
-  font-size: 6.5vh;
 }
 
 .hand {
@@ -538,15 +506,119 @@ header img {
   user-select: none;
 }
 .own-board img.small-card.item {
-  top: 7.68vh;
+  top: 2.9vh;
 }
 img.small-card.item {
   z-index: 1;
-  top: 5.38vh;
+  top: 2.2vh;
 }
 img.small-card.hero {
   z-index: 2;
 }
+
+.small.item-attached::after {
+  content: '';
+  position: absolute;
+  top: -1.2vh;
+  left: -1.2vh;
+  width: 3.3vh;
+  height: 3.3vh;
+  border-radius: 50%;
+  box-shadow: #111 0 0 1vh 0.3vh;
+  z-index: 2;
+  transition: 0.25s ease-in-out, background-size 0.35s ease-in-out;
+}
+.small.item-attached.cursed::after {
+  background: url('./assets/cursed.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.blessed::after {
+  background: url('./assets/blessed.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.bard::after {
+  background: url('./assets/bard.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.wizard::after {
+  background: url('./assets/wizard.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.fighter::after {
+  background: url('./assets/fighter.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.ranger::after {
+  background: url('./assets/ranger.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.guardian::after {
+  background: url('./assets/guardian.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+.small.item-attached.thief::after {
+  background: url('./assets/thief.png');
+  background-size: 3.33vh;
+  background-position: center;
+}
+
+.own-board .small.item-attached::after {
+  content: '';
+  position: absolute;
+  top: -1.8vh;
+  left: -1.8vh;
+  width: 4.5vh;
+  height: 4.5vh;
+  box-shadow: #111 0 0 1.4vh 0.5vh;
+}
+.own-board .small.item-attached.cursed::after {
+  background: url('./assets/cursed.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.blessed::after {
+  background: url('./assets/blessed.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.bard::after {
+  background: url('./assets/bard.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.wizard::after {
+  background: url('./assets/wizard.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.fighter::after {
+  background: url('./assets/fighter.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.ranger::after {
+  background: url('./assets/ranger.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.guardian::after {
+  background: url('./assets/guardian.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+.own-board .small.item-attached.thief::after {
+  background: url('./assets/thief.png');
+  background-size: 4.5vh;
+  background-position: center;
+}
+
 .own-board img.large-card {
   width: 11.8vh;
   height: 20.3vh;
@@ -606,6 +678,7 @@ img.large-lg {
   width: 8.19vh;
   height: 11.44vh;
   border-radius: 0.5vh;
+  position: relative;
 
   display: flex;
   flex-direction: column;

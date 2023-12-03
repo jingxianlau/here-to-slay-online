@@ -10,7 +10,7 @@ import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import { AnyCard, CardType } from '../../../types';
-import { useEffect } from './useEffect';
+import { endTurnDiscard, useEffect } from './useEffect';
 
 export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   const playerNum = validSender(roomId, userId);
@@ -99,9 +99,7 @@ export const challenge = (
         sendGameState(roomId);
         state.turn.phaseChanged = false;
       } else {
-        nextPlayer(roomId);
-        sendGameState(roomId);
-        state.turn.phaseChanged = false;
+        endTurnDiscard(roomId, state.secret.playerIds[state.turn.player]);
       }
     }, 1200);
   } else if (challenged && cardId) {
