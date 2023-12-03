@@ -27,12 +27,23 @@ const ShownCard: React.FC<ShownCardProps> = () => {
         shownCard &&
         shownCard.pos !== 'top' &&
         shownCard.pos !== 'center' &&
+        !state.turn.pause &&
         !shownCard.locked &&
         shownCard.val
           ? 'show'
           : 'hide'
       }`}
     >
+      {shownCard.val &&
+      shownCard.val.player !== undefined &&
+      shownCard.val.player !== state.playerNum ? (
+        <h1 style={{ marginBottom: '0.8vh', marginTop: '-5vh', width: '25vw' }}>
+          {state.match.players[shownCard.val.player]}
+        </h1>
+      ) : (
+        <></>
+      )}
+
       {shownCard.pos !== 'top' &&
         shownCard.pos !== 'center' &&
         shownCard.val && (

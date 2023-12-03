@@ -17,7 +17,7 @@ const ShownCardTop: React.FC = () => {
     <div
       className={`shown-card-top ${
         shownCard &&
-        ((shownCard.pos === 'top' && !shownCard.locked) ||
+        ((shownCard.pos === 'top' && !shownCard.locked && !state.turn.pause) ||
           shownCard.pos === 'center') &&
         shownCard.val
           ? 'show'
@@ -27,18 +27,32 @@ const ShownCardTop: React.FC = () => {
         top: shownCard.pos === 'center' ? '22vh' : '10vh'
       }}
     >
-      {shownCard.pos === 'center' && state.turn.phase === 'use-effect' && (
-        <h1
-          style={{
-            marginBottom: '-0.3vh',
-            fontWeight: 1000,
-            textShadow: '0.5vh 0.5vh 0.3vh #000',
-            zIndex: 100
-          }}
-        >
-          Chosen Card
-        </h1>
-      )}
+      {shownCard.pos === 'center' &&
+        (state.turn.phase === 'use-effect' ? (
+          <h1
+            style={{
+              marginBottom: '1vh',
+              fontWeight: 1000,
+              textShadow: '0.5vh 0.5vh 0.3vh #000',
+              zIndex: 100
+            }}
+          >
+            Chosen Card
+          </h1>
+        ) : state.turn.phase === 'play' ? (
+          <h1
+            style={{
+              marginBottom: '1vh',
+              fontWeight: 1000,
+              textShadow: '0.5vh 0.5vh 0.3vh #000',
+              zIndex: 100
+            }}
+          >
+            Played Card
+          </h1>
+        ) : (
+          <></>
+        ))}
       {(shownCard.pos === 'top' || shownCard.pos === 'center') &&
         shownCard.val && (
           <img

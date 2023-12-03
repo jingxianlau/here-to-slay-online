@@ -260,7 +260,9 @@ header img {
 }
 
 .shown-card .requirements {
-  width: 80%;
+  width: 45vh;
+  margin-top: -1vh;
+  margin-right: 1vw;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -482,7 +484,7 @@ header img {
 }
 .own-board .small {
   border: 0.25vh solid #fff;
-  background-color: #0000003a;
+  background-color: #00000044;
   width: 10.6vh;
   height: 14.9vh;
   border-radius: 0.75vh;
@@ -493,7 +495,7 @@ header img {
 }
 .own-board .large {
   border: 0.25vh solid #fff;
-  background-color: #0000003a;
+  background-color: #00000044;
   width: 11.8vh;
   height: 20.3vh;
   border-radius: 0.75vh;
@@ -512,6 +514,12 @@ header img {
   width: 11.8vh;
   height: 20.3vh;
   border-radius: 0.5vh;
+  user-select: none;
+}
+img.large-lg {
+  width: 43.7vh;
+  height: 74.575vh;
+  border-radius: 2vh;
   user-select: none;
 }
 
@@ -557,7 +565,7 @@ header img {
 
 .small {
   border: 0.15vh solid #fff;
-  background-color: #0000003a;
+  background-color: #00000044;
   width: 8.19vh;
   height: 11.44vh;
   border-radius: 0.5vh;
@@ -569,7 +577,7 @@ header img {
 }
 .large {
   border: 0.15vh solid #fff;
-  background-color: #0000003a;
+  background-color: #00000044;
   width: 9.1vh;
   height: 15.7vh;
   border-radius: 0.5vh;

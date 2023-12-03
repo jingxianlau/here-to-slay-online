@@ -40,7 +40,8 @@ export const useEffectRoll = (
   if (
     gameState.turn.phase === 'use-effect-roll' &&
     gameState.mainDeck.preparedCard &&
-    gameState.mainDeck.preparedCard.card.type === CardType.hero
+    gameState.mainDeck.preparedCard.card.type === CardType.hero &&
+    gameState.mainDeck.preparedCard.card.id === heroCard.id
   ) {
     const roll = rollDice();
     const val = roll[0] + roll[1];

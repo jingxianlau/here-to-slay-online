@@ -25,7 +25,7 @@ interface Card {
 export interface HeroCard extends Card {
   type: CardType.hero;
   class: HeroClass;
-  items?: ItemCard[];
+  item?: ItemCard;
   id: string;
   freeUse: boolean;
   abilityUsed: boolean;

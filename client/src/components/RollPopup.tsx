@@ -84,9 +84,19 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
       return;
 
     if (state.mainDeck.preparedCard?.card.type === CardType.hero) {
-      socket.emit('use-effect-roll', roomId, userId);
-    } else {
-      socket.emit('attack-roll', roomId, userId);
+      socket.emit(
+        'use-effect-roll',
+        roomId,
+        userId,
+        state.mainDeck.preparedCard.card
+      );
+    } else if (state.mainDeck.preparedCard?.card.type === CardType.large) {
+      socket.emit(
+        'attack-roll',
+        roomId,
+        userId,
+        state.mainDeck.preparedCard.card
+      );
     }
     hasRolled.set(true);
   }
@@ -118,7 +128,12 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
                       <img
                         src={getImage(state.mainDeck.preparedCard.card)}
                         alt={state.mainDeck.preparedCard.card.name}
-                        className='small-xl'
+                        className={
+                          state.mainDeck.preparedCard.card.type ===
+                          CardType.hero
+                            ? 'small-xl'
+                            : 'large-lg'
+                        }
                         draggable='false'
                       />
                     </div>

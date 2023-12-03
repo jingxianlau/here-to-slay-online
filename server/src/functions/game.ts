@@ -155,11 +155,18 @@ export function playCard(
   roomId: string,
   playerNum: number,
   card: HeroCard | MagicCard | ItemCard,
-  free = false
+  free = false,
+
+  // item card
+  heroCard?: HeroCard
 ) {
   const state = rooms[roomId].state;
   if (card.type === CardType.hero) {
     state.board[playerNum].heroCards.push(card);
+    state.board[playerNum].classes[card.class]++;
+  } else if (card.type === CardType.item) {
+    if (!heroCard) return;
+  } else if (card.type === CardType.magic) {
   }
 
   state.mainDeck.preparedCard = {

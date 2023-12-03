@@ -265,7 +265,8 @@ const Game: React.FC = () => {
                     'fail',
                     newState.mainDeck.preparedCard.card,
                     newState.dice.main.total
-                  )
+                  ) &&
+                  newState.mainDeck.preparedCard.successful === false
                 ) {
                   showText(showHelperText, 'Attack Failed');
                 }

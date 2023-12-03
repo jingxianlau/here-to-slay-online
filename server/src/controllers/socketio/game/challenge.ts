@@ -9,9 +9,16 @@ import {
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { AnyCard, CardType } from '../../../types';
+import { AnyCard, CardType, HeroCard } from '../../../types';
 
-export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
+export const prepareCard = (
+  roomId: string,
+  userId: string,
+  card: AnyCard,
+
+  // item card's hero
+  heroCard?: HeroCard
+) => {
   const playerNum = validSender(roomId, userId);
   const gameState = rooms[roomId].state;
   if (
@@ -23,12 +30,22 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
       card.type !== CardType.item &&
       card.type !== CardType.magic) ||
     (card.type === CardType.hero &&
-      gameState.board[playerNum].heroCards.length >= 5)
+      gameState.board[playerNum].heroCards.length >= 5) ||
+    (card.type === CardType.item &&
+      heroCard?.player &&
+      gameState.board[heroCard.player].heroCards.some(
+        val => val.id === heroCard.id
+      ) &&
+      !heroCard.item)
   ) {
     return;
   }
   removeFreeUse(roomId);
-  playCard(roomId, playerNum, card);
+  if (heroCard) {
+    playCard(roomId, playerNum, card, false, heroCard);
+  } else {
+    playCard(roomId, playerNum, card);
+  }
 };
 
 export const challenge = (

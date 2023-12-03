@@ -4,6 +4,7 @@ import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { popupHand } from '../helpers/popupHand';
 import { meetsRequirements } from '../helpers/meetsRequirements';
+import { MonsterCard } from '../types';
 
 interface CenterBoardProps {
   socket: Socket;
@@ -36,7 +37,14 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       return;
 
     socket.emit('draw-one', credentials.roomId, credentials.userId);
-    popupHand(showHand);
+    showHand.set(true);
+    showHand.setLocked(true);
+    if (state.val.turn.movesLeft > 1) {
+      setTimeout(() => {
+        showHand.set(false);
+        showHand.setLocked(false);
+      }, 1200);
+    }
   }
   function drawEffect() {
     if (state.val.turn.effect) {
@@ -46,6 +54,17 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
         credentials.userId,
         state.val.turn.effect.card
       );
+    }
+  }
+  function attackMonster(card: MonsterCard) {
+    if (
+      state.val.turn.phase === 'play' &&
+      state.val.turn.player === state.val.playerNum &&
+      !state.val.turn.pause &&
+      meetsRequirements(card, state.val) &&
+      state.val.turn.movesLeft >= 2
+    ) {
+      socket.emit('attack-roll', credentials.roomId, credentials.userId, card);
     }
   }
 
@@ -65,6 +84,7 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
               shownCard.set(null);
               shownCard.setPos(null);
             }}
+            onClick={() => attackMonster(card)}
             style={{
               cursor:
                 state.val.turn.phase === 'play' &&

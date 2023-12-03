@@ -1,4 +1,4 @@
-import { removeFreeUse, rollDice } from '../../../functions/game';
+import { rollDice } from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -24,7 +24,8 @@ export const attackRoll = (
     gameState.turn.phase === 'attack-roll' &&
     gameState.mainDeck.preparedCard &&
     gameState.mainDeck.preparedCard.card.type === CardType.large &&
-    gameState.mainDeck.preparedCard.card.player === undefined
+    gameState.mainDeck.preparedCard.card.player === undefined &&
+    gameState.mainDeck.preparedCard.card.id === monster.id
   ) {
     const roll = rollDice();
     const val = roll[0] + roll[1];

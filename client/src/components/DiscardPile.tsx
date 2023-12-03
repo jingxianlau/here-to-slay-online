@@ -41,7 +41,7 @@ const DiscardPile: React.FC<{
                 <img
                   src={getImage(state.mainDeck.discardPile[num])}
                   alt={state.mainDeck.discardPile[num].name}
-                  className='small-lg'
+                  className='small-xl'
                   draggable='false'
                 />
               </div>

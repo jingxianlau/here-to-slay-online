@@ -49,7 +49,6 @@ export const modifyRoll = (
 
     // EFFECT AFTERWARDS
     if (state.match.isReady.every(val => val === false)) {
-      state.match.isReady.fill(null);
       const cardUserId = state.secret.playerIds[state.turn.player];
 
       // use card
@@ -113,6 +112,7 @@ export const modifyRoll = (
               state.dice.main.modifier = [];
               state.dice.main.modValues = [];
               delete state.turn.challenger;
+              state.match.isReady.fill(null);
 
               setTimeout(() => {
                 sendGameState(roomId);
@@ -124,6 +124,7 @@ export const modifyRoll = (
               state.dice.main.modifier = [];
               state.dice.main.modValues = [];
               delete state.turn.challenger;
+              state.match.isReady.fill(null);
               useEffect(roomId, cardUserId, preppedCard);
             }
           }
@@ -141,6 +142,7 @@ export const modifyRoll = (
           ) {
             // monster slain
             state.mainDeck.preparedCard.successful = true;
+            preppedCard.player = state.turn.player;
             state.board[state.turn.player].largeCards.push(preppedCard);
             state.mainDeck.monsters.map((val, i) => {
               if (val.id === preppedCard.id) {
@@ -157,8 +159,10 @@ export const modifyRoll = (
               state.dice.main.modValues = [];
 
               if (state.turn.movesLeft === 0) {
+                state.match.isReady.fill(null);
                 endTurnDiscard(roomId, cardUserId);
               } else {
+                state.match.isReady.fill(null);
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
@@ -174,6 +178,7 @@ export const modifyRoll = (
             state.dice.main.modifier = [];
             state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = false;
+            state.match.isReady.fill(null);
             useEffect(roomId, cardUserId, preppedCard);
           } else {
             // neutral
@@ -187,8 +192,10 @@ export const modifyRoll = (
               state.dice.main.modValues = [];
 
               if (state.turn.movesLeft === 0) {
+                state.match.isReady.fill(null);
                 endTurnDiscard(roomId, cardUserId);
               } else {
+                state.match.isReady.fill(null);
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
@@ -215,6 +222,7 @@ export const modifyRoll = (
             state.dice.main.modifier = [];
             state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = true;
+            state.match.isReady.fill(null);
             useEffect(roomId, cardUserId, preppedCard);
           } else {
             // fail
@@ -228,8 +236,10 @@ export const modifyRoll = (
               state.dice.main.modValues = [];
 
               if (state.turn.movesLeft === 0) {
+                state.match.isReady.fill(null);
                 endTurnDiscard(roomId, cardUserId);
               } else {
+                state.match.isReady.fill(null);
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
