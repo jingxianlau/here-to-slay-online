@@ -42,7 +42,7 @@ export interface ModifierCard extends Card {
 }
 export interface ItemCard extends Card {
   type: CardType.item;
-  heroId?: number;
+  heroId?: string;
   id: string;
 }
 export interface MagicCard extends Card {
@@ -149,6 +149,7 @@ interface State {
       | 'end-turn-discard'
       | 'draw'
       | 'play'
+      | 'choose-hero'
       | 'attack-roll'
       | 'challenge'
       | 'challenge-roll'

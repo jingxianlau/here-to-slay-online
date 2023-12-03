@@ -61,6 +61,12 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
           }
           break;
 
+        case 'choose-hero':
+          if (card.type === CardType.hero) {
+            socket.emit('prepare-card', roomId, userId, card);
+          }
+          break;
+
         case 'challenge':
           if (card.type === CardType.challenge && !state.turn.pause) {
             socket.emit('challenge', roomId, userId, true, card.id);

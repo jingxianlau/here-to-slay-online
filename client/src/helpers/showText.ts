@@ -3,7 +3,7 @@ import { ClientStateObj } from '../types';
 export const showText = (
   showHelperText: ClientStateObj['showHelperText'],
   text: string,
-  timeout: number = 1000
+  timeout: number = 800
 ) => {
   showHelperText.set(true);
   showHelperText.setText(text);

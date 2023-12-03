@@ -8,11 +8,6 @@ const ShownCardTop: React.FC = () => {
     shownCard
   } = useClientContext();
 
-  useEffect(() => {
-    if (shownCard.pos === 'center' && state.turn.phase === 'use-effect') {
-    }
-  }, [shownCard.pos]);
-
   return (
     <div
       className={`shown-card-top ${

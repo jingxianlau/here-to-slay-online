@@ -13,6 +13,11 @@ header img {
   width: 85px;
 }
 
+* {
+  /* to prevent clipping with heroes with item cards (which use z-index 1 & 2) */
+  z-index: 3;
+}
+
 /* GENERAL */
 .game {
   text-align: center;
@@ -140,7 +145,7 @@ header img {
   margin-bottom: -3.7vh;
   height: 8vh;
   font-weight: 300;
-  z-index: 100;
+  z-index: 999;
 }
 .turn-order div {
   display: inline;
@@ -287,6 +292,26 @@ header img {
   height: 62.92vh;
   border-radius: 2vh;
   user-select: none;
+}
+.small-enlarged.hero {
+  position: absolute;
+  z-index: 2;
+}
+.small-enlarged.hero.own {
+  top: 13vh;
+}
+.small-enlarged.item.own {
+  top: 24.5vh;
+}
+.small-enlarged.item {
+  position: absolute;
+  z-index: 1;
+}
+.small-enlarged.hero.other {
+  top: 15vh;
+}
+.small-enlarged.item.other {
+  top: 26.5vh;
 }
 
 /* HAND */
@@ -510,6 +535,16 @@ header img {
   border-radius: 0.5vh;
   user-select: none;
 }
+.own-board img.small-card.item {
+  top: 7.5vh;
+}
+img.small-card.item {
+  z-index: 1;
+  top: 5.3vh;
+}
+img.small-card.hero {
+  z-index: 2;
+}
 .own-board img.large-card {
   width: 11.8vh;
   height: 20.3vh;
@@ -571,6 +606,7 @@ img.large-lg {
   border-radius: 0.5vh;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   transition: 0.15s;
@@ -647,6 +683,7 @@ img.small-card {
   border-radius: 0.35vh;
   user-select: none;
   transition: ease-out 0.5s;
+  position: absolute;
 }
 img.large-card {
   width: 9.2vh;
@@ -746,6 +783,12 @@ img.deny:hover {
   width: 36.732vh;
   height: 51.308vh;
   border-radius: 1.5vh;
+}
+/* ok i'm just running out of names */
+.small-lg-minus {
+  width: 29.3856vh;
+  height: 41.0464vh;
+  border-radius: 1.2vh;
 }
 .popup .center {
   margin-top: -10vh;
@@ -947,7 +990,7 @@ div.cross {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  z-index: 1;
+  z-index: 99;
   width: 100vw;
 }
 .choose-modifier.hide {
@@ -1087,7 +1130,7 @@ div.cross {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 98;
   transition: opacity ease-in-out 0.2s;
 }
 .discard-pile-container {

@@ -281,12 +281,49 @@ const Game: React.FC = () => {
             shownCard.setLocked(false);
             allowedCards.set([]);
 
-            if (newState.turn.player === newState.playerNum) {
-              allowedCards.set([CardType.hero, CardType.item, CardType.magic]);
+            if (
+              newState.turn.player === newState.playerNum &&
+              !newState.turn.pause
+            ) {
+              allowedCards.set([CardType.hero, CardType.magic]);
+              if (
+                newState.board.some(val => val.heroCards.some(val => !val.item))
+              ) {
+                allowedCards.set(val => [...val, CardType.item]);
+              }
+            }
+
+            if (
+              newState.turn.pause &&
+              newState.mainDeck.preparedCard &&
+              (newState.mainDeck.preparedCard.card.type === CardType.magic ||
+                newState.mainDeck.preparedCard.card.type === CardType.item)
+            ) {
+              shownCard.setLocked(true);
+              shownCard.setPos('center');
+              shownCard.set(newState.mainDeck.preparedCard.card);
+            }
+            if (newState.turn.pause) {
+              showHand.set(false);
+              showHand.setLocked(true);
             }
 
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Play');
+            }
+            break;
+
+          case 'choose-hero':
+            if (newState.turn.player === newState.playerNum) {
+              showHand.setLocked(true);
+              showHand.set(false);
+            }
+            shownCard.setLocked(false);
+            shownCard.set(null);
+            shownCard.setPos(null);
+            allowedCards.set([]);
+            if (newState.turn.phaseChanged) {
+              showText(showHelperText, 'Place Item');
             }
             break;
 

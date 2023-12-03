@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getImage, shortenName } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
-import { CardType, HeroClass, LeaderCard, monsterRequirements } from '../types';
+import {
+  AnyCard,
+  CardType,
+  HeroClass,
+  ItemCard,
+  LeaderCard,
+  monsterRequirements
+} from '../types';
 import { restOfCards } from '../helpers/meetsRequirements';
 
 interface ShownCardProps {}
@@ -37,7 +44,17 @@ const ShownCard: React.FC<ShownCardProps> = () => {
       {shownCard.val &&
       shownCard.val.player !== undefined &&
       shownCard.val.player !== state.playerNum ? (
-        <h1 style={{ marginBottom: '0.8vh', marginTop: '-5vh', width: '25vw' }}>
+        <h1
+          style={
+            (shownCard.val.type !== CardType.hero || !shownCard.val.item) &&
+            (shownCard.val.type !== CardType.hero ||
+              state.mainDeck.preparedCard?.card.type !== CardType.item ||
+              state.turn.player !== state.playerNum ||
+              state.turn.phase !== 'choose-hero')
+              ? { marginBottom: '0.8vh', marginTop: '-5vh', width: '25vw' }
+              : { position: 'absolute', top: '5vh' }
+          }
+        >
           {state.match.players[shownCard.val.player]}
         </h1>
       ) : (
@@ -52,12 +69,54 @@ const ShownCard: React.FC<ShownCardProps> = () => {
             alt={shownCard.val.name}
             className={
               shownCard.val.type === 'large'
-                ? 'large-enlarged'
-                : 'small-enlarged'
+                ? `large-enlarged`
+                : `small-enlarged ${
+                    (shownCard.val.type === CardType.hero &&
+                      shownCard.val.item) ||
+                    (state.mainDeck.preparedCard?.card.type === CardType.item &&
+                      state.turn.player === state.playerNum &&
+                      state.turn.phase === 'choose-hero')
+                      ? 'hero'
+                      : ''
+                  } ${
+                    ((shownCard.val.type === CardType.hero &&
+                      shownCard.val.item) ||
+                      (state.mainDeck.preparedCard?.card.type ===
+                        CardType.item &&
+                        state.turn.player === state.playerNum &&
+                        state.turn.phase === 'choose-hero')) &&
+                    (shownCard.val.player === state.playerNum ? 'own' : 'other')
+                  }`
             }
             draggable='false'
           />
         )}
+
+      {shownCard.val &&
+        (shownCard.val.type === CardType.hero && shownCard.val.item ? (
+          <img
+            src={getImage(shownCard.val.item)}
+            alt={shownCard.val.item.name}
+            className={`small-enlarged item ${
+              shownCard.val.player === state.playerNum ? 'own' : 'other'
+            }`}
+            draggable='false'
+          />
+        ) : state.mainDeck.preparedCard &&
+          state.mainDeck.preparedCard.card.type === CardType.item &&
+          state.turn.player === state.playerNum &&
+          state.turn.phase === 'choose-hero' ? (
+          <img
+            src={getImage(state.mainDeck.preparedCard.card)}
+            alt={state.mainDeck.preparedCard.card.name}
+            className={`small-enlarged item ${
+              shownCard.val.player === state.playerNum ? 'own' : 'other'
+            }`}
+            draggable='false'
+          />
+        ) : (
+          <></>
+        ))}
 
       {shownCard.val &&
         shownCard.val.type === CardType.large &&

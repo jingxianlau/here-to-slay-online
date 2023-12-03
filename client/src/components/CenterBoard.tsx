@@ -73,12 +73,16 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             className='large'
             key={card.id}
             onMouseEnter={() => {
-              shownCard.set(card);
-              shownCard.setPos('left');
+              if (!shownCard.locked) {
+                shownCard.set(card);
+                shownCard.setPos('left');
+              }
             }}
             onMouseLeave={() => {
-              shownCard.set(null);
-              shownCard.setPos(null);
+              if (!shownCard.locked) {
+                shownCard.set(null);
+                shownCard.setPos(null);
+              }
             }}
             onClick={() => attackMonster(card)}
             style={{
@@ -98,6 +102,13 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
               alt={card.name}
               className='large-card'
               draggable='false'
+              style={{
+                filter:
+                  state.val.turn.phase === 'choose-hero' &&
+                  state.val.turn.player === state.val.playerNum
+                    ? 'brightness(35%)'
+                    : 'none'
+              }}
             />
           </div>
         ))}
@@ -137,6 +148,13 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
                   : () => {}
               }
               draggable='false'
+              style={{
+                filter:
+                  state.val.turn.phase === 'choose-hero' &&
+                  state.val.turn.player === state.val.playerNum
+                    ? 'brightness(35%)'
+                    : 'none'
+              }}
             />
           </div>
           <div className='small discard'>
@@ -152,11 +170,34 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
                     state.val.mainDeck.discardPile.length - 1
                   ].name
                 }
+                onMouseEnter={() => {
+                  if (!shownCard.locked) {
+                    shownCard.set(
+                      state.val.mainDeck.discardPile[
+                        state.val.mainDeck.discardPile.length - 1
+                      ]
+                    );
+                    shownCard.setPos('left');
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (!shownCard.locked) {
+                    shownCard.set(null);
+                    shownCard.setPos(null);
+                  }
+                }}
                 className='small-card click'
                 onClick={() => {
                   setShowDiscardPile(true);
                 }}
                 draggable='false'
+                style={{
+                  filter:
+                    state.val.turn.phase === 'choose-hero' &&
+                    state.val.turn.player === state.val.playerNum
+                      ? 'brightness(35%)'
+                      : 'none'
+                }}
               />
             )}
           </div>

@@ -112,6 +112,7 @@ export function discardCard(roomId: string, playerNum: number, cardId: string) {
   if (cardIndex === -1) {
     return false;
   } else {
+    delete rooms[roomId].state.players[playerNum].hand[cardIndex].player;
     rooms[roomId].state.mainDeck.discardPile.push(
       rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0]
     );
@@ -155,18 +156,12 @@ export function playCard(
   roomId: string,
   playerNum: number,
   card: HeroCard | MagicCard | ItemCard,
-  free = false,
-
-  // item card
-  heroCard?: HeroCard
+  free = false
 ) {
   const state = rooms[roomId].state;
   if (card.type === CardType.hero) {
     state.board[playerNum].heroCards.push(card);
     state.board[playerNum].classes[card.class]++;
-  } else if (card.type === CardType.item) {
-    if (!heroCard) return;
-  } else if (card.type === CardType.magic) {
   }
 
   state.mainDeck.preparedCard = {
@@ -193,9 +188,9 @@ export function playCard(
   state.turn.pause = false;
 
   setTimeout(() => {
-    state.turn.phase = 'challenge';
+    state.turn.phase =
+      card.type !== CardType.item ? 'challenge' : 'choose-hero';
     state.turn.phaseChanged = true;
-
     sendGameState(roomId);
     state.turn.phaseChanged = false;
   }, 1200);
@@ -213,4 +208,29 @@ export function removeBoard(roomId: string, playerNum: number, card: HeroCard) {
   const state = rooms[roomId].state;
   state.board[playerNum].classes[card.class]--;
   state.board[playerNum].heroCards.filter(val => val.id !== card.id);
+}
+
+export function removeItem(roomId: string, itemCard: ItemCard) {
+  const state = rooms[roomId].state;
+  let cardIndex: number | undefined;
+  const boardIndex = state.board.findIndex(val =>
+    val.heroCards.some((val, i) => {
+      const hero = val.item && val.item.id === itemCard.id;
+      if (hero) {
+        cardIndex = i;
+      }
+      return hero;
+    })
+  );
+  if (boardIndex === -1 || cardIndex === undefined) return;
+
+  const card = state.board[boardIndex].heroCards[cardIndex].item;
+  if (!card) return;
+
+  delete card.player;
+  delete card.heroId;
+
+  state.mainDeck.discardPile.push(card);
+
+  delete state.board[boardIndex].heroCards[cardIndex].item;
 }

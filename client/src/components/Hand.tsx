@@ -50,7 +50,6 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           dropHand(showHand, shownCard);
-          showHand.setLocked(true);
         }
         break;
 
@@ -59,7 +58,6 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           dropHand(showHand, shownCard);
-          showHand.setLocked(true);
         }
         break;
 
@@ -82,7 +80,6 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           dropHand(showHand, shownCard);
-          showHand.setLocked(true);
         }
         break;
 
@@ -95,7 +92,6 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           chosenCard.setShow(true);
           chosenCard.setCustomText('Discard');
           dropHand(showHand, shownCard);
-          showHand.setLocked(true);
         }
     }
   };

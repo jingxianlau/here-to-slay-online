@@ -2,7 +2,7 @@ import {
   monsterRequirements,
   rollRequirements
 } from '../../../functions/abilities';
-import { discardCard, removeBoard } from '../../../functions/game';
+import { discardCard, removeBoard, removeItem } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -65,7 +65,7 @@ export const modifyRoll = (
           if (state.dice.main.total >= state.dice.defend.total) {
             // fail
             state.mainDeck.preparedCard.successful = false;
-            if (state.mainDeck.preparedCard.card.type === 'hero') {
+            if (state.mainDeck.preparedCard.card.type === CardType.hero) {
               const player = state.mainDeck.preparedCard.card.player;
               if (player === undefined) return;
               removeBoard(
@@ -73,6 +73,10 @@ export const modifyRoll = (
                 state.mainDeck.preparedCard.card.player,
                 state.mainDeck.preparedCard.card
               );
+            } else if (
+              state.mainDeck.preparedCard.card.type === CardType.item
+            ) {
+              removeItem(roomId, state.mainDeck.preparedCard.card);
             }
             sendGameState(roomId);
 

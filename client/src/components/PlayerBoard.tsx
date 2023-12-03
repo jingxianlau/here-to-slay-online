@@ -1,5 +1,5 @@
 import React from 'react';
-import { LeaderCard } from '../types';
+import { CardType, LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
 
@@ -19,7 +19,11 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
     <div
       className={`mat ${
         (state.board[playerNum].largeCards[0] as LeaderCard).class
-      } ${playerNum === state.turn.player ? 'active' : 'inactive'}`}
+      } ${
+        playerNum === state.turn.player && state.turn.phase !== 'choose-hero'
+          ? 'active'
+          : 'inactive'
+      }`}
     >
       <div className='background'></div>
       <div className='cards'>
@@ -35,28 +39,35 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                 }
               }}
               onMouseLeave={() => {
-                shownCard.set(null);
-                shownCard.setPos(null);
+                if (!shownCard.locked) {
+                  shownCard.set(null);
+                  shownCard.setPos(null);
+                }
               }}
               onClick={() => {
-                if (
-                  state.turn.player === state.playerNum &&
-                  state.playerNum === playerNum &&
-                  (card.freeUse || state.turn.movesLeft > 0) &&
-                  !state.turn.pause &&
-                  state.turn.phase === 'play' &&
-                  !card.abilityUsed
-                ) {
-                  chosenCard.set(card);
-                  chosenCard.setShow(true);
-                  chosenCard.setCustomText('Ability');
+                if (state.turn.player === state.playerNum) {
+                  if (
+                    (card.freeUse || state.turn.movesLeft > 0) &&
+                    !state.turn.pause &&
+                    state.turn.phase === 'play' &&
+                    !card.abilityUsed &&
+                    state.playerNum === playerNum
+                  ) {
+                    chosenCard.set(card);
+                    chosenCard.setShow(true);
+                    chosenCard.setCustomText('Ability');
+                  } else if (state.turn.phase === 'choose-hero') {
+                    chosenCard.set(card);
+                    chosenCard.setShow(true);
+                    chosenCard.setCustomText('Select');
+                  }
                 }
               }}
             >
               <img
                 src={getImage(card)}
                 alt={card.name}
-                className={`small-card ${
+                className={`small-card hero ${
                   card.id === state.mainDeck.preparedCard?.card.id ||
                   (state.turn.player === state.playerNum &&
                     card.freeUse &&
@@ -65,18 +76,46 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                     ? 'glow'
                     : ''
                 } ${
-                  !state.mainDeck.preparedCard &&
-                  state.turn.player === state.playerNum &&
-                  state.playerNum === playerNum &&
-                  state.turn.phase === 'play' &&
-                  !card.abilityUsed
+                  (!state.mainDeck.preparedCard &&
+                    state.turn.player === state.playerNum &&
+                    state.playerNum === playerNum &&
+                    state.turn.phase === 'play' &&
+                    !card.abilityUsed) ||
+                  (state.turn.phase === 'choose-hero' &&
+                    state.turn.player === state.playerNum)
                     ? 'click'
                     : playerNum === state.playerNum
                     ? 'deny'
                     : ''
                 }`}
+                style={{
+                  opacity:
+                    state.mainDeck.preparedCard?.card.type === CardType.item &&
+                    card.id === state.mainDeck.preparedCard.card.heroId
+                      ? 0.6
+                      : 1,
+                  zIndex:
+                    state.mainDeck.preparedCard?.card.type === CardType.item &&
+                    card.id === state.mainDeck.preparedCard.card.heroId
+                      ? 1
+                      : 2
+                }}
                 draggable='false'
               />
+
+              {card.item && (
+                <img
+                  src={getImage(card.item)}
+                  alt={card.item.name}
+                  className={`small-card item ${
+                    state.mainDeck.preparedCard?.card.type === CardType.item &&
+                    card.id === state.mainDeck.preparedCard.card.heroId
+                      ? 'glow'
+                      : ''
+                  }`}
+                  draggable='false'
+                />
+              )}
             </div>
           ))}
 
@@ -100,8 +139,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                 }
               }}
               onMouseLeave={() => {
-                shownCard.set(null);
-                shownCard.setPos(null);
+                if (!shownCard.locked) {
+                  shownCard.set(null);
+                  shownCard.setPos(null);
+                }
               }}
             >
               <img
@@ -109,6 +150,13 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                 alt={card.name}
                 className='large-card'
                 draggable='false'
+                style={{
+                  filter:
+                    state.turn.phase === 'choose-hero' &&
+                    state.turn.player === state.playerNum
+                      ? 'brightness(35%)'
+                      : 'none'
+                }}
               />
             </div>
           ))}

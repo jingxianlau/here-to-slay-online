@@ -27,7 +27,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
       <button
         className={`circular pass ${
           state.turn.player === state.playerNum &&
-          (state.turn.phase === 'draw' || state.turn.phase === 'play')
+          (state.turn.phase === 'draw' || state.turn.phase === 'play') &&
+          !state.turn.pause
             ? 'show'
             : 'hide'
         }`}
