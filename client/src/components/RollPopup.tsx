@@ -124,7 +124,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
               state.turn.challenger === undefined && (
                 <>
                   <div className='roll-popup'>
-                    <div className='img-container left'>
+                    <div className='img-container'>
                       <img
                         src={getImage(state.mainDeck.preparedCard.card)}
                         alt={state.mainDeck.preparedCard.card.name}

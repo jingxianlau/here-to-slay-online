@@ -348,7 +348,7 @@ header img {
   user-select: none;
   transition: ease-in-out 0.25s;
 }
-.hand .img-container img.small-md.glow {
+.hand.list .img-container img.small-md.glow {
   width: 19.402vh;
   height: 27.101vh;
   margin: 0 1.8vh;

@@ -40,7 +40,8 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
             !(
               card.type === CardType.hero &&
               state.board[state.playerNum].heroCards.length >= 5
-            )
+            ) &&
+            state.turn.movesLeft
           ) {
             socket.emit('prepare-card', roomId, userId, card);
           } else if (
@@ -48,7 +49,9 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
             card.type === CardType.hero &&
             state.board[state.playerNum].heroCards.some(
               val => val.id === card.id
-            )
+            ) &&
+            (state.turn.movesLeft || card.freeUse) &&
+            !card.abilityUsed
           ) {
             socket.emit('use-effect-roll', roomId, userId, card);
           } else if (

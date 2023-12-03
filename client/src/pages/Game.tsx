@@ -283,7 +283,8 @@ const Game: React.FC = () => {
 
             if (
               newState.turn.player === newState.playerNum &&
-              !newState.turn.pause
+              !newState.turn.pause &&
+              newState.turn.movesLeft
             ) {
               allowedCards.set([CardType.hero, CardType.magic]);
               if (

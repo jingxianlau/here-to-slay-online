@@ -49,7 +49,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
               onClick={() => {
                 if (state.turn.player === state.playerNum) {
                   if (
-                    (card.freeUse || state.turn.movesLeft > 0) &&
+                    (state.turn.movesLeft || card.freeUse) &&
                     !state.turn.pause &&
                     state.turn.phase === 'play' &&
                     !card.abilityUsed &&
@@ -90,7 +90,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                     state.turn.player === state.playerNum &&
                     state.playerNum === playerNum &&
                     state.turn.phase === 'play' &&
-                    !card.abilityUsed) ||
+                    !card.abilityUsed &&
+                    (state.turn.movesLeft || card.freeUse)) ||
                   (state.turn.phase === 'choose-hero' &&
                     state.turn.player === state.playerNum &&
                     !card.item)

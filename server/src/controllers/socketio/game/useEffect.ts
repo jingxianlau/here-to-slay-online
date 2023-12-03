@@ -57,7 +57,11 @@ export const useEffectRoll = (
       gameState.turn.phaseChanged = false;
     }, 3000);
   } else {
-    if (gameState.turn.movesLeft < 1 || heroCard.abilityUsed) return;
+    if (
+      (gameState.turn.movesLeft < 1 && !heroCard.freeUse) ||
+      heroCard.abilityUsed
+    )
+      return;
 
     gameState.turn.phase = 'use-effect-roll';
     gameState.turn.phaseChanged = true;

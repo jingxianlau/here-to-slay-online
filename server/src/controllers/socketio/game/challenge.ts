@@ -50,7 +50,8 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     (card.type !== CardType.hero ||
       state.board[playerNum].heroCards.length < 5) &&
     (card.type !== CardType.item ||
-      state.board.some(val => val.heroCards.some(val => !val.item)))
+      state.board.some(val => val.heroCards.some(val => !val.item))) &&
+    state.turn.movesLeft >= 1
   ) {
     removeFreeUse(roomId);
     playCard(roomId, playerNum, card);
