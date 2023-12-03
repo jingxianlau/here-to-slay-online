@@ -15,7 +15,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
   socket,
   setShowDiscardPile
 }) => {
-  const { state, credentials, showHand, shownCard } = useClientContext();
+  const { state, credentials, showHand, shownCard, chosenCard } =
+    useClientContext();
 
   function drawTwo() {
     if (
@@ -36,15 +37,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
     )
       return;
 
-    socket.emit('draw-one', credentials.roomId, credentials.userId);
-    showHand.set(true);
-    showHand.setLocked(true);
-    if (state.val.turn.movesLeft > 1) {
-      setTimeout(() => {
-        showHand.set(false);
-        showHand.setLocked(false);
-      }, 1200);
-    }
+    chosenCard.setShow(true);
+    chosenCard.setCustomText('Draw');
   }
   function drawEffect() {
     if (state.val.turn.effect) {
@@ -64,7 +58,9 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       meetsRequirements(card, state.val) &&
       state.val.turn.movesLeft >= 2
     ) {
-      socket.emit('attack-roll', credentials.roomId, credentials.userId, card);
+      chosenCard.set(card);
+      chosenCard.setShow(true);
+      chosenCard.setCustomText('Attack');
     }
   }
 

@@ -91,9 +91,11 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           state.turn.player === state.playerNum &&
           state.players[state.playerNum].numCards > 7
         ) {
-          socket.emit('end-turn-discard', roomId, userId, card);
-          shownCard.set(null);
-          shownCard.setPos(null);
+          chosenCard.set(card);
+          chosenCard.setShow(true);
+          chosenCard.setCustomText('Discard');
+          dropHand(showHand, shownCard);
+          showHand.setLocked(true);
         }
     }
   };

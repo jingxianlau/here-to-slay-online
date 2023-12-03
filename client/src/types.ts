@@ -229,6 +229,8 @@ export interface ClientStateObj {
     set: React.Dispatch<React.SetStateAction<AnyCard | null>>;
     show: boolean;
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
+    customText: string;
+    setCustomText: React.Dispatch<React.SetStateAction<string>>;
   };
 
   showHand: {

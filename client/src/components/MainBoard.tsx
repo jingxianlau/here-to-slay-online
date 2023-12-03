@@ -106,7 +106,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
                     {state.val.match.players[boardNum]}
                   </h2>
                 )}
-                <PlayerBoard playerNum={boardNum} col={num} socket={socket} />
+                <PlayerBoard playerNum={boardNum} col={num} />
               </div>
             ) : (
               <div className='center-board' key={i}>

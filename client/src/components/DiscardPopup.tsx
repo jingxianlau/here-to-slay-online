@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
-import { AnyCard, CardType } from '../types';
+import { AnyCard } from '../types';
 import { getImage } from '../helpers/getImage';
 
 interface DiscardPopupProps {

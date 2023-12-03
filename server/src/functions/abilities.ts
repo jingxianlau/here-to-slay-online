@@ -1,15 +1,8 @@
 import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
-import { AnyCard, CardType, GameState, HeroClass, allCards } from '../types';
-import {
-  addCards,
-  drawCards,
-  nextPlayer,
-  playCard,
-  removeCard,
-  swapHands
-} from './game';
+import { AnyCard, CardType, HeroClass, allCards } from '../types';
+import { addCards, drawCards, playCard, removeCard, swapHands } from './game';
 
 const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
   setTimeout(() => {

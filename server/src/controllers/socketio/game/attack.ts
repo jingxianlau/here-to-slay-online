@@ -1,8 +1,61 @@
+import { monsterRequirements } from '../../../functions/abilities';
 import { rollDice } from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { CardType, MonsterCard } from '../../../types';
+import {
+  CardType,
+  GameState,
+  HeroClass,
+  LargeCard,
+  LeaderCard,
+  MonsterCard
+} from '../../../types';
+
+const restOfCards = (
+  requirements: { req: number; hero: HeroClass | 'hero' }[],
+  state: GameState
+) => {
+  let usedCards = 0;
+  for (let i = 0; i < requirements.length; i++) {
+    const heroClass = requirements[i].hero;
+    if (heroClass !== 'hero') {
+      let num = state.board[state.turn.player].classes[heroClass];
+      if (
+        heroClass ===
+        (state.board[state.turn.player].largeCards[0] as LeaderCard).class
+      ) {
+        num--;
+      }
+      usedCards += num > requirements[i].req ? requirements[i].req : num;
+    }
+  }
+  return state.board[state.turn.player].heroCards.length - usedCards;
+};
+const meetsRequirements = (monster: LargeCard, state: GameState) => {
+  for (const requirement of monsterRequirements[
+    monster.name.replaceAll(' ', '-').toLowerCase()
+  ]) {
+    if (requirement.hero !== 'hero') {
+      if (
+        state.board[state.turn.player].classes[requirement.hero] <
+        requirement.req
+      ) {
+        return false;
+      }
+    } else {
+      if (
+        restOfCards(
+          monsterRequirements[monster.name.replaceAll(' ', '-').toLowerCase()],
+          state
+        ) < requirement.req
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
 
 export const attackRoll = (
   roomId: string,
@@ -15,7 +68,10 @@ export const attackRoll = (
     playerNum === -1 ||
     gameState.dice.main.total !== 0 ||
     gameState.turn.player !== playerNum ||
-    (gameState.turn.phase !== 'play' && gameState.turn.phase !== 'attack-roll')
+    (gameState.turn.phase !== 'play' &&
+      gameState.turn.phase !== 'attack-roll') ||
+    !meetsRequirements(monster, gameState) ||
+    !gameState.mainDeck.monsters.some(val => val.id === monster.id)
   ) {
     return;
   }

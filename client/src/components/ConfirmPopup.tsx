@@ -1,9 +1,8 @@
 import React from 'react';
 import { Socket } from 'socket.io-client';
-import { CardType, ModifierCard } from '../types';
+import { CardType } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
-import { dropHand } from '../helpers/dropHand';
 
 interface ConfirmCardProps {
   socket: Socket;
@@ -13,7 +12,15 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
   const {
     showHand,
     credentials: { roomId, userId },
-    chosenCard: { val: card, set: setCard, show, setShow },
+    chosenCard: {
+      val: card,
+      set: setCard,
+      show,
+      setShow,
+      customText,
+      setCustomText
+    },
+    shownCard,
     state: { val: state }
   } = useClientContext();
 
@@ -27,12 +34,30 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
               card.type === CardType.item ||
               card.type === CardType.magic) &&
             !state.turn.pause &&
+            !state.board[state.playerNum].heroCards.some(
+              val => val.id === card.id
+            ) &&
             !(
               card.type === CardType.hero &&
               state.board[state.playerNum].heroCards.length >= 5
             )
           ) {
             socket.emit('prepare-card', roomId, userId, card);
+          } else if (
+            state.turn.player === state.playerNum &&
+            card.type === CardType.hero &&
+            state.board[state.playerNum].heroCards.some(
+              val => val.id === card.id
+            )
+          ) {
+            socket.emit('use-effect-roll', roomId, userId, card);
+          } else if (
+            state.turn.player === state.playerNum &&
+            card.type === CardType.large &&
+            card.player === undefined &&
+            state.turn.movesLeft >= 2
+          ) {
+            socket.emit('attack-roll', roomId, userId, card);
           }
           break;
 
@@ -56,6 +81,17 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
             );
           }
           break;
+
+        case 'end-turn-discard':
+          if (
+            state.turn.player === state.playerNum &&
+            state.players[state.turn.player].numCards > 7
+          ) {
+            socket.emit('end-turn-discard', roomId, userId, card);
+            shownCard.set(null);
+            shownCard.setPos(null);
+          }
+          break;
       }
 
       setShow(false);
@@ -63,24 +99,68 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
       setTimeout(() => {
         setCard(null);
       }, 200);
+    } else if (customText === 'Draw') {
+      if (
+        state.turn.player === state.playerNum &&
+        state.turn.movesLeft >= 1 &&
+        state.turn.phase === 'play'
+      ) {
+        socket.emit('draw-one', roomId, userId);
+        showHand.set(true);
+        showHand.setLocked(true);
+        if (state.turn.movesLeft > 1) {
+          setTimeout(() => {
+            showHand.set(false);
+            showHand.setLocked(false);
+          }, 1200);
+        }
+      }
     }
+
+    setCard(null);
+    setShow(false);
+    setCustomText('');
   };
 
   return (
     <div className={`confirm-card${show ? ' show' : ' hide'}`}>
-      {card && state.turn.phase !== 'modify' && (
+      {(card || customText === 'Draw') && state.turn.phase !== 'modify' && (
         <>
           <div className='left' onClick={playCard}>
-            <h1>Play</h1>
+            <h1>{customText ? customText : 'Play'}</h1>
           </div>
-          <div className='img-container'>
-            <img
-              src={getImage(card)}
-              alt={card.name}
-              className='small-xl'
-              draggable='false'
-            />
-          </div>
+
+          {customText !== 'Draw' && card ? (
+            card.type !== CardType.large ? (
+              <div className='img-container'>
+                <img
+                  src={getImage(card)}
+                  alt={card.name}
+                  className='small-xl'
+                  draggable='false'
+                />
+              </div>
+            ) : (
+              <div className='img-container'>
+                <img
+                  src={getImage(card)}
+                  alt={card.name}
+                  className='large-lg'
+                  draggable='false'
+                />
+              </div>
+            )
+          ) : (
+            <div className='img-container'>
+              <img
+                src='./assets/back/back-creme.png'
+                alt='Deck'
+                className='small-xl'
+                draggable='false'
+              />
+            </div>
+          )}
+
           <div
             className='right'
             onClick={() => {

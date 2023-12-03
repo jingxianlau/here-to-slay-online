@@ -81,18 +81,7 @@ export const allCards = [
   CardType.item
 ];
 
-export interface GameState extends privateState {
-  // PRIVATE
-  secret: {
-    deck: AnyCard[];
-    leaderPile: LeaderCard[];
-    monsterPile: MonsterCard[];
-    playerIds: string[];
-    playerSocketIds: string[];
-  };
-}
-
-export interface privateState {
+interface State {
   // PRIVATE
   secret: {
     deck: AnyCard[] | null;
@@ -195,5 +184,19 @@ export interface privateState {
     isRolling: boolean;
     pause: boolean;
   };
+}
+
+export interface GameState extends State {
+  // PRIVATE
+  secret: {
+    deck: AnyCard[];
+    leaderPile: LeaderCard[];
+    monsterPile: MonsterCard[];
+    playerIds: string[];
+    playerSocketIds: string[];
+  };
+}
+
+export interface privateState extends State {
   playerNum: number;
 }

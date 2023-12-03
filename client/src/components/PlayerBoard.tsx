@@ -1,24 +1,18 @@
 import React from 'react';
 import { LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
-import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 
 interface PlayerBoardProps {
   playerNum: number;
   col: number;
-  socket: Socket;
 }
 
-const PlayerBoard: React.FC<PlayerBoardProps> = ({
-  playerNum,
-  col,
-  socket
-}) => {
+const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
   const {
     state: { val: state },
     shownCard,
-    credentials: { roomId, userId }
+    chosenCard
   } = useClientContext();
 
   return state.board[playerNum].largeCards.length > 0 ? (
@@ -53,7 +47,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                   state.turn.phase === 'play' &&
                   !card.abilityUsed
                 ) {
-                  socket.emit('use-effect-roll', roomId, userId, card);
+                  chosenCard.set(card);
+                  chosenCard.setShow(true);
+                  chosenCard.setCustomText('Ability');
                 }
               }}
             >

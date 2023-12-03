@@ -187,7 +187,13 @@ export const endTurnDiscard = (
     }
   } else {
     // new effect
-    if (state.players[playerNum].numCards > 7) {
+    if (state.board[state.turn.player].heroCards.some(val => val.freeUse)) {
+      state.turn.phase = 'play';
+      state.turn.phaseChanged = true;
+      sendGameState(roomId);
+      state.turn.phaseChanged = false;
+      return;
+    } else if (state.players[playerNum].numCards > 7) {
       state.turn.phase = 'end-turn-discard';
       state.turn.toDiscard = state.players[playerNum].numCards - 7;
       state.turn.phaseChanged = true;
