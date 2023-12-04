@@ -413,7 +413,7 @@ header img {
 /* BOARD */
 .content {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 .col {
@@ -1182,6 +1182,17 @@ div.cross {
 }
 .confirm-card.hide .img-container {
   align-content: center;
+}
+.confirm-card.hide .icon {
+  align-content: center;
+}
+.confirm-card .icon {
+  width: 30vh;
+  height: 30vh;
+}
+.confirm-card .icon span.image.material-symbols-outlined {
+  font-size: 30vh;
+  user-select: none;
 }
 .confirm-card .left {
   font-size: 6vh;

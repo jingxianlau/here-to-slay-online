@@ -5,7 +5,6 @@ export const dropHand = (
   shownCard: ClientStateObj['shownCard']
 ) => {
   showHand.set(false);
-  showHand.setLocked(true);
   shownCard.set(null);
   shownCard.setPos(null);
 };

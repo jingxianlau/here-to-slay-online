@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getImage, shortenName } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
-import {
-  AnyCard,
-  CardType,
-  HeroClass,
-  ItemCard,
-  LeaderCard,
-  monsterRequirements
-} from '../types';
+import { CardType, monsterRequirements } from '../types';
 import { restOfCards } from '../helpers/meetsRequirements';
 
 interface ShownCardProps {}

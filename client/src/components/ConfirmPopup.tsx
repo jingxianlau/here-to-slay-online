@@ -3,6 +3,7 @@ import { Socket } from 'socket.io-client';
 import { CardType } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
+import { popupHand } from '../helpers/popupHand';
 
 interface ConfirmCardProps {
   socket: Socket;
@@ -104,7 +105,6 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
       }
 
       setShow(false);
-      showHand.setLocked(false);
       setTimeout(() => {
         setCard(null);
       }, 200);
@@ -124,6 +124,24 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
           }, 1200);
         }
       }
+    } else if (customText === 'Redraw') {
+      if (!state || !socket || state.turn.movesLeft === 0) return;
+      if (state.turn.player === state.playerNum) {
+        socket.emit('draw-five', roomId, userId);
+        popupHand(showHand);
+      }
+    } else if (customText === 'Pass') {
+      if (state.turn.phase === 'draw' || state.turn.phase === 'play') {
+        socket.emit('pass', roomId, userId);
+      }
+    } else if (customText === 'Skip') {
+      if (
+        state.turn.effect &&
+        state.turn.effect.players.some(val => val === state.playerNum) &&
+        state.turn.effect.action === 'choose-hand'
+      ) {
+        socket.emit('use-effect', roomId, userId, state.turn.effect.card);
+      }
     }
 
     setCard(null);
@@ -133,57 +151,80 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
 
   return (
     <div className={`confirm-card${show ? ' show' : ' hide'}`}>
-      {(card || customText === 'Draw') && state.turn.phase !== 'modify' && (
-        <>
-          <div className='left' onClick={playCard}>
-            <h1>{customText ? customText : 'Play'}</h1>
-          </div>
+      {(card ||
+        customText === 'Draw' ||
+        customText === 'Redraw' ||
+        customText === 'Pass' ||
+        customText === 'Skip') &&
+        state.turn.phase !== 'modify' && (
+          <>
+            <div className='left' onClick={playCard}>
+              <h1>{customText ? customText : 'Play'}</h1>
+            </div>
 
-          {customText !== 'Draw' && card ? (
-            card.type !== CardType.large ? (
+            {customText !== 'Draw' &&
+            customText !== 'Redraw' &&
+            customText !== 'Pass' &&
+            customText !== 'Skip' &&
+            card ? (
+              card.type !== CardType.large ? (
+                <div className='img-container'>
+                  <img
+                    src={getImage(card)}
+                    alt={card.name}
+                    className='small-xl'
+                    draggable='false'
+                  />
+                </div>
+              ) : (
+                <div className='img-container'>
+                  <img
+                    src={getImage(card)}
+                    alt={card.name}
+                    className='large-lg'
+                    draggable='false'
+                  />
+                </div>
+              )
+            ) : customText === 'Draw' ? (
               <div className='img-container'>
                 <img
-                  src={getImage(card)}
-                  alt={card.name}
+                  src='./assets/back/back-creme.png'
+                  alt='Deck'
                   className='small-xl'
                   draggable='false'
                 />
               </div>
-            ) : (
-              <div className='img-container'>
-                <img
-                  src={getImage(card)}
-                  alt={card.name}
-                  className='large-lg'
-                  draggable='false'
-                />
+            ) : customText === 'Pass' ? (
+              <div className='icon'>
+                <span className='image material-symbols-outlined'>forward</span>
               </div>
-            )
-          ) : (
-            <div className='img-container'>
-              <img
-                src='./assets/back/back-creme.png'
-                alt='Deck'
-                className='small-xl'
-                draggable='false'
-              />
-            </div>
-          )}
+            ) : customText === 'Redraw' ? (
+              <div className='icon'>
+                <span className='image material-symbols-outlined'>
+                  delete_forever
+                </span>
+              </div>
+            ) : (
+              <div className='icon'>
+                <span className='image material-symbols-outlined'>start</span>
+              </div>
+            )}
 
-          <div
-            className='right'
-            onClick={() => {
-              setShow(false);
-              showHand.setLocked(false);
-              setTimeout(() => {
-                setCard(null);
-              }, 200);
-            }}
-          >
-            <h1>Cancel</h1>
-          </div>
-        </>
-      )}
+            <div
+              className='right'
+              onClick={() => {
+                setShow(false);
+                setTimeout(() => {
+                  setCard(null);
+                  setCustomText('');
+                }, 200);
+              }}
+            >
+              <h1>Cancel</h1>
+            </div>
+          </>
+        )}
     </div>
   );
 };

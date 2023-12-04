@@ -50,7 +50,6 @@ const Game: React.FC = () => {
   const [showDiscardPile, setShowDiscardPile] = useState(false);
   const [showEffectPopup, setShowEffectPopup] = useState(false);
   const [showDiscardPopup, setShowDiscardPopup] = useState(false);
-  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (!credentials) {
@@ -412,8 +411,6 @@ const Game: React.FC = () => {
             }
 
             if (!showBoard) {
-              showHand.set(false);
-              showHand.setLocked(true);
               showHand.set(true);
               showHand.setLocked(true);
             }
@@ -499,16 +496,11 @@ const Game: React.FC = () => {
                 <ShownCard />
                 <ShownCardTop />
 
-                <Hand
-                  socket={socket}
-                  showBoard={showBoard}
-                  setShowBoard={setShowBoard}
-                />
+                <Hand showBoard={showBoard} setShowBoard={setShowBoard} />
 
                 <HelperText />
 
                 <MenuButtons
-                  socket={socket}
                   showBoard={showBoard}
                   setShowBoard={setShowBoard}
                   setShowHelp={setShowHelp}

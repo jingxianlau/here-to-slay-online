@@ -1,19 +1,16 @@
 import React from 'react';
 import { AnyCard, CardType } from '../types';
 import { getImage } from '../helpers/getImage';
-import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
 import { dropHand } from '../helpers/dropHand';
-import { popupHand } from '../helpers/popupHand';
 
 interface HandProps {
-  socket: Socket;
   showBoard: boolean;
   setShowBoard: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
+const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
   const {
     state: { val: state },
     showHand,
@@ -23,16 +20,8 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
     shownCard
   } = useClientContext();
 
-  const drawFive = () => {
-    if (!state || !socket || state.turn.movesLeft === 0) return;
-    if (state.turn.player === state.playerNum) {
-      socket.emit('draw-five', roomId, userId);
-      popupHand(showHand);
-    }
-  };
-
   const playCard = (card: AnyCard) => {
-    if (!state || !socket || !allowedCard(allowedCards.val, card.type)) return;
+    if (!state || !allowedCard(allowedCards.val, card.type)) return;
 
     switch (state.turn.phase) {
       case 'play':
@@ -79,7 +68,9 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
         ) {
           chosenCard.set(card);
           chosenCard.setShow(true);
-          dropHand(showHand, shownCard);
+          if (!showHand.locked) {
+            dropHand(showHand, shownCard);
+          }
         }
         break;
 
@@ -91,7 +82,9 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           chosenCard.setCustomText('Discard');
-          dropHand(showHand, shownCard);
+          if (!showHand.locked) {
+            dropHand(showHand, shownCard);
+          }
         }
     }
   };
@@ -127,14 +120,27 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
         {state.turn.player === state.playerNum &&
           state.turn.movesLeft === 3 &&
           state.turn.phase === 'play' && (
-            <button className='danger circular discard' onClick={drawFive}>
+            <button
+              className='danger circular discard'
+              onClick={() => {
+                chosenCard.setShow(true);
+                chosenCard.setCustomText('Redraw');
+                if (!showHand.locked) {
+                  dropHand(showHand, shownCard);
+                }
+              }}
+            >
               <span className='material-symbols-outlined'>delete_forever</span>
             </button>
           )}
 
         <div
           className={`hand${
-            state.players[state.playerNum].numCards > 8 ? ' cover' : ' list'
+            state.players[state.playerNum].numCards *
+              ((23 / 100) * window.innerHeight) >
+            (97 / 100) * window.innerWidth
+              ? ' cover'
+              : ' list'
           }`}
         >
           {state.players[state.playerNum]?.hand.map((card, i) => (
@@ -213,19 +219,10 @@ const Hand: React.FC<HandProps> = ({ socket, showBoard, setShowBoard }) => {
             <button
               className='circular skip'
               onClick={() => {
-                if (
-                  state.turn.effect &&
-                  state.turn.effect.players.some(
-                    val => val === state.playerNum
-                  ) &&
-                  state.turn.effect.action === 'choose-hand'
-                ) {
-                  socket.emit(
-                    'use-effect',
-                    roomId,
-                    userId,
-                    state.turn.effect.card
-                  );
+                chosenCard.setShow(true);
+                chosenCard.setCustomText('Skip');
+                if (!showHand.locked) {
+                  dropHand(showHand, shownCard);
                 }
               }}
             >

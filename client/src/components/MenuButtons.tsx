@@ -3,21 +3,19 @@ import useClientContext from '../hooks/useClientContext';
 import { Socket } from 'socket.io-client';
 
 interface MenuButtonsProps {
-  socket: Socket;
   showBoard: boolean;
   setShowBoard: React.Dispatch<React.SetStateAction<boolean>>;
   setShowHelp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MenuButtons: React.FC<MenuButtonsProps> = ({
-  socket,
   showBoard,
   setShowBoard,
   setShowHelp
 }) => {
   const {
     state: { val: state },
-    credentials,
+    chosenCard,
     showHand,
     shownCard
   } = useClientContext();
@@ -33,9 +31,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
             : 'hide'
         }`}
         onClick={() => {
-          if (state.turn.phase === 'draw' || state.turn.phase === 'play') {
-            socket.emit('pass', credentials.roomId, credentials.userId);
-          }
+          chosenCard.setShow(true);
+          chosenCard.setCustomText('Pass');
         }}
       >
         <span className='material-symbols-outlined'>forward</span>

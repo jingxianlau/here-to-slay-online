@@ -74,7 +74,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
                 }`}
                 key={i}
                 style={{
-                  marginBottom: arr.length > 1 ? 0 : '120px'
+                  marginBottom: arr.length > 1 ? 0 : '10vh'
                 }}
               >
                 {boardNum !== state.val.playerNum && (

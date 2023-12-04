@@ -45,7 +45,6 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
       setShow(true);
     } else {
       setShow(false);
-      showHand.setLocked(false);
     }
   }, [chosenCard.val]);
 
