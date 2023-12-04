@@ -4,6 +4,7 @@ import {
   CardType,
   GameState,
   HeroCard,
+  HeroClass,
   ItemCard,
   LeaderCard,
   MagicCard,
@@ -12,7 +13,7 @@ import {
 import shuffle from 'lodash.shuffle';
 import random from 'lodash.random';
 import { heroCards, initialState } from '../cards';
-import { sendGameState } from '../server';
+import { disconnectAll, sendGameState } from '../server';
 import cloneDeep from 'lodash.clonedeep';
 
 export const distributeCards = (state: GameState, numPlayers: number) => {

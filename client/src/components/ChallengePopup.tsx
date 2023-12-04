@@ -30,8 +30,7 @@ const ChallengePopup: React.FC<{
   const [show, setShow] = useState(false);
 
   // item cards
-  const [heroCardPlayer, setHeroCardPlayer] = useState(0);
-
+  const [heroCardPlayer, setHeroCardPlayer] = useState(-1);
   const preppedCard = state.mainDeck.preparedCard;
 
   useEffect(() => {
@@ -246,7 +245,10 @@ const ChallengePopup: React.FC<{
                       draggable='false'
                     />
                   ) : (
-                    heroCardPlayer !== -1 && (
+                    heroCardPlayer !== -1 &&
+                    state.board[heroCardPlayer].heroCards.find(
+                      val => val.item && val.item.id === preppedCard.card.id
+                    ) && (
                       <>
                         <img
                           src={getImage(

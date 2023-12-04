@@ -9,7 +9,7 @@ import random from 'lodash.random';
 export const getRooms: RequestHandler = (req, res) => {
   let updatedRooms: { [key: string]: number } = {};
   for (const key of Object.keys(rooms)) {
-    if (!rooms[key].private) {
+    if (!rooms[key].private && !rooms[key].state.match.gameStarted) {
       updatedRooms[key] = rooms[key].numPlayers;
     }
   }
@@ -67,6 +67,10 @@ export const joinRoom: RequestHandler = (req, res) => {
   if (room) {
     if (rooms[roomId].state.match.players.includes(username)) {
       return res.json({ successful: false, res: 'Username taken' });
+    } else if (rooms[roomId].state.match.gameStarted) {
+      return res
+        .status(400)
+        .json({ successful: false, res: 'Room could not be found' });
     }
 
     addPlayer(roomId, userId, username);

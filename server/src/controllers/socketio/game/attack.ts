@@ -1,5 +1,5 @@
 import { monsterRequirements } from '../../../functions/abilities';
-import { rollDice } from '../../../functions/game';
+import { removeFreeUse, rollDice } from '../../../functions/game';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
@@ -98,6 +98,7 @@ export const attackRoll = (
     }, 3000);
   } else {
     if (gameState.turn.movesLeft < 2) return;
+    removeFreeUse(roomId);
 
     gameState.turn.phase = 'attack-roll';
     gameState.turn.phaseChanged = true;

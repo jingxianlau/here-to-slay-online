@@ -52,7 +52,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state.val]);
 
   return (
     <div className='content'>
@@ -74,7 +74,12 @@ const MainBoard: React.FC<MainBoardProps> = ({
                 }`}
                 key={i}
                 style={{
-                  marginBottom: arr.length > 1 ? 0 : '10vh'
+                  marginBottom: arr.length > 1 ? 0 : '10vh',
+                  filter:
+                    state.val.turn.phase === 'end-game' &&
+                    !state.val.match.isReady[boardNum]
+                      ? 'brightness(35%)'
+                      : 'none'
                 }}
               >
                 {boardNum !== state.val.playerNum && (
@@ -109,7 +114,17 @@ const MainBoard: React.FC<MainBoardProps> = ({
                 <PlayerBoard playerNum={boardNum} col={num} />
               </div>
             ) : (
-              <div className='center-board' key={i}>
+              <div
+                className='center-board'
+                key={i}
+                style={{
+                  filter:
+                    state.val.turn.phase === 'end-game' &&
+                    !state.val.match.isReady[boardNum]
+                      ? 'brightness(35%)'
+                      : 'none'
+                }}
+              >
                 <CenterBoard
                   socket={socket}
                   setShowDiscardPile={setShowDiscardPile}

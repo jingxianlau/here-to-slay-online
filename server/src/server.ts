@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import express from 'express';
 
 import expressServer from './controllers/express/expressServer';
-import { parseState, validSender } from './functions/helpers';
+import { parseState } from './functions/helpers';
 import { rooms } from './rooms';
 
 import {
@@ -86,6 +86,10 @@ HELPER FUNCTIONS
 - sendGameState (in match)
 - confirmNumPlayers
 */
+export function disconnectAll(roomId: string) {
+  io.in(roomId).disconnectSockets(true);
+}
+
 export function sendState(roomId: string) {
   io.in(roomId).emit('state', rooms[roomId].state.match);
 }

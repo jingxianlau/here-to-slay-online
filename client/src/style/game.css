@@ -41,6 +41,7 @@ header img {
   position: absolute;
   top: 1vh;
   right: 1.5vh;
+  z-index: 9999;
 }
 
 .game button {
@@ -1421,6 +1422,46 @@ div.cross {
 }
 .discard-cover .discarded .img-container:hover img {
   border: 0.5vh solid #fc7c37;
+}
+
+.end-page {
+  position: absolute;
+  top: 0;
+  background: #000000dd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity ease-in-out 0.2s;
+  z-index: 1000;
+}
+.end-page.show {
+  width: 100vw;
+  height: 100vh;
+}
+.end-page.hide {
+  opacity: 0;
+}
+.end-page .timer {
+  position: absolute;
+  bottom: 0;
+  background-color: #fc7c37;
+  width: 25vh;
+  height: 12.5vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12.5vh 12.5vh 0 0;
+  border-left: 0.8vh solid white;
+  border-right: 0.8vh solid white;
+  border-top: 0.8vh solid white;
+}
+.end-page .timer h1 {
+  font-size: 8.5vh;
+  margin-top: 3vh;
+}
+.end-page .timer h5 {
+  margin-top: -6.5vh;
 }
 
 /* HELPER TEXT & TIMER */

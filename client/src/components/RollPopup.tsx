@@ -107,9 +107,10 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
           state.mainDeck.preparedCard.card.type === CardType.large) && (
           <div
             className={`popup ${
-              state.turn.phase === 'use-effect-roll' ||
-              state.turn.phase === 'attack-roll' ||
-              state.turn.phase === 'modify'
+              state.turn.challenger === undefined &&
+              (state.turn.phase === 'use-effect-roll' ||
+                state.turn.phase === 'attack-roll' ||
+                state.turn.phase === 'modify')
                 ? 'show'
                 : 'hide'
             }`}
@@ -308,7 +309,12 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
                       </h3>
                     </div>
 
-                    <div className='side-modifier'>
+                    <div
+                      className='side-modifier'
+                      style={{
+                        marginLeft: '1.2vh'
+                      }}
+                    >
                       {state.turn.phase === 'modify' && modifiers.length ? (
                         <div className='has-modifier'>
                           <h3>

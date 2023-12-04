@@ -20,7 +20,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
       className={`mat ${
         (state.board[playerNum].largeCards[0] as LeaderCard).class
       } ${
-        playerNum === state.turn.player && state.turn.phase !== 'choose-hero'
+        (playerNum === state.turn.player &&
+          state.turn.phase !== 'choose-hero') ||
+        state.turn.phase === 'end-game'
           ? 'active'
           : 'inactive'
       }`}
@@ -86,17 +88,19 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
                     ? 'glow'
                     : ''
                 } ${
-                  (!state.mainDeck.preparedCard &&
+                  state.turn.phase !== 'end-game' &&
+                  ((!state.mainDeck.preparedCard &&
                     state.turn.player === state.playerNum &&
                     state.playerNum === playerNum &&
                     state.turn.phase === 'play' &&
                     !card.abilityUsed &&
                     (state.turn.movesLeft || card.freeUse)) ||
-                  (state.turn.phase === 'choose-hero' &&
-                    state.turn.player === state.playerNum &&
-                    !card.item)
+                    (state.turn.phase === 'choose-hero' &&
+                      state.turn.player === state.playerNum &&
+                      !card.item))
                     ? 'click'
-                    : playerNum === state.playerNum
+                    : state.turn.phase !== 'end-game' &&
+                      playerNum === state.playerNum
                     ? 'deny'
                     : ''
                 }`}

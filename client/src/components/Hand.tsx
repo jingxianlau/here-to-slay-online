@@ -137,7 +137,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
         <div
           className={`hand${
             state.players[state.playerNum].numCards *
-              ((23 / 100) * window.innerHeight) >
+              ((21 / 100) * window.innerHeight) >
             (97 / 100) * window.innerWidth
               ? ' cover'
               : ' list'

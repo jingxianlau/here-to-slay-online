@@ -7,11 +7,12 @@ import {
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { abilities } from '../../../functions/abilities';
 import { rooms } from '../../../rooms';
-import { sendGameState } from '../../../server';
+import { disconnectAll, sendGameState } from '../../../server';
 import {
   AnyCard,
   CardType,
   HeroCard,
+  HeroClass,
   MagicCard,
   MonsterCard
 } from '../../../types';
@@ -167,6 +168,30 @@ export const pass = (roomId: string, userId: string) => {
   }, 200);
 };
 
+function checkWin(roomId: string): boolean[] | -1 {
+  const state = rooms[roomId].state;
+  let winners: boolean[] = [];
+  for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+    if (state.board[i].heroCards.length === 5) {
+      let isWinner = true;
+      for (const className of Object.keys(
+        state.board[i].classes
+      ) as HeroClass[]) {
+        if (state.board[i].classes[className] !== 1) {
+          isWinner = false;
+        }
+      }
+      winners.push(isWinner);
+    } else {
+      winners.push(false);
+    }
+  }
+  if (winners.some(val => val)) {
+    return winners;
+  } else {
+    return -1;
+  }
+}
 export const endTurnDiscard = (
   roomId: string,
   userId: string,
@@ -175,6 +200,30 @@ export const endTurnDiscard = (
   const playerNum = validSender(roomId, userId);
   const state = rooms[roomId].state;
   if (state.turn.player !== playerNum) return;
+
+  const hasWon = checkWin(roomId);
+  if (hasWon !== -1) {
+    rooms[roomId].state.match.isReady = hasWon;
+    rooms[roomId].state.turn.phase = 'end-game';
+    rooms[roomId].state.turn.phaseChanged = true;
+    sendGameState(roomId);
+    rooms[roomId].state.turn.phaseChanged = false;
+
+    let start = Date.now();
+    const timer = setInterval(() => {
+      let delta = Date.now() - start;
+      // random variable cos i don't need one specifically for game end timer
+      rooms[roomId].state.match.startRolls.maxVal = Math.floor(delta / 1000);
+      sendGameState(roomId);
+
+      if (delta / 1000 >= 180) {
+        disconnectAll(roomId);
+        delete rooms[roomId];
+        clearInterval(timer);
+      }
+    }, 1000);
+    return;
+  }
 
   if (
     state.turn.phase === 'end-turn-discard' &&

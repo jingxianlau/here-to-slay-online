@@ -24,6 +24,7 @@ import DiscardPopup from '../components/DiscardPopup';
 import ConfirmPopup from '../components/ConfirmPopup';
 import RollPopup from '../components/RollPopup';
 import { meetsRollRequirements } from '../helpers/meetsRequirements';
+import EndPage from '../components/EndPage';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const Game: React.FC = () => {
       socket.on('game-state', (newState: GameState) => {
         console.log(newState);
         setState(newState);
-        setShowBoard(_ => false);
+        if (newState.turn.phase !== 'end-game') setShowBoard(_ => false);
 
         /* PHASES */
         switch (newState.turn.phase) {
@@ -424,6 +425,21 @@ const Game: React.FC = () => {
               }
             }
             break;
+
+          case 'end-game':
+            showPopup.set(false);
+            setShowEffectPopup(false);
+            showHand.setLocked(false);
+            shownCard.setLocked(false);
+            if (showBoard) {
+              setShowBoard(true);
+            }
+            allowedCards.set([]);
+            localStorage.removeItem('credentials');
+
+            if (180 - newState.match.startRolls.maxVal <= 0) {
+              navigate('/');
+            }
         }
       });
 
@@ -505,6 +521,8 @@ const Game: React.FC = () => {
                   setShowBoard={setShowBoard}
                   setShowHelp={setShowHelp}
                 />
+
+                <EndPage showBoard={showBoard} />
 
                 <HelpCards showHelp={showHelp} />
 

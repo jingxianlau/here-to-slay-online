@@ -5,7 +5,7 @@ import {
 import { discardCard, removeBoard, removeItem } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
-import { sendGameState } from '../../../server';
+import { disconnectAll, sendGameState } from '../../../server';
 import { CardType, HeroCard, ModifierCard, MonsterCard } from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
 
@@ -165,7 +165,30 @@ export const modifyRoll = (
               state.dice.main.modifier = [];
               state.dice.main.modValues = [];
 
-              if (state.turn.movesLeft === 0) {
+              if (state.board[state.turn.player].largeCards.length === 4) {
+                state.match.isReady = state.board.map(
+                  val => val.largeCards.length === 4
+                );
+                state.turn.phase = 'end-game';
+                state.turn.phaseChanged = true;
+                sendGameState(roomId);
+                state.turn.phaseChanged = false;
+
+                let start = Date.now();
+                const timer = setInterval(() => {
+                  let delta = Date.now() - start;
+                  // random variable cos i don't need one specifically for game end timer
+                  state.match.startRolls.maxVal = Math.floor(delta / 1000);
+                  sendGameState(roomId);
+
+                  if (delta / 1000 >= 180) {
+                    disconnectAll(roomId);
+                    delete rooms[roomId];
+                    clearInterval(timer);
+                  }
+                }, 1000);
+                return;
+              } else if (state.turn.movesLeft === 0) {
                 state.match.isReady.fill(null);
                 endTurnDiscard(roomId, cardUserId);
               } else {

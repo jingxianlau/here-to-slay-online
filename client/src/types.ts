@@ -152,7 +152,8 @@ export interface GameState {
       | 'challenge-roll'
       | 'use-effect-roll'
       | 'use-effect'
-      | 'modify';
+      | 'modify'
+      | 'end-game';
 
     /* ONLY FOR 'end-turn-discard' PHASE */
     toDiscard: number;
