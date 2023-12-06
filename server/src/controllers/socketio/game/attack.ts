@@ -1,5 +1,5 @@
 import { monsterRequirements } from '../../../functions/abilities';
-import { removeFreeUse, rollDice } from '../../../functions/game';
+import { removeFreeUse, rollDice } from '../../../functions/gameHelpers';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';

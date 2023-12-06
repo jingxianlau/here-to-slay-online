@@ -1,10 +1,5 @@
-import {
-  hasCard,
-  playCard,
-  discardCard,
-  rollDice,
-  removeFreeUse
-} from '../../../functions/game';
+import { rollDice, removeFreeUse } from '../../../functions/gameHelpers';
+import { hasCard, playCard, discardCard } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';

@@ -27,7 +27,7 @@ import {
   useEffect,
   useEffectRoll
 } from './controllers/socketio/game/useEffect';
-import { removeFreeUse } from './functions/game';
+import { removeFreeUse } from './functions/gameHelpers';
 
 /* EXPRESS SERVER */
 const app = express();

@@ -1,7 +1,4 @@
-import {
-  monsterRequirements,
-  rollRequirements
-} from '../../../functions/abilities';
+import { rollRequirements } from '../../../functions/abilities';
 import { discardCard, removeBoard, removeItem } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';

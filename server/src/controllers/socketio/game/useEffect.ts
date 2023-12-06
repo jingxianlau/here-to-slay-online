@@ -3,7 +3,7 @@ import {
   nextPlayer,
   removeFreeUse,
   rollDice
-} from '../../../functions/game';
+} from '../../../functions/gameHelpers';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { abilities } from '../../../functions/abilities';
 import { rooms } from '../../../rooms';

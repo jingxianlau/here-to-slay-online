@@ -1,4 +1,4 @@
-import { rollDice } from '../../../functions/game';
+import { rollDice } from '../../../functions/gameHelpers';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';

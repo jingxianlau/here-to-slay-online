@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import { distributeCards } from '../../../functions/game';
+import { distributeCards } from '../../../functions/gameHelpers';
 import { checkCredentials, removePlayer } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import {

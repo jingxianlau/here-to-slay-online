@@ -1,4 +1,4 @@
-import { removeFreeUse, reshuffleDeck } from '../../../functions/game';
+import { removeFreeUse, reshuffleDeck } from '../../../functions/gameHelpers';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';

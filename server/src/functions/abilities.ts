@@ -2,7 +2,13 @@ import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
 import { AnyCard, CardType, HeroClass, allCards } from '../types';
-import { addCards, drawCards, playCard, removeCard, swapHands } from './game';
+import {
+  addCards,
+  drawCards,
+  playCard,
+  removeCard,
+  swapHands
+} from './gameHelpers';
 
 const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
   setTimeout(() => {
