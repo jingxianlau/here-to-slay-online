@@ -21,8 +21,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
     hasRolled,
     showRoll,
     showHelperText,
-    chosenCard,
-    showHand
+    chosenCard
   } = useClientContext();
 
   const [activeModifier, setActiveModifier] = useState(0);

@@ -1,6 +1,5 @@
 import React from 'react';
 import useClientContext from '../hooks/useClientContext';
-import { Socket } from 'socket.io-client';
 
 interface MenuButtonsProps {
   showBoard: boolean;
@@ -31,11 +30,17 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
             : 'hide'
         }`}
         onClick={() => {
-          chosenCard.setShow(true);
-          chosenCard.setCustomText('Pass');
+          if (
+            state.turn.player === state.playerNum &&
+            (state.turn.phase === 'draw' || state.turn.phase === 'play') &&
+            !state.turn.pause
+          ) {
+            chosenCard.setShow(true);
+            chosenCard.setCustomText('Pass');
+          }
         }}
       >
-        <span className='material-symbols-outlined'>forward</span>
+        <span className='material-symbols-outlined icon'>forward</span>
       </button>
       <div
         className={`help-trigger show`}
@@ -46,7 +51,7 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
           setShowHelp(false);
         }}
       >
-        <span className='material-symbols-outlined'>help</span>
+        <span className='material-symbols-outlined icon'>help</span>
       </div>
       <button
         className={`circular show-board-trigger ${
@@ -102,7 +107,7 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
           }
         }}
       >
-        <span className='material-symbols-outlined'>flip</span>
+        <span className='material-symbols-outlined icon'>flip</span>
       </button>
     </>
   );

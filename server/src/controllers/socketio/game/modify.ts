@@ -110,7 +110,6 @@ export const modifyRoll = (
               rooms[roomId].state.turn.phaseChanged = true;
               setTimeout(() => {
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
               }, 1200);
             }
           } else {
@@ -138,7 +137,6 @@ export const modifyRoll = (
 
               setTimeout(() => {
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
               }, 1200);
             } else if (preppedCard.type === 'magic') {
               state.dice.main.roll = [1, 1];
@@ -187,7 +185,6 @@ export const modifyRoll = (
                 state.turn.phase = 'end-game';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
 
                 let start = Date.now();
                 const timer = setInterval(() => {
@@ -211,7 +208,6 @@ export const modifyRoll = (
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
               }
             }, 1200);
           } else if (
@@ -244,7 +240,6 @@ export const modifyRoll = (
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
               }
             }, 1200);
           }
@@ -288,7 +283,6 @@ export const modifyRoll = (
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
                 sendGameState(roomId);
-                state.turn.phaseChanged = false;
               }
             }, 1200);
           }

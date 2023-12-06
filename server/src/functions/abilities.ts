@@ -2,13 +2,7 @@ import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
 import { AnyCard, CardType, HeroClass, allCards } from '../types';
-import {
-  addCards,
-  drawCards,
-  playCard,
-  removeCard,
-  swapHands
-} from './gameHelpers';
+import { addCards, drawCards, playCard, removeCard, swapHands } from './game';
 
 const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
   setTimeout(() => {
@@ -19,7 +13,6 @@ const endEffect = (roomId: string, playerNum: number, updatePhase = true) => {
         state.turn.phase = 'play';
         state.turn.phaseChanged = true;
         sendGameState(roomId);
-        state.turn.phaseChanged = false;
       } else endTurnDiscard(roomId, state.secret.playerIds[playerNum]);
     }
   }, 2400);
@@ -36,6 +29,7 @@ export const abilities: {
     fromPlayer?: number
   ) => void)[];
 } = {
+  // BARDS
   // trade hands with another player
   'dodgy-dealer': [
     (roomId, playerNum) => {
@@ -45,6 +39,7 @@ export const abilities: {
       state.turn.effect.players = [playerNum];
       state.turn.effect.val = 1;
       state.turn.effect.purpose = 'Swap Hands';
+      state.turn.effect.actionChanged = true;
 
       sendGameState(roomId);
     },
@@ -76,6 +71,7 @@ export const abilities: {
       state.turn.effect.val = 1;
       state.turn.effect.players = [playerNum];
       state.turn.effect.purpose = 'Draw Card';
+      state.turn.effect.actionChanged = true;
       sendGameState(roomId);
     },
     (roomId, playerNum) => {
@@ -92,6 +88,7 @@ export const abilities: {
       state.turn.effect.val = 1;
       state.turn.effect.players = [playerNum];
       state.turn.effect.purpose = 'Play Hero';
+      state.turn.effect.actionChanged = true;
       sendGameState(roomId);
     },
     (roomId, playerNum, returnVal) => {
@@ -124,6 +121,7 @@ export const abilities: {
       state.turn.effect.action = 'choose-hand';
       state.turn.effect.allowedCards = allCards;
       state.turn.effect.purpose = 'Give Card';
+      state.turn.effect.actionChanged = true;
       let players = [];
       for (let i = 0; i < rooms[roomId].numPlayers; i++) {
         if (i !== playerNum) {
@@ -146,6 +144,28 @@ export const abilities: {
       sendGameState(roomId);
     },
     (roomId, playerNum) => endEffect(roomId, playerNum)
+  ],
+  'napping-nibbles': [
+    (roomId, playerNum) => {
+      const state = rooms[roomId].state;
+      if (!state.turn.effect) return;
+
+      state.turn.effect.action = 'none';
+      state.turn.effect.allowedCards = [];
+      state.turn.effect.players = [];
+      state.turn.effect.purpose = 'Do Nothing';
+      state.turn.effect.actionChanged = true;
+      sendGameState(roomId);
+
+      setTimeout(() => {
+        state.turn.effect = null;
+        if (state.turn.movesLeft > 0) {
+          state.turn.phase = 'play';
+          state.turn.phaseChanged = true;
+          sendGameState(roomId);
+        } else endTurnDiscard(roomId, state.secret.playerIds[playerNum]);
+      }, 5000);
+    }
   ]
 };
 

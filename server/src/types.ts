@@ -171,6 +171,7 @@ interface State {
         | 'choose-hand'
         | 'choose-other-hand'
         | 'choose-discard';
+      actionChanged: boolean;
       players: number[]; // active players who can choose
       val: number; // num of items to choose
       step: number; // to access functions in ability array

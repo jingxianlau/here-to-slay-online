@@ -166,12 +166,10 @@ export const startMatch = (socket: Socket) => {
       state.dice.main.roll[1] = 1;
       state.turn.movesLeft = 3;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
       /* DEV ^ */
 
       // distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
       // sendGameState(roomId);
-      // state.turn.phaseChanged = false;
     }
   };
 };

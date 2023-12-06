@@ -37,10 +37,10 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       state.players[i].hand.push(card);
     }
 
-    // let card2 = cloneDeep(heroCards[1]);
-    // card2.player = i;
-    // state.players[i].hand.push(card2);
-    state.players[i].numCards = 5;
+    let card2 = cloneDeep(heroCards[5]);
+    card2.player = i;
+    state.players[i].hand.push(card2);
+    state.players[i].numCards = 6;
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;
     leader.player = i;
@@ -66,7 +66,6 @@ export function nextPlayer(roomId: string) {
   }
 
   sendGameState(roomId);
-  rooms[roomId].state.turn.phaseChanged = false;
 }
 
 export function rollDice(): [number, number] {

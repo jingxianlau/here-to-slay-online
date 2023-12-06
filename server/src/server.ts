@@ -27,12 +27,17 @@ import {
   useEffect,
   useEffectRoll
 } from './controllers/socketio/game/useEffect';
-import { removeFreeUse } from './functions/gameHelpers';
+import 'dotenv/config';
 
 /* EXPRESS SERVER */
 const app = express();
+
+const port = process.env.PORT || 4000;
+
 app.use(expressServer);
-const httpServer = app.listen(4000, () => console.log('server on port 4000'));
+const httpServer = app.listen(port, () =>
+  console.log(`server on port ${port}`)
+);
 
 /* SOCKET.IO  SERVER */
 const io = new Server(httpServer, {
@@ -101,6 +106,11 @@ export function sendGameState(roomId: string) {
     const privateState = parseState(state.secret.playerIds[i], state);
     io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
   }
+
+  if (state.turn.effect) {
+    state.turn.effect.actionChanged = false;
+  }
+  state.turn.phaseChanged = false;
 }
 
 export function emit(roomId: string, message: string): void {

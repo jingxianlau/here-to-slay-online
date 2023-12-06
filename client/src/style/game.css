@@ -29,14 +29,6 @@ header img {
   top: 0;
 }
 
-.game .show-board-trigger.show {
-  opacity: 1;
-}
-.game .show-board-trigger.hide {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
 .game .show-board-trigger {
   position: absolute;
   top: 1vh;
@@ -87,6 +79,11 @@ header img {
 }
 .game button.circular.hide {
   opacity: 0;
+  width: 0;
+  height: 0;
+}
+.game button.circular.hide span.icon.material-symbols-outlined {
+  font-size: 0;
 }
 
 .help-cards {
@@ -457,6 +454,27 @@ header img {
   height: 30.4vh;
   position: relative;
   border-radius: 2.2vh;
+  transition: filter 0.25s;
+}
+.player-board .overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 2.2vh;
+  background-color: #0000009a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8vh;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.35s ease-in-out;
+}
+.player-board .overlay:hover,
+.player-board .overlay.chosen {
+  opacity: 1;
 }
 
 .bottom-row {
@@ -477,6 +495,7 @@ header img {
   height: 39.5vh;
   position: relative;
   border-radius: 3.2vh;
+  transition: filter 0.25s;
 }
 .own-board .small {
   border: 0.25vh solid #fff;
@@ -640,6 +659,15 @@ img.large-lg {
   border: 1px solid;
   border-radius: 2.5vh;
   position: relative;
+  transition: opacity 0.25s ease-in-out;
+}
+.center-board .mat.show {
+  opacity: 1;
+}
+.center-board .mat.hide {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 .center-board .mat .cards {
   height: 16vh;
@@ -1374,6 +1402,19 @@ div.cross {
   font-size: 7vh;
   width: 30vw;
   margin-right: -1.5vw;
+}
+.content h1.purpose {
+  font-size: 8vh;
+  transition: opacity 0.25s ease-in-out;
+}
+.content h1.purpose.show {
+  opacity: 1;
+}
+.content h1.purpose.hide {
+  opacity: 0;
+  font-size: 0;
+  width: 0;
+  height: 0;
 }
 
 .discard-cover {

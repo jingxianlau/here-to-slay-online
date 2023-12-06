@@ -53,6 +53,15 @@ const Lobby: React.FC = () => {
       );
 
       socket.on('state', (state: GameState['match']) => {
+        socket.emit(
+          'player-num',
+          credentials.roomId,
+          credentials.userId,
+          (playerNum: number) => {
+            setPlayerNum(playerNum);
+          }
+        );
+
         setMatchState(state);
         if (state.gameStarted) {
           navigate('/game');

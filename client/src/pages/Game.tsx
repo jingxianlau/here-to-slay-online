@@ -315,6 +315,7 @@ const Game: React.FC = () => {
             break;
 
           case 'choose-hero':
+            showPopup.set(false);
             if (newState.turn.player === newState.playerNum) {
               showHand.setLocked(true);
               showHand.set(false);
@@ -329,6 +330,7 @@ const Game: React.FC = () => {
             break;
 
           case 'use-effect':
+            showPopup.set(false);
             if (!newState.turn.effect) return;
             showHand.setLocked(false);
             if (!showBoard) {
@@ -364,7 +366,6 @@ const Game: React.FC = () => {
                 if (newState.turn.effect) {
                   switch (newState.turn.effect.action) {
                     case 'choose-discard':
-                      setShowDiscardPile(true);
                       break;
                     case 'choose-hand':
                       showHand.setLocked(true);
@@ -387,13 +388,15 @@ const Game: React.FC = () => {
                     case 'choose-other-hand':
                       setShowEffectPopup(true);
                       break;
-                    case 'choose-player':
-                      setShowEffectPopup(true);
-                      break;
-                    default:
-                      if (newState.turn.effect) {
+                    case 'draw':
+                      if (
+                        newState.turn.effect &&
+                        newState.turn.effect.actionChanged
+                      ) {
                         showText(showHelperText, newState.turn.effect.purpose);
                       }
+                      break;
+                    default:
                       setShowEffectPopup(false);
                       shownCard.setLocked(false);
                   }

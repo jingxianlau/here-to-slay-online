@@ -100,7 +100,6 @@ export function playCard(
       card.type !== CardType.item ? 'challenge' : 'choose-hero';
     state.turn.phaseChanged = true;
     sendGameState(roomId);
-    state.turn.phaseChanged = false;
   }, 1200);
 }
 
@@ -157,4 +156,18 @@ export function removeItem(roomId: string, itemCard: ItemCard) {
   state.mainDeck.discardPile.push(card);
 
   delete state.board[boardIndex].heroCards[cardIndex].item;
+}
+
+export function drawCards(roomId: string, playerNum: number, num: number) {
+  const state = rooms[roomId].state;
+
+  for (let i = 0; i < num; i++) {
+    let card = state.secret.deck.pop() as AnyCard;
+    if (!card) {
+      card = reshuffleDeck(roomId);
+    }
+    card.player = playerNum;
+    state.players[playerNum].hand.push(card);
+    state.players[playerNum].numCards++;
+  }
 }

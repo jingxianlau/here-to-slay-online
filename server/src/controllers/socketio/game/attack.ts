@@ -94,7 +94,6 @@ export const attackRoll = (
       gameState.turn.phase = 'modify';
       gameState.turn.isRolling = false;
       sendGameState(roomId);
-      gameState.turn.phaseChanged = false;
     }, 3000);
   } else {
     if (gameState.turn.movesLeft < 2) return;
@@ -106,6 +105,5 @@ export const attackRoll = (
     gameState.turn.movesLeft -= 2;
     gameState.turn.isRolling = true;
     sendGameState(roomId);
-    gameState.turn.phaseChanged = false;
   }
 };

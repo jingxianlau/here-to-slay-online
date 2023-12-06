@@ -2,17 +2,24 @@ import React from 'react';
 import { CardType, LeaderCard } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
+import { Socket } from 'socket.io-client';
 
 interface PlayerBoardProps {
+  socket: Socket;
   playerNum: number;
   col: number;
 }
 
-const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
+const PlayerBoard: React.FC<PlayerBoardProps> = ({
+  playerNum,
+  col,
+  socket
+}) => {
   const {
     state: { val: state },
     shownCard,
-    chosenCard
+    chosenCard,
+    credentials: { roomId, userId }
   } = useClientContext();
 
   return state.board[playerNum].largeCards.length > 0 ? (
@@ -26,6 +33,17 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
           ? 'active'
           : 'inactive'
       }`}
+      style={{
+        filter:
+          (state.turn.player === state.playerNum &&
+            state.turn.phase === 'use-effect' &&
+            state.turn.effect?.action === 'choose-player' &&
+            !state.turn.effect.choice &&
+            playerNum === state.turn.player) ||
+          (state.turn.effect && state.turn.effect.action === 'none')
+            ? 'brightness(35%)'
+            : 'none'
+      }}
     >
       <div className='background'></div>
       <div className='cards'>
@@ -185,6 +203,34 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({ playerNum, col }) => {
           )}
         </div>
       </div>
+      {state.turn.phase === 'use-effect' &&
+        state.turn.effect &&
+        state.turn.effect.action === 'choose-player' &&
+        state.turn.player === state.playerNum &&
+        (!state.turn.effect.choice ||
+          (state.turn.effect.choice &&
+            state.turn.effect.choice[0] === playerNum)) &&
+        state.playerNum !== playerNum && (
+          <div
+            className={`overlay ${
+              state.turn.effect.choice &&
+              state.turn.effect.choice[0] === playerNum
+                ? 'chosen'
+                : ''
+            }`}
+            onClick={() => {
+              socket.emit(
+                'use-effect',
+                roomId,
+                userId,
+                state.turn.effect?.card,
+                playerNum
+              );
+            }}
+          >
+            {state.turn.effect.purpose.split(' ')[0]}
+          </div>
+        )}
     </div>
   ) : (
     <></>

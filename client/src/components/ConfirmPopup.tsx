@@ -158,9 +158,15 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
         customText === 'Skip') &&
         state.turn.phase !== 'modify' && (
           <>
-            <div className='left' onClick={playCard}>
-              <h1>{customText ? customText : 'Play'}</h1>
-            </div>
+            {state.turn.phase !== 'use-effect' || !state.turn.effect ? (
+              <div className='left' onClick={playCard}>
+                <h1>{customText ? customText : 'Play'}</h1>
+              </div>
+            ) : (
+              <div className='left' onClick={playCard}>
+                <h1>{state.turn.effect.purpose.split(' ')[0]}</h1>
+              </div>
+            )}
 
             {customText !== 'Draw' &&
             customText !== 'Redraw' &&

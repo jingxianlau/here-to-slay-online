@@ -48,7 +48,6 @@ export const startRoll = (roomId: string, userId: string) => {
 
     setTimeout(() => {
       sendGameState(roomId);
-      rooms[roomId].state.turn.phaseChanged = false;
     }, 3000);
 
     return;

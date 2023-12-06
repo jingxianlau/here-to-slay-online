@@ -38,7 +38,6 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
       state.turn.phase = 'challenge';
       state.turn.phaseChanged = true;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
     }, 1200);
   } else if (
     state.turn.phase === 'play' &&
@@ -99,7 +98,6 @@ export const challenge = (
         state.turn.phase = 'play';
         state.turn.phaseChanged = true;
         sendGameState(roomId);
-        state.turn.phaseChanged = false;
       } else {
         endTurnDiscard(roomId, state.secret.playerIds[state.turn.player]);
       }
@@ -121,7 +119,6 @@ export const challenge = (
       state.turn.challenger = playerNum;
       state.turn.isRolling = true;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
     }, 1200);
   }
 };
@@ -162,7 +159,6 @@ export const challengeRoll = (roomId: string, userId: string) => {
       state.turn.phase = 'modify';
       state.turn.isRolling = false;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
     }, 3000);
   }
 };

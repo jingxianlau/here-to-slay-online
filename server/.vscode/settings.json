@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "undefined/subscriptions/46a90195-a7c5-4fb1-84c0-01a53a251c46/resourceGroups/here-to-slay-server/providers/Microsoft.Web/sites/here-to-slay-server",
+  "appService.deploySubpath": "."
+}

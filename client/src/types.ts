@@ -165,6 +165,7 @@ export interface GameState {
         | 'none'
         | 'draw'
         | 'play'
+        | 'reveal'
         | 'choose-boards'
         | 'choose-own-board'
         | 'choose-other-boards'
@@ -172,6 +173,7 @@ export interface GameState {
         | 'choose-hand'
         | 'choose-other-hand'
         | 'choose-discard';
+      actionChanged: boolean;
       players: number[]; // active players who can choose
       val: number; // num of items to choose
       step: number; // to access functions in ability array

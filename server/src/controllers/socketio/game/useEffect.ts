@@ -1,9 +1,9 @@
 import {
-  discardCard,
   nextPlayer,
   removeFreeUse,
   rollDice
 } from '../../../functions/gameHelpers';
+import { discardCard } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { abilities } from '../../../functions/abilities';
 import { rooms } from '../../../rooms';
@@ -55,7 +55,6 @@ export const useEffectRoll = (
       gameState.turn.phase = 'modify';
       gameState.turn.isRolling = false;
       sendGameState(roomId);
-      gameState.turn.phaseChanged = false;
     }, 3000);
   } else {
     if (
@@ -81,7 +80,6 @@ export const useEffectRoll = (
 
     gameState.turn.isRolling = true;
     sendGameState(roomId);
-    gameState.turn.phaseChanged = false;
   }
 };
 
@@ -142,6 +140,7 @@ export const useEffect = (
     state.mainDeck.preparedCard = null;
     state.turn.effect = {
       action: 'none',
+      actionChanged: false,
       players: [],
       val: 0,
       step: 0,
@@ -151,20 +150,27 @@ export const useEffect = (
     };
 
     abilities[cardName][0](roomId, playerNum);
-    state.turn.phaseChanged = false;
   }
 };
 
 // misc functions that i have no idea where to put
 export const pass = (roomId: string, userId: string) => {
   const playerNum = validSender(roomId, userId);
+  const state = rooms[roomId].state;
   if (playerNum === -1) return;
   removeFreeUse(roomId);
 
   rooms[roomId].state.turn.movesLeft = 0;
   sendGameState(roomId);
   setTimeout(() => {
-    endTurnDiscard(roomId, userId);
+    if (state.players[playerNum].numCards > 7) {
+      state.turn.phase = 'end-turn-discard';
+      state.turn.toDiscard = state.players[playerNum].numCards - 7;
+      state.turn.phaseChanged = true;
+      sendGameState(roomId);
+    } else {
+      nextPlayer(roomId);
+    }
   }, 200);
 };
 
@@ -207,7 +213,6 @@ export const endTurnDiscard = (
     rooms[roomId].state.turn.phase = 'end-game';
     rooms[roomId].state.turn.phaseChanged = true;
     sendGameState(roomId);
-    rooms[roomId].state.turn.phaseChanged = false;
 
     let start = Date.now();
     const timer = setInterval(() => {
@@ -244,14 +249,12 @@ export const endTurnDiscard = (
       state.turn.phase = 'play';
       state.turn.phaseChanged = true;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
       return;
     } else if (state.players[playerNum].numCards > 7) {
       state.turn.phase = 'end-turn-discard';
       state.turn.toDiscard = state.players[playerNum].numCards - 7;
       state.turn.phaseChanged = true;
       sendGameState(roomId);
-      state.turn.phaseChanged = false;
     } else {
       nextPlayer(roomId);
     }
