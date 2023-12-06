@@ -6,7 +6,13 @@ import { discardCard, removeBoard, removeItem } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { disconnectAll, sendGameState } from '../../../server';
-import { CardType, HeroCard, ModifierCard, MonsterCard } from '../../../types';
+import {
+  CardType,
+  HeroCard,
+  HeroClass,
+  ModifierCard,
+  MonsterCard
+} from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
 
 export const meetsRollRequirements = (
@@ -76,6 +82,18 @@ export const modifyRoll = (
             } else if (
               state.mainDeck.preparedCard.card.type === CardType.item
             ) {
+              const itemCard = state.mainDeck.preparedCard.card;
+              if (!itemCard.heroPlayer) return;
+              state.board[itemCard.heroPlayer].classes[
+                itemCard.name.split(' ')[0].toLowerCase() as HeroClass
+              ]--;
+              state.board[itemCard.heroPlayer].classes[
+                (
+                  state.board[itemCard.heroPlayer].heroCards.find(
+                    val => val.id === itemCard.heroId
+                  ) as HeroCard
+                ).class
+              ]++;
               removeItem(roomId, state.mainDeck.preparedCard.card);
             }
             sendGameState(roomId);

@@ -43,6 +43,7 @@ export const startRoll = (roomId: string, userId: string) => {
     rooms[roomId].state.turn.isRolling = false;
     rooms[roomId].state.dice.main.roll[0] = 1;
     rooms[roomId].state.dice.main.roll[1] = 1;
+    rooms[roomId].state.dice.main.total = 0;
     rooms[roomId].state.turn.movesLeft = 3;
 
     setTimeout(() => {
@@ -69,6 +70,7 @@ export const startRoll = (roomId: string, userId: string) => {
   rooms[roomId].state.turn.movesLeft = 1;
   rooms[roomId].state.dice.main.roll[0] = 1;
   rooms[roomId].state.dice.main.roll[1] = 1;
+  rooms[roomId].state.dice.main.total = 0;
 
   setTimeout(() => sendGameState(roomId), 3000);
 };

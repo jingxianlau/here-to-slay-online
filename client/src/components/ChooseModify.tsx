@@ -70,7 +70,11 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
           <div className='center'>
             <img
               className='logo'
-              src={dice === 0 ? './assets/sword.png' : './assets/shield.png'}
+              src={
+                dice === 0
+                  ? 'https://jingxianlau.github.io/here-to-slay/assets/sword.png'
+                  : 'https://jingxianlau.github.io/here-to-slay/assets/shield.png'
+              }
               alt={''}
             />
             <div className='img-container'>

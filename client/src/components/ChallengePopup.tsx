@@ -203,7 +203,7 @@ const ChallengePopup: React.FC<{
               }}
             >
               <img
-                src='./assets/challenge/challenge.png'
+                src='https://jingxianlau.github.io/here-to-slay/assets/challenge/challenge.png'
                 alt='challenge'
                 className='small-lg center-img'
                 draggable='false'
@@ -321,7 +321,12 @@ const ChallengePopup: React.FC<{
                   {state.turn.phase === 'modify' && state.dice.defend && (
                     <div className='summary'>
                       <div>
-                        <img src={'./assets/sword.png'} alt={''} />
+                        <img
+                          src={
+                            'https://jingxianlau.github.io/here-to-slay/assets/sword.png'
+                          }
+                          alt={''}
+                        />
                         <h1
                           style={{
                             color:
@@ -345,7 +350,12 @@ const ChallengePopup: React.FC<{
                         >
                           {state.dice.defend?.total}
                         </h1>
-                        <img src={'./assets/shield.png'} alt={''} />
+                        <img
+                          src={
+                            'https://jingxianlau.github.io/here-to-slay/assets/shield.png'
+                          }
+                          alt={''}
+                        />
                       </div>
                     </div>
                   )}
@@ -385,7 +395,7 @@ const ChallengePopup: React.FC<{
                       </span>
                     ) : (
                       <img
-                        src='./assets/sword.png'
+                        src='https://jingxianlau.github.io/here-to-slay/assets/sword.png'
                         alt={''}
                         className={`logo`}
                       />
@@ -445,7 +455,7 @@ const ChallengePopup: React.FC<{
                       </span>
                     ) : (
                       <img
-                        src='./assets/shield.png'
+                        src='https://jingxianlau.github.io/here-to-slay/assets/shield.png'
                         alt={''}
                         className={`logo`}
                       />

@@ -22,5 +22,5 @@
     "baseUrl": "."
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts", "src/controllers/socketio"]
+  "include": ["./src/*"]
 }

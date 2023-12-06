@@ -8,7 +8,7 @@ import {
 import { checkCredentials, validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
-import { AnyCard, CardType } from '../../../types';
+import { AnyCard, CardType, HeroClass } from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
 
 export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
@@ -31,6 +31,13 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
       ];
     itemHero.item = state.mainDeck.preparedCard.card;
     itemHero.item.heroId = card.id;
+    itemHero.item.heroPlayer = card.player;
+    if (itemHero.item.name.includes('Mask')) {
+      state.board[card.player].classes[itemHero.class]--;
+      state.board[card.player].classes[
+        itemHero.item.name.split(' ')[0].toLowerCase() as HeroClass
+      ]++;
+    }
     sendGameState(roomId);
     setTimeout(() => {
       state.turn.phase = 'challenge';

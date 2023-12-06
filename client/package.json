@@ -1,6 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "homepage": "https://jingxianlau.github.io/here-to-slay",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -24,7 +25,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +52,7 @@
     "@types/lodash": "^4.14.200",
     "@types/react-router-dom": "^5.3.3",
     "@types/socket.io-client": "^3.0.0",
-    "easytimer-react-hook": "^2.1.0"
+    "easytimer-react-hook": "^2.1.0",
+    "gh-pages": "^6.1.0"
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import './style/index.css';
 import App from './App';
 import Lobby from './pages/Lobby';
@@ -13,13 +13,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ClientContextProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path='/' element={<App />} />
           <Route path='/lobby' element={<Lobby />} />
           <Route path='/game' element={<Game />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </ClientContextProvider>
   </React.StrictMode>
 );

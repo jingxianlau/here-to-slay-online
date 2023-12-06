@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { GameState } from '../types';
 import { getCredentials } from '../helpers/getJSON';
 import useClientContext from '../hooks/useClientContext';
+import { match } from 'assert';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
@@ -94,61 +95,61 @@ const Lobby: React.FC = () => {
     });
   }
 
-  return (
-    credentials && (
-      <>
-        <h5 className='lobby-id'>Lobby ID: {credentials.roomId}</h5>
-        <div className='lobby'>
-          <div className='details'>
-            <div className='name'>
-              <h1>{matchState?.players[playerNum]}</h1>
-              <button className='danger circular' onClick={leaveRoom}>
-                <span className='material-symbols-outlined'>logout</span>
-              </button>
-            </div>
-            {matchState && (
-              <h2
-                style={{
-                  color: matchState.isReady[playerNum] ? '#11b56b' : '#DC143C'
-                }}
-              >
-                {matchState.isReady[playerNum] ? 'Ready' : 'Not Ready'}
-              </h2>
-            )}
+  return credentials && matchState && playerNum !== -1 ? (
+    <>
+      <h5 className='lobby-id'>Lobby ID: {credentials.roomId}</h5>
+      <div className='lobby'>
+        <div className='details'>
+          <div className='name'>
+            <h1>{matchState.players[playerNum]}</h1>
+            <button className='danger circular' onClick={leaveRoom}>
+              <span className='material-symbols-outlined'>logout</span>
+            </button>
           </div>
-          <button onClick={getReady}>{isReady ? 'Not Ready' : 'Ready!'}</button>
-          <br />
-          <br />
-          <div className='player-list'>
-            {matchState &&
-              matchState.players.map(
-                (uname, num) =>
-                  num !== playerNum && (
-                    <div className='player' key={num}>
-                      <h3 className='uname'>{uname}</h3>
-                      <h3
-                        style={{
-                          color: matchState.isReady[
-                            matchState.players.indexOf(uname)
-                          ]
-                            ? '#11b56b'
-                            : '#DC143C'
-                        }}
-                      >
-                        {matchState.isReady[matchState.players.indexOf(uname)]
-                          ? 'Ready'
-                          : 'Not Ready'}
-                      </h3>
-                    </div>
-                  )
-              )}
-          </div>
-          {matchState && matchState.players.length < 3 && (
-            <h4>Waiting for Players...</h4>
+          {matchState && (
+            <h2
+              style={{
+                color: matchState.isReady[playerNum] ? '#11b56b' : '#DC143C'
+              }}
+            >
+              {matchState.isReady[playerNum] ? 'Ready' : 'Not Ready'}
+            </h2>
           )}
         </div>
-      </>
-    )
+        <button onClick={getReady}>{isReady ? 'Not Ready' : 'Ready!'}</button>
+        <br />
+        <br />
+        <div className='player-list'>
+          {matchState &&
+            matchState.players.map(
+              (uname, num) =>
+                num !== playerNum && (
+                  <div className='player' key={num}>
+                    <h3 className='uname'>{uname}</h3>
+                    <h3
+                      style={{
+                        color: matchState.isReady[
+                          matchState.players.indexOf(uname)
+                        ]
+                          ? '#11b56b'
+                          : '#DC143C'
+                      }}
+                    >
+                      {matchState.isReady[matchState.players.indexOf(uname)]
+                        ? 'Ready'
+                        : 'Not Ready'}
+                    </h3>
+                  </div>
+                )
+            )}
+        </div>
+        {matchState && matchState.players.length < 3 && (
+          <h4>Waiting for Players...</h4>
+        )}
+      </div>
+    </>
+  ) : (
+    <></>
   );
 };
 

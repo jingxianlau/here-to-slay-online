@@ -23,11 +23,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // DEV
-  useEffect(() => {
-    joinRoom('999999');
-  }, []);
-
   function changeUsername(name: string) {
     if (name.length > 15) {
       alert('Username max 15 characters');
@@ -99,9 +94,19 @@ function App() {
     }
   }
 
+  // DEV
+  useEffect(() => {
+    joinRoom('999999');
+  }, []);
+  // DEV
+
   return (
     <div className='App' style={{ margin: '25px' }}>
-      <img src='/HTS_title.png' alt='Here to Slay' width='300px' />
+      <img
+        src='https://jingxianlau.github.io/here-to-slay/HTS_title.png'
+        alt='Here to Slay'
+        width='300px'
+      />
       <br />
       <form>
         <label>Username</label>

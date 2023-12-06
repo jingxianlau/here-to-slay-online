@@ -98,7 +98,12 @@ const ShownCard: React.FC<ShownCardProps> = () => {
         ) : state.mainDeck.preparedCard &&
           state.mainDeck.preparedCard.card.type === CardType.item &&
           state.turn.player === state.playerNum &&
-          state.turn.phase === 'choose-hero' ? (
+          state.turn.phase === 'choose-hero' &&
+          shownCard.val.type === CardType.hero &&
+          !shownCard.val.item &&
+          !state.mainDeck.discardPile.some(
+            val => val.id === shownCard.val?.id
+          ) ? (
           <img
             src={getImage(state.mainDeck.preparedCard.card)}
             alt={state.mainDeck.preparedCard.card.name}
@@ -120,7 +125,7 @@ const ShownCard: React.FC<ShownCardProps> = () => {
                 shownCard.val && (
                   <div className='requirement' key={i}>
                     <img
-                      src={`./assets/icons/${val.hero}.png`}
+                      src={`https://jingxianlau.github.io/here-to-slay/assets/icons/${val.hero}.png`}
                       alt={val.hero}
                     />
                     <h1>
