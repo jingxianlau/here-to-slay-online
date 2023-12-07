@@ -169,14 +169,18 @@ interface State {
         | 'choose-other-boards'
         | 'choose-player'
         | 'choose-hand'
-        | 'choose-other-hand'
+        | 'choose-other-hand-hide'
+        | 'choose-other-hand-show'
         | 'choose-discard';
-      actionChanged: boolean;
       players: number[]; // active players who can choose
       val: number; // num of items to choose
       step: number; // to access functions in ability array
       card: HeroCard | MagicCard | MonsterCard; // card in use
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
+      active?: {
+        num?: number;
+        card?: AnyCard;
+      };
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
     } | null;

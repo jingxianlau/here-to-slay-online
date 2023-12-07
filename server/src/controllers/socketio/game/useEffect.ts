@@ -115,7 +115,7 @@ export const useEffect = (
       returnVal
         ? {
             card: isCard(returnVal) ? returnVal : undefined,
-            player: typeof returnVal === 'number' ? returnVal : undefined
+            num: typeof returnVal === 'number' ? returnVal : undefined
           }
         : undefined,
       state.turn.player !== playerNum ? playerNum : undefined
@@ -140,7 +140,6 @@ export const useEffect = (
     state.mainDeck.preparedCard = null;
     state.turn.effect = {
       action: 'none',
-      actionChanged: false,
       players: [],
       val: 0,
       step: 0,

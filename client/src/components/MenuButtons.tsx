@@ -63,7 +63,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
             state.turn.effect &&
             (state.turn.effect.action === 'choose-player' ||
               state.turn.effect.action === 'choose-hand' ||
-              state.turn.effect.action === 'choose-other-hand' ||
+              state.turn.effect.action === 'choose-other-hand-hide' ||
+              state.turn.effect.action === 'choose-other-hand-show' ||
               state.turn.effect.action === 'choose-discard')) ||
           state.turn.phase === 'use-effect-roll' ||
           state.turn.phase === 'end-turn-discard' ||
@@ -81,7 +82,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
               state.turn.effect &&
               (state.turn.effect.action === 'choose-player' ||
                 state.turn.effect.action === 'choose-hand' ||
-                state.turn.effect.action === 'choose-other-hand' ||
+                state.turn.effect.action === 'choose-other-hand-hide' ||
+                state.turn.effect.action === 'choose-other-hand-show' ||
                 state.turn.effect.action === 'choose-discard')) ||
             state.turn.phase === 'use-effect-roll' ||
             state.turn.phase === 'end-turn-discard' ||

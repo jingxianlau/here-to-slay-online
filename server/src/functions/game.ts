@@ -43,6 +43,13 @@ export function removeCard(
   if (cardIndex === -1) return -1;
   return rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0];
 }
+export function removeCardIndex(
+  roomId: string,
+  playerNum: number,
+  cardIndex: number
+): -1 | AnyCard {
+  return rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0];
+}
 export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
   const length = cards.length;
   for (let i = 0; i < length; i++) {

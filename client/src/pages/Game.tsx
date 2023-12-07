@@ -385,14 +385,14 @@ const Game: React.FC = () => {
                         }
                       }
                       break;
-                    case 'choose-other-hand':
+                    case 'choose-other-hand-hide':
+                      setShowEffectPopup(true);
+                      break;
+                    case 'choose-other-hand-show':
                       setShowEffectPopup(true);
                       break;
                     case 'draw':
-                      if (
-                        newState.turn.effect &&
-                        newState.turn.effect.actionChanged
-                      ) {
+                      if (newState.turn.effect) {
                         showText(showHelperText, newState.turn.effect.purpose);
                       }
                       break;
