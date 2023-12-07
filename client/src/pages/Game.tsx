@@ -387,6 +387,8 @@ const Game: React.FC = () => {
                       break;
                     case 'choose-other-hand-hide':
                       setShowEffectPopup(true);
+                      showHand.set(false);
+                      showHand.setLocked(true);
                       break;
                     case 'choose-other-hand-show':
                       setShowEffectPopup(true);

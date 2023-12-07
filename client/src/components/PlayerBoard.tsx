@@ -104,6 +104,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                     state.playerNum === playerNum &&
                     state.turn.phase === 'play')
                     ? 'glow'
+                    : state.turn.phase === 'use-effect' &&
+                      state.turn.effect &&
+                      state.turn.effect.card.id === card.id
+                    ? 'glow-purple'
                     : ''
                 } ${
                   state.turn.phase !== 'end-game' &&
