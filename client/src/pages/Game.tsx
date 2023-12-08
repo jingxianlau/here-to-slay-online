@@ -25,6 +25,7 @@ import ConfirmPopup from '../components/ConfirmPopup';
 import RollPopup from '../components/RollPopup';
 import { meetsRollRequirements } from '../helpers/meetsRequirements';
 import EndPage from '../components/EndPage';
+import { popupHand } from '../helpers/popupHand';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ const Game: React.FC = () => {
 
       socket.on('game-state', (newState: GameState) => {
         console.log(newState);
+
         setState(newState);
         if (newState.turn.phase !== 'end-game') setShowBoard(_ => false);
 
@@ -330,6 +332,7 @@ const Game: React.FC = () => {
             break;
 
           case 'use-effect':
+            showHand.set(false);
             showPopup.set(false);
             if (!newState.turn.effect) return;
             showHand.setLocked(false);
@@ -378,7 +381,6 @@ const Game: React.FC = () => {
                           showText(showHelperText, 'No Card Picked');
                         } else if (isCard(newState.turn.effect.choice[0])) {
                           setShowEffectPopup(false);
-                          showHand.set(false);
                           shownCard.set(newState.turn.effect.choice[0]);
                           shownCard.setPos('center');
                           shownCard.setLocked(true);
@@ -387,7 +389,6 @@ const Game: React.FC = () => {
                       break;
                     case 'choose-other-hand-hide':
                       setShowEffectPopup(true);
-                      showHand.set(false);
                       showHand.setLocked(true);
                       break;
                     case 'choose-other-hand-show':

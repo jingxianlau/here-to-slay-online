@@ -38,6 +38,11 @@ export const useEffectRoll = (
     return;
   }
 
+  // DEV
+  useEffect(roomId, userId, heroCard);
+  return;
+  // DEV
+
   if (
     gameState.turn.phase === 'use-effect-roll' &&
     gameState.mainDeck.preparedCard &&
@@ -122,17 +127,27 @@ export const useEffect = (
     );
 
     if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
-      abilities[cardName][++state.turn.effect.step](roomId, state.turn.player);
+      setTimeout(() => {
+        if (state.turn.effect)
+          abilities[cardName][++state.turn.effect.step](
+            roomId,
+            state.turn.player
+          );
+      }, 1200);
     } else {
       state.turn.effect.step--;
     }
   } else if (
-    state.mainDeck.preparedCard?.card.id === card.id &&
-    ((card.type === CardType.hero && state.mainDeck.preparedCard?.successful) ||
-      (card.type === CardType.large &&
-        card.player === undefined &&
-        !state.mainDeck.preparedCard.successful)) &&
-    state.turn.phase === 'modify'
+    // DEV
+    true
+    // DEV
+
+    // state.mainDeck.preparedCard?.card.id === card.id &&
+    // ((card.type === CardType.hero && state.mainDeck.preparedCard?.successful) ||
+    //   (card.type === CardType.large &&
+    //     card.player === undefined &&
+    //     !state.mainDeck.preparedCard.successful)) &&
+    // state.turn.phase === 'modify'
   ) {
     // new effect
     state.turn.phase = 'use-effect';

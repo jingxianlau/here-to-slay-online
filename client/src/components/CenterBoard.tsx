@@ -44,6 +44,9 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
 
     chosenCard.setShow(true);
     chosenCard.setCustomText('Draw');
+    chosenCard.setCustomCenter(
+      'https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+    );
   }
   function drawEffect() {
     if (state.turn.effect) {

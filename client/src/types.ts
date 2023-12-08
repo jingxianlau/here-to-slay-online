@@ -240,6 +240,8 @@ export interface ClientStateObj {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     customText: string;
     setCustomText: React.Dispatch<React.SetStateAction<string>>;
+    customCenter: string;
+    setCustomCenter: React.Dispatch<React.SetStateAction<string>>;
   };
 
   showHand: {

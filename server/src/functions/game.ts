@@ -41,6 +41,7 @@ export function removeCard(
 ): -1 | AnyCard {
   const cardIndex = findCard(roomId, playerNum, cardId);
   if (cardIndex === -1) return -1;
+  rooms[roomId].state.players[playerNum].numCards--;
   return rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0];
 }
 export function removeCardIndex(
@@ -48,6 +49,7 @@ export function removeCardIndex(
   playerNum: number,
   cardIndex: number
 ): -1 | AnyCard {
+  rooms[roomId].state.players[playerNum].numCards--;
   return rooms[roomId].state.players[playerNum].hand.splice(cardIndex, 1)[0];
 }
 export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
@@ -103,8 +105,13 @@ export function playCard(
   state.turn.pause = false;
 
   setTimeout(() => {
-    state.turn.phase =
-      card.type !== CardType.item ? 'challenge' : 'choose-hero';
+    // state.turn.phase =
+    //   card.type !== CardType.item ? 'challenge' : 'choose-hero';
+
+    // DEV
+    state.turn.phase === 'play';
+    // DEV
+
     state.turn.phaseChanged = true;
     sendGameState(roomId);
   }, 1200);

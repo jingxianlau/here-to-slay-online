@@ -53,6 +53,7 @@ export const receivePlayer = (
   state.turn.effect.val--;
   sendGameState(roomId);
 };
+
 export const pickCard = (roomId: string, playerNum: number) => {
   const state = rooms[roomId].state;
   if (
@@ -94,13 +95,6 @@ const addCard = (roomId: string, playerNum: number, returnVal?: returnType) => {
   if (card === -1) return;
   delete state.turn.effect.active.num;
   addCards(roomId, [card], playerNum);
-
-  state.turn.effect.active = { card };
-
-  delete state.turn.effect.active;
-  setTimeout(() => {
-    sendGameState(roomId);
-  }, 600);
 };
 export const pickFromHand = [
   (roomId: string, playerNum: number) => choosePlayer(roomId, playerNum),
@@ -115,23 +109,24 @@ export const ifMayPlay = (
   return [
     (roomId: string, playerNum: number) => {
       const state = rooms[roomId].state;
-      if (
-        !state.turn.effect ||
-        !state.turn.effect.active ||
-        !state.turn.effect.active.card
-      )
-        return;
+      if (!state.turn.effect || state.players[playerNum].numCards <= 0) return;
 
-      if (state.turn.effect.active.card.type === type) {
-        state.turn.effect.action = 'play';
-        state.turn.effect.val = 1;
-        state.turn.effect.allowedCards = [];
-        state.turn.effect.players = [playerNum];
-        state.turn.effect.purpose = 'Play';
-        sendGameState(roomId);
-      } else {
-        endEffect(roomId, playerNum);
-      }
+      setTimeout(() => {
+        if (
+          state.turn.effect &&
+          state.players[playerNum].hand[state.players[playerNum].numCards - 1]
+            .type === type
+        ) {
+          state.turn.effect.action = 'play';
+          state.turn.effect.val = 1;
+          state.turn.effect.allowedCards = [];
+          state.turn.effect.players = [playerNum];
+          state.turn.effect.purpose = 'Play';
+          sendGameState(roomId);
+        } else {
+          endEffect(roomId, playerNum);
+        }
+      }, 1200);
     },
     (roomId: string, playerNum: number, returnVal?: returnType) => {
       const state = rooms[roomId].state;

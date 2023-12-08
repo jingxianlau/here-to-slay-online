@@ -37,6 +37,7 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
           ) {
             chosenCard.setShow(true);
             chosenCard.setCustomText('Pass');
+            chosenCard.setCustomCenter('forward');
           }
         }}
       >

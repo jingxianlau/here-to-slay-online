@@ -19,7 +19,9 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
       show,
       setShow,
       customText,
-      setCustomText
+      setCustomText,
+      customCenter,
+      setCustomCenter
     },
     shownCard,
     state: { val: state }
@@ -168,11 +170,7 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
               </div>
             )}
 
-            {customText !== 'Draw' &&
-            customText !== 'Redraw' &&
-            customText !== 'Pass' &&
-            customText !== 'Skip' &&
-            card ? (
+            {card ? (
               card.type !== CardType.large ? (
                 <div className='img-container'>
                   <img
@@ -192,29 +190,27 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
                   />
                 </div>
               )
-            ) : customText === 'Draw' ? (
-              <div className='img-container'>
-                <img
-                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
-                  alt='Deck'
-                  className='small-xl'
-                  draggable='false'
-                />
-              </div>
-            ) : customText === 'Pass' ? (
-              <div className='icon'>
-                <span className='image material-symbols-outlined'>forward</span>
-              </div>
-            ) : customText === 'Redraw' ? (
-              <div className='icon'>
-                <span className='image material-symbols-outlined'>
-                  delete_forever
-                </span>
-              </div>
+            ) : customText && customCenter ? (
+              customCenter.includes(
+                'https://jingxianlau.github.io/here-to-slay/'
+              ) ? (
+                <div className='img-container'>
+                  <img
+                    src={customCenter}
+                    alt={customText}
+                    className='small-xl'
+                    draggable='false'
+                  />
+                </div>
+              ) : (
+                <div className='icon'>
+                  <span className='image material-symbols-outlined'>
+                    {customCenter}
+                  </span>
+                </div>
+              )
             ) : (
-              <div className='icon'>
-                <span className='image material-symbols-outlined'>start</span>
-              </div>
+              <></>
             )}
 
             <div

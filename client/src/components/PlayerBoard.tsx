@@ -210,11 +210,11 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
       {state.turn.phase === 'use-effect' &&
         state.turn.effect &&
         state.turn.effect.action === 'choose-player' &&
-        state.turn.player === state.playerNum &&
-        (!state.turn.effect.choice ||
+        ((state.turn.player === state.playerNum &&
+          !state.turn.effect.choice &&
+          state.playerNum !== playerNum) ||
           (state.turn.effect.choice &&
-            state.turn.effect.choice[0] === playerNum)) &&
-        state.playerNum !== playerNum && (
+            state.turn.effect.choice[0] === playerNum)) && (
           <div
             className={`overlay ${
               state.turn.effect.choice &&
@@ -223,13 +223,15 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 : ''
             }`}
             onClick={() => {
-              socket.emit(
-                'use-effect',
-                roomId,
-                userId,
-                state.turn.effect?.card,
-                playerNum
-              );
+              if (state.turn.player === state.playerNum) {
+                socket.emit(
+                  'use-effect',
+                  roomId,
+                  userId,
+                  state.turn.effect?.card,
+                  playerNum
+                );
+              }
             }}
           >
             {state.turn.effect.purpose.split(' ')[0]}

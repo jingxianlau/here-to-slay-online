@@ -27,6 +27,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [chosenCard, setChosenCard] = useState<AnyCard | null>(null);
   const [showChosenCard, setShowChosenCard] = useState(false);
   const [chosenCardCustomText, setChosenCardCustomText] = useState('');
+  const [chosenCardCustomCenter, setChosenCardCustomCenter] = useState('');
   const [pos, setPos] = useState<'left' | 'right' | 'top' | 'center' | null>(
     null
   );
@@ -68,7 +69,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       show: showChosenCard,
       setShow: setShowChosenCard,
       customText: chosenCardCustomText,
-      setCustomText: setChosenCardCustomText
+      setCustomText: setChosenCardCustomText,
+      customCenter: chosenCardCustomCenter,
+      setCustomCenter: setChosenCardCustomCenter
     },
     showHand: {
       val: showHand,

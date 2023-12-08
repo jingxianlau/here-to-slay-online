@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnyCard, CardType } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
 import { dropHand } from '../helpers/dropHand';
+import { popupHand } from '../helpers/popupHand';
+import { uniqueId } from 'lodash';
 
 interface HandProps {
   showBoard: boolean;
@@ -16,9 +18,80 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
     showHand,
     allowedCards,
     chosenCard,
-    credentials: { roomId, userId },
     shownCard
   } = useClientContext();
+
+  const [prevHand, setPrevHand] = useState<AnyCard[] | undefined>();
+  const [solidCardsAdd, setSolidCardsAdd] = useState<boolean[]>([]);
+  const [solidCardsRemove, setSolidCardsRemove] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!prevHand) {
+      setPrevHand(_ => {
+        setSolidCardsAdd(_ => []);
+        for (let i = 0; i < state.players[state.playerNum].hand.length; i++) {
+          setSolidCardsAdd(arr => [...arr, true]);
+        }
+        setSolidCardsRemove([]);
+        return state.players[state.playerNum].hand;
+      });
+      return;
+    }
+
+    const currHand = state.players[state.playerNum].hand;
+    if (prevHand) {
+      if (currHand.length > prevHand.length) {
+        popupHand(showHand, (currHand.length - prevHand.length) * 450 + 250);
+
+        setPrevHand(_ => currHand);
+
+        setSolidCardsAdd([]);
+        setSolidCardsRemove([]);
+        for (let i = 0; i < currHand.length; i++) {
+          setSolidCardsAdd(arr => [...arr, i < prevHand.length]);
+        }
+
+        let i = prevHand.length;
+        let int = setInterval(() => {
+          setSolidCardsAdd(arr => {
+            return arr.map((_, index) => index < i);
+          });
+          if (i === currHand.length) {
+            clearInterval(int);
+          } else i++;
+        }, 250);
+      } else if (currHand < prevHand) {
+        popupHand(showHand, (prevHand.length - currHand.length) * 450 + 250);
+        showHand.set(true);
+        showHand.setLocked(true);
+
+        setSolidCardsAdd([]);
+        setSolidCardsRemove([]);
+        let cards: number[] = [];
+        for (let i = 0; i < prevHand.length; i++) {
+          const id = prevHand[i].id;
+          if (!id) return;
+          if (!currHand.some(val => val.id === id)) {
+            cards.push(i);
+          }
+          setSolidCardsRemove(arr => [...arr, id]);
+        }
+
+        let i = -1;
+        let int = setInterval(() => {
+          if (++i === cards.length) {
+            setPrevHand(currHand);
+            clearInterval(int);
+            return;
+          }
+
+          const id = prevHand[cards[i]].id;
+          if (!id) return;
+          setSolidCardsRemove(arr => arr.filter(val => val !== id));
+        }, 250);
+      }
+    }
+  }, [state.players[state.playerNum].hand]);
 
   const playCard = (card: AnyCard) => {
     if (!state || !allowedCard(allowedCards.val, card.type)) return;
@@ -125,6 +198,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
               onClick={() => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Redraw');
+                chosenCard.setCustomCenter('delete_forever');
                 if (!showHand.locked) {
                   dropHand(showHand, shownCard);
                 }
@@ -143,68 +217,72 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
               : ' list'
           }`}
         >
-          {state.players[state.playerNum]?.hand.map((card, i) => (
-            <div
-              key={i}
-              onMouseEnter={() => {
-                if (!shownCard.locked) {
-                  shownCard.set(card);
-                  shownCard.setPos('top');
-                }
-              }}
-              onMouseLeave={() => {
-                if (!shownCard.locked) {
-                  shownCard.set(null);
-                  shownCard.setPos(null);
-                }
-              }}
-              className={`img-container${
-                state.turn.phase === 'end-turn-discard' &&
-                state.turn.player === state.playerNum &&
-                allowedCards.val.length > 0 &&
-                state.players[state.playerNum].numCards > 7 &&
-                !showBoard
-                  ? ' cross-md'
-                  : ''
-              }`}
-              onClick={() => {
-                if (
-                  allowedCard(allowedCards.val, card.type) &&
-                  ((card.type === CardType.hero &&
-                    state.board[state.playerNum].heroCards.length < 5) ||
-                    card.type !== CardType.hero)
-                )
-                  playCard(card);
-              }}
-              style={{
-                zIndex: 100 - i
-              }}
-            >
-              <img
-                src={getImage(card)}
-                alt={card.name}
-                className={`small-md ${
-                  allowedCards.val.length === 5
-                    ? 'active'
-                    : allowedCard(allowedCards.val, card.type) &&
-                      ((card.type === CardType.hero &&
-                        state.board[state.playerNum].heroCards.length < 5) ||
-                        card.type !== CardType.hero) &&
-                      (state.turn.phase === 'challenge' ||
-                        state.turn.phase === 'challenge-roll' ||
-                        state.turn.phase === 'modify')
-                    ? 'active glow'
-                    : allowedCard(allowedCards.val, card.type) &&
-                      ((card.type === CardType.hero &&
-                        state.board[state.playerNum].heroCards.length < 5) ||
-                        card.type !== CardType.hero)
-                    ? 'active'
-                    : 'inactive'
-                }`}
-                draggable='false'
-              />
-            </div>
-          ))}
+          {prevHand &&
+            prevHand.map((card, i) => (
+              <div
+                key={card.id}
+                onMouseEnter={() => {
+                  if (!shownCard.locked) {
+                    shownCard.set(card);
+                    shownCard.setPos('top');
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (!shownCard.locked) {
+                    shownCard.set(null);
+                    shownCard.setPos(null);
+                  }
+                }}
+                className='img-container'
+                onClick={() => {
+                  if (
+                    allowedCard(allowedCards.val, card.type) &&
+                    ((card.type === CardType.hero &&
+                      state.board[state.playerNum].heroCards.length < 5) ||
+                      card.type !== CardType.hero)
+                  )
+                    playCard(card);
+                }}
+                style={{
+                  zIndex: 100 - i
+                }}
+              >
+                <img
+                  src={getImage(card)}
+                  alt={card.name}
+                  className={`small-md ${
+                    allowedCards.val.length === 5
+                      ? 'active'
+                      : allowedCard(allowedCards.val, card.type) &&
+                        ((card.type === CardType.hero &&
+                          state.board[state.playerNum].heroCards.length < 5) ||
+                          card.type !== CardType.hero) &&
+                        (state.turn.phase === 'challenge' ||
+                          state.turn.phase === 'challenge-roll' ||
+                          state.turn.phase === 'modify')
+                      ? 'active glow'
+                      : allowedCard(allowedCards.val, card.type) &&
+                        ((card.type === CardType.hero &&
+                          state.board[state.playerNum].heroCards.length < 5) ||
+                          card.type !== CardType.hero)
+                      ? 'active'
+                      : 'inactive'
+                  }`}
+                  style={
+                    card.id &&
+                    (solidCardsRemove.includes(card.id) || solidCardsAdd[i])
+                      ? {}
+                      : {
+                          marginBottom: '20vh',
+                          marginLeft: '-9.418vh',
+                          marginRight: '-9.418vh',
+                          opacity: 0
+                        }
+                  }
+                  draggable='false'
+                />
+              </div>
+            ))}
           {state.players[state.playerNum]?.hand.length === 0 && (
             <div style={{ marginBottom: '5vh' }}>
               <h2>No Cards :(</h2>
@@ -221,6 +299,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
               onClick={() => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Skip');
+                chosenCard.setCustomCenter('start');
                 if (!showHand.locked) {
                   dropHand(showHand, shownCard);
                 }

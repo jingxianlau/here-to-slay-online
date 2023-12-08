@@ -9,9 +9,14 @@ interface EffectPopupProps {
   showBoard: boolean;
 }
 
-const EffectPopup: React.FC<EffectPopupProps> = ({ show, showBoard }) => {
+const EffectPopup: React.FC<EffectPopupProps> = ({
+  show,
+  showBoard,
+  socket
+}) => {
   const {
-    state: { val: state }
+    state: { val: state },
+    credentials: { roomId, userId }
   } = useClientContext();
 
   return (
@@ -49,10 +54,10 @@ const EffectPopup: React.FC<EffectPopupProps> = ({ show, showBoard }) => {
               <h1>{state.turn.effect.purpose}</h1>
             </div>
             <div
-              className={`bottom ${
+              className={`bottom${
                 state.players[state.playerNum].numCards *
-                  ((21 / 100) * window.innerHeight) >
-                (97 / 100) * window.innerWidth
+                  ((19 / 100) * window.innerHeight) >
+                window.innerWidth
                   ? ' cover'
                   : ' list'
               }`}
@@ -64,6 +69,21 @@ const EffectPopup: React.FC<EffectPopupProps> = ({ show, showBoard }) => {
                     key={i}
                     src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
                     alt='card'
+                    onClick={
+                      state.turn.effect?.players.some(
+                        val => val === state.playerNum
+                      )
+                        ? () => {
+                            socket.emit(
+                              'use-effect',
+                              roomId,
+                              userId,
+                              state.turn.effect?.card,
+                              i
+                            );
+                          }
+                        : () => {}
+                    }
                     className={`small-md ${
                       state.turn.effect?.players.some(
                         val => val === state.playerNum
