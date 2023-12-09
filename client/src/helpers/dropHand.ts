@@ -4,7 +4,7 @@ export const dropHand = (
   showHand: ClientStateObj['showHand'],
   shownCard: ClientStateObj['shownCard']
 ) => {
-  showHand.set(false);
+  showHand.set(val => val--);
   shownCard.set(null);
   shownCard.setPos(null);
 };

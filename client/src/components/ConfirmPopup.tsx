@@ -3,7 +3,6 @@ import { Socket } from 'socket.io-client';
 import { CardType } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
-import { popupHand } from '../helpers/popupHand';
 
 interface ConfirmCardProps {
   socket: Socket;
@@ -11,7 +10,6 @@ interface ConfirmCardProps {
 
 const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
   const {
-    showHand,
     credentials: { roomId, userId },
     chosenCard: {
       val: card,
@@ -117,20 +115,11 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
         state.turn.phase === 'play'
       ) {
         socket.emit('draw-one', roomId, userId);
-        showHand.set(true);
-        showHand.setLocked(true);
-        if (state.turn.movesLeft > 1) {
-          setTimeout(() => {
-            showHand.set(false);
-            showHand.setLocked(false);
-          }, 1200);
-        }
       }
     } else if (customText === 'Redraw') {
       if (!state || !socket || state.turn.movesLeft === 0) return;
       if (state.turn.player === state.playerNum) {
         socket.emit('draw-five', roomId, userId);
-        popupHand(showHand);
       }
     } else if (customText === 'Pass') {
       if (state.turn.phase === 'draw' || state.turn.phase === 'play') {

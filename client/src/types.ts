@@ -245,10 +245,10 @@ export interface ClientStateObj {
   };
 
   showHand: {
-    val: boolean;
-    set: React.Dispatch<React.SetStateAction<boolean>>;
-    locked: boolean;
-    setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+    val: number;
+    set: React.Dispatch<React.SetStateAction<number>>;
+    locked: number;
+    setLocked: React.Dispatch<React.SetStateAction<number>>;
   };
 
   shownCard: {

@@ -95,6 +95,10 @@ const addCard = (roomId: string, playerNum: number, returnVal?: returnType) => {
   if (card === -1) return;
   delete state.turn.effect.active.num;
   addCards(roomId, [card], playerNum);
+
+  setTimeout(() => {
+    sendGameState(roomId);
+  }, 600);
 };
 export const pickFromHand = [
   (roomId: string, playerNum: number) => choosePlayer(roomId, playerNum),

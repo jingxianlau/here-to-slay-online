@@ -162,6 +162,7 @@ export const useEffect = (
       purpose: '',
       card: card
     };
+    console.log('HIHI');
 
     abilities[cardName][0](roomId, playerNum);
   }

@@ -2,7 +2,6 @@ import React from 'react';
 import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
-import { popupHand } from '../helpers/popupHand';
 import { meetsRequirements } from '../helpers/meetsRequirements';
 import { MonsterCard } from '../types';
 
@@ -32,7 +31,6 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       return;
 
     socket.emit('draw-two', credentials.roomId, credentials.userId);
-    popupHand(showHand);
   }
   function drawOne() {
     if (

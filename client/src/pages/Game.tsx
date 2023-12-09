@@ -25,7 +25,6 @@ import ConfirmPopup from '../components/ConfirmPopup';
 import RollPopup from '../components/RollPopup';
 import { meetsRollRequirements } from '../helpers/meetsRequirements';
 import EndPage from '../components/EndPage';
-import { popupHand } from '../helpers/popupHand';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -127,8 +126,8 @@ const Game: React.FC = () => {
             showPopup.set(false);
             setShowEffectPopup(false);
             setShowDiscardPopup(false);
-            showHand.setLocked(false);
-            showHand.set(false);
+            showHand.setLocked(0);
+            showHand.set(0);
             shownCard.setLocked(false);
             shownCard.set(null);
             shownCard.setPos(null);
@@ -142,8 +141,8 @@ const Game: React.FC = () => {
           case 'challenge':
             setActiveDice(0);
             showPopup.set(true);
-            showHand.setLocked(false);
-            showHand.set(false);
+            showHand.setLocked(0);
+            showHand.set(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -155,7 +154,7 @@ const Game: React.FC = () => {
             setActiveDice(0);
             showPopup.set(true);
             showRoll.set(false);
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -187,7 +186,7 @@ const Game: React.FC = () => {
 
           case 'attack-roll':
             showRoll.set(false);
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -206,7 +205,7 @@ const Game: React.FC = () => {
 
           case 'use-effect-roll':
             showRoll.set(false);
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -225,7 +224,7 @@ const Game: React.FC = () => {
 
           case 'modify':
             showPopup.set(true);
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -279,7 +278,7 @@ const Game: React.FC = () => {
           case 'play':
             showPopup.set(false);
             setShowEffectPopup(false);
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             shownCard.setLocked(false);
             allowedCards.set([]);
 
@@ -307,8 +306,8 @@ const Game: React.FC = () => {
               shownCard.set(newState.mainDeck.preparedCard.card);
             }
             if (newState.turn.pause) {
-              showHand.set(false);
-              showHand.setLocked(true);
+              showHand.set(0);
+              showHand.setLocked(1);
             }
 
             if (newState.turn.phaseChanged) {
@@ -319,8 +318,8 @@ const Game: React.FC = () => {
           case 'choose-hero':
             showPopup.set(false);
             if (newState.turn.player === newState.playerNum) {
-              showHand.setLocked(true);
-              showHand.set(false);
+              showHand.setLocked(1);
+              showHand.set(0);
             }
             shownCard.setLocked(false);
             shownCard.set(null);
@@ -332,10 +331,9 @@ const Game: React.FC = () => {
             break;
 
           case 'use-effect':
-            showHand.set(false);
             showPopup.set(false);
             if (!newState.turn.effect) return;
-            showHand.setLocked(false);
+            showHand.setLocked(0);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -371,8 +369,8 @@ const Game: React.FC = () => {
                     case 'choose-discard':
                       break;
                     case 'choose-hand':
-                      showHand.setLocked(true);
-                      showHand.set(true);
+                      showHand.setLocked(val => ++val);
+                      showHand.set(val => ++val);
                       shownCard.setLocked(false);
                       setShowEffectPopup(true);
 
@@ -389,18 +387,22 @@ const Game: React.FC = () => {
                       break;
                     case 'choose-other-hand-hide':
                       setShowEffectPopup(true);
-                      showHand.setLocked(true);
+                      showHand.setLocked(1);
+                      showHand.set(0);
                       break;
                     case 'choose-other-hand-show':
                       setShowEffectPopup(true);
+                      showHand.set(0);
                       break;
                     case 'draw':
                       if (newState.turn.effect) {
                         showText(showHelperText, newState.turn.effect.purpose);
                       }
+                      showHand.set(0);
                       break;
                     default:
                       setShowEffectPopup(false);
+                      showHand.set(0);
                       shownCard.setLocked(false);
                   }
                 }
@@ -418,8 +420,8 @@ const Game: React.FC = () => {
             }
 
             if (!showBoard) {
-              showHand.set(true);
-              showHand.setLocked(true);
+              showHand.set(val => ++val);
+              showHand.setLocked(val => ++val);
             }
             if (
               newState.turn.player === newState.playerNum &&
@@ -435,7 +437,7 @@ const Game: React.FC = () => {
           case 'end-game':
             showPopup.set(false);
             setShowEffectPopup(false);
-            showHand.setLocked(false);
+            showHand.setLocked(val => --val);
             shownCard.setLocked(false);
             if (showBoard) {
               setShowBoard(true);
@@ -518,7 +520,7 @@ const Game: React.FC = () => {
                 <ShownCard />
                 <ShownCardTop />
 
-                <Hand showBoard={showBoard} setShowBoard={setShowBoard} />
+                <Hand setShowBoard={setShowBoard} />
 
                 <HelperText />
 

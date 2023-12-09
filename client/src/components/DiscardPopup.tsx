@@ -31,6 +31,7 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
           state.mainDeck.discardPile[state.mainDeck.discardPile.length - i - 1]
         ]);
       }
+      setDiscardedCards(arr => arr.reverse());
     }
   }, [state.mainDeck.discardPile]);
   useEffect(() => {
@@ -69,12 +70,12 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                     } else {
                       shownCard.setPos('left');
                     }
-                    showHand.set(false);
+                    showHand.set(val => val--);
                   }}
                   onMouseLeave={() => {
                     shownCard.set(null);
                     shownCard.setPos(null);
-                    showHand.set(true);
+                    showHand.set(val => val++);
                   }}
                 >
                   <img

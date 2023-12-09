@@ -4,15 +4,12 @@ import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
 import { dropHand } from '../helpers/dropHand';
-import { popupHand } from '../helpers/popupHand';
-import { uniqueId } from 'lodash';
 
 interface HandProps {
-  showBoard: boolean;
   setShowBoard: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
+const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
   const {
     state: { val: state },
     showHand,
@@ -39,7 +36,12 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
     const currHand = state.players[state.playerNum].hand;
     if (prevHand) {
       if (currHand.length > prevHand.length) {
-        popupHand(showHand, (currHand.length - prevHand.length) * 450 + 250);
+        showHand.set(val => ++val);
+        showHand.setLocked(val => ++val);
+        setTimeout(() => {
+          showHand.set(val => --val);
+          showHand.setLocked(val => --val);
+        }, (currHand.length - prevHand.length) * 450 + 250);
 
         setPrevHand(_ => currHand);
 
@@ -58,9 +60,12 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
           } else i++;
         }, 250);
       } else if (currHand < prevHand) {
-        popupHand(showHand, (prevHand.length - currHand.length) * 450 + 250);
-        showHand.set(true);
-        showHand.setLocked(true);
+        showHand.set(val => ++val);
+        showHand.setLocked(val => ++val);
+        setTimeout(() => {
+          showHand.set(val => --val);
+          showHand.setLocked(val => --val);
+        }, (currHand.length - prevHand.length) * 450 + 250);
 
         setSolidCards([]);
         let cards: number[] = [];
@@ -132,8 +137,8 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
           shownCard.setLocked(true);
           shownCard.set(null);
           chosenCard.set(card);
-          showHand.set(false);
-          showHand.setLocked(true);
+          showHand.set(0);
+          showHand.setLocked(val => ++val);
         }
         break;
 
@@ -144,7 +149,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
         ) {
           chosenCard.set(card);
           chosenCard.setShow(true);
-          if (!showHand.locked) {
+          if (showHand.locked <= 0) {
             dropHand(showHand, shownCard);
           }
         }
@@ -158,7 +163,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           chosenCard.setCustomText('Discard');
-          if (!showHand.locked) {
+          if (showHand.locked <= 0) {
             dropHand(showHand, shownCard);
           }
         }
@@ -169,17 +174,17 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
     <div
       className='hand-trigger'
       onMouseOver={() => {
-        if (!showHand.locked) {
-          showHand.set(true);
+        if (showHand.locked <= 0) {
+          showHand.set(val => ++val);
         }
       }}
       onMouseOut={() => {
-        if (!showHand.locked) {
-          showHand.set(false);
+        if (showHand.locked <= 0) {
+          showHand.set(val => --val);
         }
       }}
     >
-      {!showHand.val && !showHand.locked && (
+      {showHand.val <= 0 && showHand.locked <= 0 && (
         <>
           <h5>
             <span>Hand</span>
@@ -191,7 +196,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
       )}
       <div
         className='bottomMenu'
-        style={{ bottom: showHand.val ? 0 : '-30vh' }}
+        style={{ bottom: showHand.val > 0 ? 0 : '-30vh' }}
       >
         {state.turn.player === state.playerNum &&
           state.turn.movesLeft === 3 &&
@@ -202,7 +207,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Redraw');
                 chosenCard.setCustomCenter('delete_forever');
-                if (!showHand.locked) {
+                if (showHand.locked <= 0) {
                   dropHand(showHand, shownCard);
                 }
               }}
@@ -225,13 +230,13 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
               <div
                 key={card.id}
                 onMouseEnter={() => {
-                  if (!shownCard.locked) {
+                  if (solidCards[i] && !shownCard.locked) {
                     shownCard.set(card);
                     shownCard.setPos('top');
                   }
                 }}
                 onMouseLeave={() => {
-                  if (!shownCard.locked) {
+                  if (solidCards[i] && !shownCard.locked) {
                     shownCard.set(null);
                     shownCard.setPos(null);
                   }
@@ -285,11 +290,12 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
                 />
               </div>
             ))}
-          {state.players[state.playerNum]?.hand.length === 0 && (
-            <div style={{ marginBottom: '5vh' }}>
-              <h2>No Cards :(</h2>
-            </div>
-          )}
+          {state.players[state.playerNum]?.hand.length === 0 &&
+            prevHand?.length === 0 && (
+              <div style={{ marginBottom: '5vh' }}>
+                <h2>No Cards :(</h2>
+              </div>
+            )}
         </div>
 
         {state.turn.phase === 'use-effect' &&
@@ -302,7 +308,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Skip');
                 chosenCard.setCustomCenter('start');
-                if (!showHand.locked) {
+                if (showHand.locked <= 0) {
                   dropHand(showHand, shownCard);
                 }
               }}

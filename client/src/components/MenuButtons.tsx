@@ -105,12 +105,12 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                   (state.turn.effect.action !== 'choose-other-hand-hide' &&
                     state.turn.effect.action !== 'choose-other-hand-show')
                 ) {
-                  showHand.set(true);
+                  showHand.set(val => val++);
                 }
-                showHand.setLocked(true);
+                showHand.setLocked(val => val++);
               } else {
-                showHand.set(false);
-                showHand.setLocked(false);
+                showHand.set(val => val--);
+                showHand.setLocked(val => val--);
               }
             } else {
               shownCard.setLocked(val => !val);

@@ -51,7 +51,7 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
                 card.modifier[1]
               ) {
                 setShow(false);
-                showHand.setLocked(false);
+                showHand.setLocked(val => --val);
                 modify(0);
                 setTimeout(() => {
                   chosenCard.set(null);
@@ -90,7 +90,7 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
                 className='circular danger cancel'
                 onClick={() => {
                   setShow(false);
-                  showHand.setLocked(false);
+                  showHand.setLocked(val => --val);
                   setTimeout(() => {
                     chosenCard.set(null);
                   }, 200);
@@ -109,7 +109,7 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
                 card.modifier[1]
               ) {
                 setShow(false);
-                showHand.setLocked(false);
+                showHand.setLocked(val => --val);
                 modify(card.modifier[1] ? 1 : 0);
                 setTimeout(() => {
                   chosenCard.set(null);

@@ -66,6 +66,7 @@ export const drawFive = (roomId: string, userId: string) => {
     delete card.player;
     gameState.mainDeck.discardPile.push(card);
   }
+  gameState.players[playerNum].numCards = 0;
   sendGameState(roomId);
 
   for (let i = 0; i < 5; i++) {
@@ -81,8 +82,8 @@ export const drawFive = (roomId: string, userId: string) => {
   gameState.players[playerNum].numCards = 5;
   setTimeout(() => {
     sendGameState(roomId);
-  }, 500);
+  }, numCards * 350);
   setTimeout(() => {
     endTurnDiscard(roomId, userId);
-  }, 1700);
+  }, numCards * 350 + 3000);
 };
