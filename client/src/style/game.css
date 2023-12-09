@@ -377,9 +377,6 @@ header img {
 .hand .img-container img.small-md.inactive {
   cursor: not-allowed;
 }
-.hand.list .img-container:hover img.small-md.glow {
-  margin: 30px 16px;
-}
 .small-md {
   width: 18.837vh;
   height: 26.312vh;

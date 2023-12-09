@@ -173,14 +173,14 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
   return (
     <div
       className='hand-trigger'
-      onMouseOver={() => {
+      onMouseEnter={() => {
         if (showHand.locked <= 0) {
           showHand.set(val => ++val);
         }
       }}
-      onMouseOut={() => {
+      onMouseLeave={() => {
         if (showHand.locked <= 0) {
-          showHand.set(val => --val);
+          showHand.set(0);
         }
       }}
     >

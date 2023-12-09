@@ -105,11 +105,11 @@ export function playCard(
   state.turn.pause = false;
 
   setTimeout(() => {
-    // state.turn.phase =
-    //   card.type !== CardType.item ? 'challenge' : 'choose-hero';
+    state.turn.phase =
+      card.type !== CardType.item ? 'challenge' : 'choose-hero';
 
     // DEV
-    state.turn.phase === 'play';
+    // state.turn.phase === 'play';
     // DEV
 
     state.turn.phaseChanged = true;

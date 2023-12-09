@@ -54,7 +54,7 @@ const ChallengePopup: React.FC<{
       setShow(true);
     } else {
       setShow(false);
-      showHand.setLocked(val => --val);
+      showHand.setLocked(0);
     }
   }, [chosenCard.val]);
 
@@ -492,6 +492,7 @@ const ChallengePopup: React.FC<{
                         <Dice
                           roll1={state.dice.main.roll[0]}
                           roll2={state.dice.main.roll[1]}
+                          total={state.dice.main.total}
                         />
                       </div>
                     ) : (
@@ -500,6 +501,7 @@ const ChallengePopup: React.FC<{
                           <Dice
                             roll1={state.dice.defend.roll[0]}
                             roll2={state.dice.defend.roll[1]}
+                            total={state.dice.defend.total}
                           />
                         </div>
                       )

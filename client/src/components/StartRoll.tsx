@@ -71,6 +71,7 @@ const StartRoll: React.FC<StartRollProps> = ({ rollSummary }) => {
               <Dice
                 roll1={state.val.dice.main.roll[0]}
                 roll2={state.val.dice.main.roll[1]}
+                total={state.val.dice.main.total}
               />
             </div>
             <h1>

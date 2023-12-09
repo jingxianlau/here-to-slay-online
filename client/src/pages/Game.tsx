@@ -52,6 +52,17 @@ const Game: React.FC = () => {
   const [showEffectPopup, setShowEffectPopup] = useState(false);
   const [showDiscardPopup, setShowDiscardPopup] = useState(false);
 
+  // useEffect(() => {
+  //   showHand.set(val => {
+  //     console.log('VAL:', val);
+  //     return val;
+  //   });
+  //   showHand.setLocked(val => {
+  //     console.log('LOCKED:', val);
+  //     return val;
+  //   });
+  // }, [showHand.val, showHand.locked]);
+
   useEffect(() => {
     if (!credentials) {
       navigate('/');
@@ -437,7 +448,7 @@ const Game: React.FC = () => {
           case 'end-game':
             showPopup.set(false);
             setShowEffectPopup(false);
-            showHand.setLocked(val => --val);
+            showHand.setLocked(-1000);
             shownCard.setLocked(false);
             if (showBoard) {
               setShowBoard(true);

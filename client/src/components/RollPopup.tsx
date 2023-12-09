@@ -224,6 +224,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
                           <Dice
                             roll1={state.dice.main.roll[0]}
                             roll2={state.dice.main.roll[1]}
+                            total={state.dice.main.total}
                           />
                         </div>
                       </div>

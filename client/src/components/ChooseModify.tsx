@@ -22,7 +22,8 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
   const {
     showHand,
     credentials: { roomId, userId },
-    chosenCard
+    chosenCard,
+    state: { val: state }
   } = useClientContext();
 
   function modify(effect: 0 | 1) {
@@ -76,6 +77,7 @@ const ChooseModify: React.FC<ChooseModifyProps> = ({
                   : 'https://jingxianlau.github.io/here-to-slay/assets/shield.png'
               }
               alt={''}
+              style={{ opacity: state.turn.challenger ? 1 : 0 }}
             />
             <div className='img-container'>
               <img

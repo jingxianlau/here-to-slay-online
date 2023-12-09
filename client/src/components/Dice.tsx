@@ -2,13 +2,33 @@ import React, { useEffect, useState } from 'react';
 import '../style/dice.css';
 import { random } from 'lodash';
 
-const Dice: React.FC<{ roll1: number; roll2: number }> = ({ roll1, roll2 }) => {
+const Dice: React.FC<{ roll1: number; roll2: number; total: number }> = ({
+  roll1,
+  roll2,
+  total
+}) => {
   const [face1, setFace1] = useState(1);
   const [face2, setFace2] = useState(1);
 
   useEffect(() => {
-    setFace1(roll1);
-    setFace2(roll2);
+    if (total) {
+      setFace1(random(1, 6));
+      setFace2(random(1, 6));
+      let i = 0;
+      let int = setInterval(() => {
+        if (++i === 6) {
+          clearInterval(int);
+          setFace1(roll1);
+          setFace2(roll2);
+        } else {
+          setFace1(random(1, 6));
+          setFace2(random(1, 6));
+        }
+      }, 100);
+    } else {
+      setFace1(roll1);
+      setFace2(roll2);
+    }
   }, [roll1, roll2]);
 
   return (

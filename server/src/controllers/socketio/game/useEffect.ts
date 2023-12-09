@@ -39,8 +39,8 @@ export const useEffectRoll = (
   }
 
   // DEV
-  useEffect(roomId, userId, heroCard);
-  return;
+  // useEffect(roomId, userId, heroCard);
+  // return;
   // DEV
 
   if (
