@@ -22,17 +22,15 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
   } = useClientContext();
 
   const [prevHand, setPrevHand] = useState<AnyCard[] | undefined>();
-  const [solidCardsAdd, setSolidCardsAdd] = useState<boolean[]>([]);
-  const [solidCardsRemove, setSolidCardsRemove] = useState<string[]>([]);
+  const [solidCards, setSolidCards] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (!prevHand) {
       setPrevHand(_ => {
-        setSolidCardsAdd(_ => []);
+        setSolidCards(_ => []);
         for (let i = 0; i < state.players[state.playerNum].hand.length; i++) {
-          setSolidCardsAdd(arr => [...arr, true]);
+          setSolidCards(arr => [...arr, true]);
         }
-        setSolidCardsRemove([]);
         return state.players[state.playerNum].hand;
       });
       return;
@@ -45,15 +43,14 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
 
         setPrevHand(_ => currHand);
 
-        setSolidCardsAdd([]);
-        setSolidCardsRemove([]);
+        setSolidCards([]);
         for (let i = 0; i < currHand.length; i++) {
-          setSolidCardsAdd(arr => [...arr, i < prevHand.length]);
+          setSolidCards(arr => [...arr, i < prevHand.length]);
         }
 
         let i = prevHand.length;
         let int = setInterval(() => {
-          setSolidCardsAdd(arr => {
+          setSolidCards(arr => {
             return arr.map((_, index) => index < i);
           });
           if (i === currHand.length) {
@@ -65,8 +62,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
         showHand.set(true);
         showHand.setLocked(true);
 
-        setSolidCardsAdd([]);
-        setSolidCardsRemove([]);
+        setSolidCards([]);
         let cards: number[] = [];
         for (let i = 0; i < prevHand.length; i++) {
           const id = prevHand[i].id;
@@ -74,20 +70,27 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
           if (!currHand.some(val => val.id === id)) {
             cards.push(i);
           }
-          setSolidCardsRemove(arr => [...arr, id]);
+          setSolidCards(arr => [...arr, true]);
         }
 
         let i = -1;
         let int = setInterval(() => {
           if (++i === cards.length) {
-            setPrevHand(currHand);
+            setSolidCards([]);
+            for (let i = 0; i < currHand.length; i++) {
+              setSolidCards(arr => [...arr, true]);
+            }
+            setPrevHand(_ => {
+              console.log(currHand);
+              return currHand;
+            });
             clearInterval(int);
             return;
           }
 
-          const id = prevHand[cards[i]].id;
-          if (!id) return;
-          setSolidCardsRemove(arr => arr.filter(val => val !== id));
+          setSolidCards(arr =>
+            arr.map((val, index) => (index !== cards[i] ? val : false))
+          );
         }, 250);
       }
     }
@@ -269,8 +272,7 @@ const Hand: React.FC<HandProps> = ({ showBoard, setShowBoard }) => {
                       : 'inactive'
                   }`}
                   style={
-                    card.id &&
-                    (solidCardsRemove.includes(card.id) || solidCardsAdd[i])
+                    solidCards[i]
                       ? {}
                       : {
                           marginBottom: '20vh',
