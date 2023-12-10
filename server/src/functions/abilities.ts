@@ -2,14 +2,7 @@ import { endTurnDiscard } from '../controllers/socketio/game/useEffect';
 import { rooms } from '../rooms';
 import { sendGameState } from '../server';
 import { AnyCard, CardType, HeroClass, allCards } from '../types';
-import {
-  addCards,
-  drawCards,
-  playCard,
-  removeCard,
-  removeCardIndex,
-  swapHands
-} from './game';
+import { addCards, removeCard, swapHands } from './game';
 import {
   choosePlayer,
   drawCard,
@@ -65,6 +58,7 @@ export const abilities: {
       if (!state.turn.effect) return;
 
       state.turn.effect.action = 'choose-hand';
+      state.turn.effect.actionChanged = true;
       state.turn.effect.allowedCards = allCards;
       state.turn.effect.purpose = 'Give Card';
       let players = [];
@@ -108,6 +102,7 @@ export const abilities: {
       if (!state.turn.effect) return;
 
       state.turn.effect.action = 'none';
+      state.turn.effect.actionChanged = true;
       state.turn.effect.allowedCards = [];
       state.turn.effect.players = [];
       state.turn.effect.purpose = 'Do Nothing';

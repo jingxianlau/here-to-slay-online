@@ -21,7 +21,9 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
 
   return (
     <div
-      className={`effect-cover${show && state.turn.effect ? ' show' : ' hide'}`}
+      className={`effect-cover${
+        show && state.turn.effect && !showBoard ? ' show' : ' hide'
+      }`}
       style={{
         opacity: show && state.turn.effect && !showBoard ? 1 : 0
       }}
@@ -40,7 +42,10 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
               <h1>{state.turn.effect.purpose}</h1>
             </div>
           </div>
-        ) : state.turn.effect.action === 'choose-other-hand-hide' ? (
+        ) : state.turn.effect.action === 'choose-other-hand-hide' &&
+          state.turn.effect.active &&
+          state.turn.effect.active.num &&
+          state.turn.effect.active.num.length === 2 ? (
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -50,54 +55,110 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   className='small-lg'
                 />
               </div>
-              <h2>{state.match.players[state.turn.effect.active.num]}</h2>
+              <h2>{state.match.players[state.turn.effect.active.num[0]]}</h2>
               <h1>{state.turn.effect.purpose}</h1>
             </div>
             <div
               className={`bottom${
-                state.players[state.playerNum].numCards *
+                state.turn.effect.active.num[1] *
                   ((19 / 100) * window.innerHeight) >
                 window.innerWidth
                   ? ' cover'
                   : ' list'
               }`}
             >
-              {Array.from(
-                Array(state.players[state.turn.effect.active.num].numCards),
-                (_, i) => (
-                  <img
-                    key={i}
-                    src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
-                    alt='card'
-                    onClick={
-                      state.turn.effect?.players.some(
-                        val => val === state.playerNum
-                      )
-                        ? () => {
-                            socket.emit(
-                              'use-effect',
-                              roomId,
-                              userId,
-                              state.turn.effect?.card,
-                              i
-                            );
-                          }
-                        : () => {}
-                    }
-                    className={`small-md ${
-                      state.turn.effect?.players.some(
-                        val => val === state.playerNum
-                      )
-                        ? 'active'
-                        : state.turn.effect?.choice &&
-                          state.turn.effect.choice[0] === i
-                        ? 'chosen'
-                        : ''
-                    }`}
-                  />
-                )
-              )}
+              {Array.from(Array(state.turn.effect.active.num[1]), (_, i) => (
+                <img
+                  key={i}
+                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                  alt='card'
+                  onClick={
+                    state.turn.effect?.players.some(
+                      val => val === state.playerNum
+                    )
+                      ? () => {
+                          socket.emit(
+                            'use-effect',
+                            roomId,
+                            userId,
+                            state.turn.effect?.card,
+                            i
+                          );
+                        }
+                      : () => {}
+                  }
+                  className={`small-md ${
+                    state.turn.effect?.players.some(
+                      val => val === state.playerNum
+                    )
+                      ? 'active'
+                      : state.turn.effect?.choice &&
+                        state.turn.effect.choice[0] === i
+                      ? 'chosen'
+                      : ''
+                  }`}
+                />
+              ))}
             </div>
+          </div>
+        ) : state.turn.effect.action === 'play' &&
+          state.turn.effect.active &&
+          state.turn.effect.active.num &&
+          state.turn.effect.active.card ? (
+          <div className='choose-cover'>
+            {state.turn.player === state.playerNum &&
+              (state.turn.effect.active.num[0] === 1 ? (
+                <div
+                  className='left active'
+                  onClick={() => {
+                    socket.emit(
+                      'use-effect',
+                      roomId,
+                      userId,
+                      state.turn.effect?.card,
+                      1
+                    );
+                  }}
+                >
+                  {state.turn.effect.purpose}
+                </div>
+              ) : (
+                <div
+                  className='left inactive'
+                  onClick={() => {}}
+                  style={{ opacity: 0 }}
+                >
+                  {state.turn.effect.purpose}
+                </div>
+              ))}
+
+            {state.turn.effect.active && state.turn.effect.active.card && (
+              <div className='img-container center'>
+                <img
+                  src={getImage(state.turn.effect.active.card[0])}
+                  alt={state.turn.effect.active.card[0].name}
+                  className='small-xl'
+                  draggable='false'
+                />
+              </div>
+            )}
+
+            {state.turn.player === state.playerNum && (
+              <div
+                className='right'
+                onClick={() => {
+                  socket.emit(
+                    'use-effect',
+                    roomId,
+                    userId,
+                    state.turn.effect?.card,
+                    0
+                  );
+                }}
+              >
+                {state.turn.effect.active.num[0] === 1 ? 'Cancel' : 'Next'}
+              </div>
+            )}
           </div>
         ) : (
           <></>

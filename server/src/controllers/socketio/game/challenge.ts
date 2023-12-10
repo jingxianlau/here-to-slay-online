@@ -136,7 +136,8 @@ export const challengeRoll = (roomId: string, userId: string) => {
     return;
   }
 
-  const roll = rollDice();
+  // const roll = rollDice();
+  const roll: [number, number] = [6, 6];
   const val = roll[0] + roll[1];
   if (state.dice.main.total === 0) {
     state.dice.main.roll = roll;

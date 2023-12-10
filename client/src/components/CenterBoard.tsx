@@ -17,7 +17,6 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
   const {
     state: { val: state },
     credentials,
-    showHand,
     shownCard,
     chosenCard
   } = useClientContext();

@@ -36,6 +36,7 @@ export const choosePlayer = (
   if (!state.turn.effect) return;
 
   state.turn.effect.action = 'choose-player';
+  state.turn.effect.actionChanged = true;
   state.turn.effect.val = 1;
   state.turn.effect.allowedCards = [];
   state.turn.effect.players = [playerNum];
@@ -64,11 +65,17 @@ export const pickCard = (roomId: string, playerNum: number) => {
     return;
 
   state.turn.effect.action = 'choose-other-hand-hide';
+  state.turn.effect.actionChanged = true;
   state.turn.effect.val = 1;
   state.turn.effect.allowedCards = [];
   state.turn.effect.players = [playerNum];
   state.turn.effect.purpose = 'Choose Card';
-  state.turn.effect.active = { num: state.turn.effect.choice[0] };
+  state.turn.effect.active = {
+    num: [
+      state.turn.effect.choice[0],
+      state.players[state.turn.effect.choice[0]].numCards
+    ]
+  };
   state.turn.effect.choice = null;
   sendGameState(roomId);
 };
@@ -89,16 +96,18 @@ const addCard = (roomId: string, playerNum: number, returnVal?: returnType) => {
 
   const card = removeCardIndex(
     roomId,
-    state.turn.effect.active.num,
+    state.turn.effect.active.num[0],
     returnVal.num
   );
   if (card === -1) return;
-  delete state.turn.effect.active.num;
   addCards(roomId, [card], playerNum);
 
   setTimeout(() => {
     sendGameState(roomId);
-  }, 600);
+    if (state.turn.effect?.active) {
+      delete state.turn.effect.active.num;
+    }
+  }, 400);
 };
 export const pickFromHand = [
   (roomId: string, playerNum: number) => choosePlayer(roomId, playerNum),
@@ -116,19 +125,28 @@ export const ifMayPlay = (
       if (!state.turn.effect || state.players[playerNum].numCards <= 0) return;
 
       setTimeout(() => {
-        if (
-          state.turn.effect &&
-          state.players[playerNum].hand[state.players[playerNum].numCards - 1]
-            .type === type
-        ) {
+        if (state.turn.effect) {
           state.turn.effect.action = 'play';
+          state.turn.effect.actionChanged = true;
           state.turn.effect.val = 1;
           state.turn.effect.allowedCards = [];
           state.turn.effect.players = [playerNum];
           state.turn.effect.purpose = 'Play';
+          state.turn.effect.active = {
+            num: [
+              state.players[playerNum].hand[
+                state.players[playerNum].numCards - 1
+              ].type === type
+                ? 1
+                : 0
+            ],
+            card: [
+              state.players[playerNum].hand[
+                state.players[playerNum].numCards - 1
+              ]
+            ]
+          };
           sendGameState(roomId);
-        } else {
-          endEffect(roomId, playerNum);
         }
       }, 1200);
     },
@@ -138,17 +156,14 @@ export const ifMayPlay = (
         !state.turn.effect ||
         !state.turn.effect.active ||
         !state.turn.effect.active.card ||
-        state.turn.effect.active.card.type !== type
+        !state.turn.effect.active.num ||
+        state.turn.effect.active.card[0].type !== type
       )
         return;
 
-      if (!returnVal?.num) {
-        state.turn.effect.val--;
-        sendGameState(roomId);
-        endEffect(roomId, playerNum);
-      } else if (returnVal && returnVal.num) {
-        state.turn.effect.val--;
-        playCard(roomId, playerNum, state.turn.effect.active.card, true);
+      state.turn.effect.val--;
+      if (state.turn.effect.active.num[0] === 1 && returnVal && returnVal.num) {
+        playCard(roomId, playerNum, state.turn.effect.active.card[0], true);
       }
     }
   ];
@@ -159,6 +174,7 @@ export const drawCard = (num = 1) => [
     const state = rooms[roomId].state;
     if (!state.turn.effect) return;
     state.turn.effect.action = 'draw';
+    state.turn.effect.actionChanged = true;
     state.turn.effect.allowedCards = [];
     state.turn.effect.val = 1;
     state.turn.effect.players = [playerNum];
@@ -170,7 +186,7 @@ export const drawCard = (num = 1) => [
     if (!state.turn.effect) return;
     drawCards(roomId, playerNum, num);
     state.turn.effect.active = {
-      card: state.players[playerNum].hand[state.players[playerNum].numCards]
+      card: [state.players[playerNum].hand[state.players[playerNum].numCards]]
     };
     state.turn.effect.val--;
   }
@@ -183,6 +199,7 @@ export const playFromHand = (
     const state = rooms[roomId].state;
     if (!state.turn.effect) return;
     state.turn.effect.action = 'choose-hand';
+    state.turn.effect.actionChanged = true;
     state.turn.effect.allowedCards = [type];
     state.turn.effect.val = 1;
     state.turn.effect.players = [playerNum];

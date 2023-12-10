@@ -37,8 +37,8 @@ export const removePlayer = (
 };
 
 export const checkCredentials = (roomId: string, userId: string): number => {
+  if (!roomId || !userId) return -1;
   if (!rooms[roomId]) return -1;
-
   const playerNum = rooms[roomId].state.secret.playerIds.indexOf(userId);
 
   return playerNum;

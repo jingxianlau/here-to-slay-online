@@ -54,7 +54,6 @@ const ChallengePopup: React.FC<{
       setShow(true);
     } else {
       setShow(false);
-      showHand.setLocked(0);
     }
   }, [chosenCard.val]);
 

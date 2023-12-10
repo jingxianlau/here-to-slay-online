@@ -107,10 +107,10 @@ export function sendGameState(roomId: string) {
     io.to(state.secret.playerSocketIds[i]).emit('game-state', privateState);
   }
 
+  state.turn.phaseChanged = false;
   if (state.turn.effect) {
     state.turn.effect.actionChanged = false;
   }
-  state.turn.phaseChanged = false;
 }
 
 export function emit(roomId: string, message: string): void {

@@ -66,7 +66,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
               state.turn.effect.action === 'choose-hand' ||
               state.turn.effect.action === 'choose-other-hand-hide' ||
               state.turn.effect.action === 'choose-other-hand-show' ||
-              state.turn.effect.action === 'choose-discard')) ||
+              state.turn.effect.action === 'choose-discard' ||
+              state.turn.effect.action === 'play')) ||
           state.turn.phase === 'use-effect-roll' ||
           state.turn.phase === 'end-turn-discard' ||
           state.turn.phase === 'end-game'
@@ -81,39 +82,51 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
             state.turn.phase === 'modify' ||
             (state.turn.phase === 'use-effect' &&
               state.turn.effect &&
-              (state.turn.effect.action === 'choose-player' ||
-                state.turn.effect.action === 'choose-hand' ||
+              (state.turn.effect.action === 'choose-hand' ||
                 state.turn.effect.action === 'choose-other-hand-hide' ||
                 state.turn.effect.action === 'choose-other-hand-show' ||
-                state.turn.effect.action === 'choose-discard')) ||
+                state.turn.effect.action === 'choose-discard' ||
+                state.turn.effect.action === 'play')) ||
             state.turn.phase === 'use-effect-roll' ||
             state.turn.phase === 'end-turn-discard' ||
             state.turn.phase === 'end-game'
           ) {
             setShowBoard(val => !val);
 
+            if (state.turn.phase !== 'end-turn-discard') {
+              shownCard.setLocked(val => !val);
+            }
+
             if (
               (state.turn.effect &&
                 (state.turn.effect.action === 'choose-hand' ||
                   state.turn.effect.action === 'choose-other-hand-hide' ||
-                  state.turn.effect.action === 'choose-other-hand-show')) ||
+                  state.turn.effect.action === 'choose-other-hand-show' ||
+                  state.turn.effect.action === 'play')) ||
               state.turn.phase === 'end-turn-discard'
             ) {
               if (showBoard) {
                 if (
                   !state.turn.effect ||
                   (state.turn.effect.action !== 'choose-other-hand-hide' &&
-                    state.turn.effect.action !== 'choose-other-hand-show')
+                    state.turn.effect.action !== 'choose-other-hand-show' &&
+                    state.turn.effect.action !== 'play')
                 ) {
-                  showHand.set(val => val++);
+                  // show hand when popup active
+                  showHand.set(val => ++val);
                 }
-                showHand.setLocked(val => val++);
+                showHand.setLocked(val => ++val);
               } else {
-                showHand.set(val => val--);
-                showHand.setLocked(val => val--);
+                if (
+                  !state.turn.effect ||
+                  (state.turn.effect.action !== 'choose-other-hand-hide' &&
+                    state.turn.effect.action !== 'choose-other-hand-show' &&
+                    state.turn.effect.action !== 'play')
+                ) {
+                  showHand.set(val => --val);
+                }
+                showHand.setLocked(val => --val);
               }
-            } else {
-              shownCard.setLocked(val => !val);
             }
           }
         }}

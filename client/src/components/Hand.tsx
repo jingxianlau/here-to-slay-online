@@ -3,7 +3,6 @@ import { AnyCard, CardType } from '../types';
 import { getImage } from '../helpers/getImage';
 import useClientContext from '../hooks/useClientContext';
 import { allowedCard } from '../helpers/allowedCard';
-import { dropHand } from '../helpers/dropHand';
 
 interface HandProps {
   setShowBoard: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +19,9 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
 
   const [prevHand, setPrevHand] = useState<AnyCard[] | undefined>();
   const [solidCards, setSolidCards] = useState<boolean[]>([]);
+
+  // fixes onenter triggering twice for some reason
+  const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
     if (!prevHand) {
@@ -65,7 +67,7 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
         setTimeout(() => {
           showHand.set(val => --val);
           showHand.setLocked(val => --val);
-        }, (currHand.length - prevHand.length) * 450 + 250);
+        }, (prevHand.length - currHand.length) * 450 + 250);
 
         setSolidCards([]);
         let cards: number[] = [];
@@ -85,10 +87,7 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
             for (let i = 0; i < currHand.length; i++) {
               setSolidCards(arr => [...arr, true]);
             }
-            setPrevHand(_ => {
-              console.log(currHand);
-              return currHand;
-            });
+            setPrevHand(_ => currHand);
             clearInterval(int);
             return;
           }
@@ -119,7 +118,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
         ) {
           chosenCard.set(card);
           chosenCard.setShow(true);
-          dropHand(showHand, shownCard);
         }
         break;
 
@@ -127,7 +125,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
         if (card.type === CardType.challenge && !state.turn.pause) {
           chosenCard.set(card);
           chosenCard.setShow(true);
-          dropHand(showHand, shownCard);
         }
         break;
 
@@ -137,8 +134,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
           shownCard.setLocked(true);
           shownCard.set(null);
           chosenCard.set(card);
-          showHand.set(0);
-          showHand.setLocked(val => ++val);
         }
         break;
 
@@ -149,9 +144,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
         ) {
           chosenCard.set(card);
           chosenCard.setShow(true);
-          if (showHand.locked <= 0) {
-            dropHand(showHand, shownCard);
-          }
         }
         break;
 
@@ -163,9 +155,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
           chosenCard.set(card);
           chosenCard.setShow(true);
           chosenCard.setCustomText('Discard');
-          if (showHand.locked <= 0) {
-            dropHand(showHand, shownCard);
-          }
         }
     }
   };
@@ -174,13 +163,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     <div
       className='hand-trigger'
       onMouseEnter={() => {
-        if (showHand.locked <= 0) {
+        if (showHand.locked <= 0 && !trigger) {
           showHand.set(val => ++val);
+          setTrigger(_ => true);
         }
       }}
       onMouseLeave={() => {
-        if (showHand.locked <= 0) {
-          showHand.set(0);
+        if (showHand.locked <= 0 && trigger) {
+          showHand.set(val => --val);
+          setTrigger(_ => false);
         }
       }}
     >
@@ -207,9 +198,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Redraw');
                 chosenCard.setCustomCenter('delete_forever');
-                if (showHand.locked <= 0) {
-                  dropHand(showHand, shownCard);
-                }
               }}
             >
               <span className='material-symbols-outlined'>delete_forever</span>
@@ -308,9 +296,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                 chosenCard.setShow(true);
                 chosenCard.setCustomText('Skip');
                 chosenCard.setCustomCenter('start');
-                if (showHand.locked <= 0) {
-                  dropHand(showHand, shownCard);
-                }
               }}
             >
               <span className='material-symbols-outlined'>start</span>

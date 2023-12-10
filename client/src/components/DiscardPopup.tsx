@@ -64,18 +64,22 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                   className='img-container'
                   key={i}
                   onMouseEnter={() => {
-                    shownCard.set(card);
-                    if (i + 1 < discardedCards.length / 2) {
-                      shownCard.setPos('right');
-                    } else {
-                      shownCard.setPos('left');
+                    if (show) {
+                      shownCard.set(card);
+                      if (i + 1 < discardedCards.length / 2) {
+                        shownCard.setPos('right');
+                      } else {
+                        shownCard.setPos('left');
+                      }
+                      showHand.set(val => val--);
                     }
-                    showHand.set(val => val--);
                   }}
                   onMouseLeave={() => {
-                    shownCard.set(null);
-                    shownCard.setPos(null);
-                    showHand.set(val => val++);
+                    if (show) {
+                      shownCard.set(null);
+                      shownCard.setPos(null);
+                      showHand.set(val => val++);
+                    }
                   }}
                 >
                   <img

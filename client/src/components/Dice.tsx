@@ -16,7 +16,7 @@ const Dice: React.FC<{ roll1: number; roll2: number; total: number }> = ({
       setFace2(random(1, 6));
       let i = 0;
       let int = setInterval(() => {
-        if (++i === 6) {
+        if (++i === 20) {
           clearInterval(int);
           setFace1(roll1);
           setFace2(roll2);
@@ -24,7 +24,7 @@ const Dice: React.FC<{ roll1: number; roll2: number; total: number }> = ({
           setFace1(random(1, 6));
           setFace2(random(1, 6));
         }
-      }, 100);
+      }, 35);
     } else {
       setFace1(roll1);
       setFace2(roll2);

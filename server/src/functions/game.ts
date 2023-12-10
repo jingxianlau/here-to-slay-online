@@ -108,10 +108,6 @@ export function playCard(
     state.turn.phase =
       card.type !== CardType.item ? 'challenge' : 'choose-hero';
 
-    // DEV
-    // state.turn.phase === 'play';
-    // DEV
-
     state.turn.phaseChanged = true;
     sendGameState(roomId);
   }, 1200);

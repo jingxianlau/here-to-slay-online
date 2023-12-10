@@ -27,9 +27,9 @@ export const useEffectRoll = (
   heroCard: HeroCard
 ) => {
   const playerNum = validSender(roomId, userId);
+  if (playerNum === -1) return;
   const gameState = rooms[roomId].state;
   if (
-    playerNum === -1 ||
     gameState.dice.main.total !== 0 ||
     gameState.turn.player !== playerNum ||
     (gameState.turn.phase !== 'play' &&
@@ -38,18 +38,14 @@ export const useEffectRoll = (
     return;
   }
 
-  // DEV
-  // useEffect(roomId, userId, heroCard);
-  // return;
-  // DEV
-
   if (
     gameState.turn.phase === 'use-effect-roll' &&
     gameState.mainDeck.preparedCard &&
     gameState.mainDeck.preparedCard.card.type === CardType.hero &&
     gameState.mainDeck.preparedCard.card.id === heroCard.id
   ) {
-    const roll = rollDice();
+    // const roll = rollDice();
+    const roll: [number, number] = [6, 6];
     const val = roll[0] + roll[1];
     gameState.dice.main.roll = roll;
     gameState.dice.main.total = val;
@@ -95,6 +91,7 @@ export const useEffect = (
   returnVal?: AnyCard | number
 ) => {
   const playerNum = checkCredentials(roomId, userId);
+  if (playerNum === -1 || !card) return;
   const state = rooms[roomId].state;
   if (
     (state.turn.effect &&
@@ -155,6 +152,7 @@ export const useEffect = (
     state.mainDeck.preparedCard = null;
     state.turn.effect = {
       action: 'none',
+      actionChanged: false,
       players: [],
       val: 0,
       step: 0,
@@ -162,7 +160,6 @@ export const useEffect = (
       purpose: '',
       card: card
     };
-    console.log('HIHI');
 
     abilities[cardName][0](roomId, playerNum);
   }
@@ -171,8 +168,8 @@ export const useEffect = (
 // misc functions that i have no idea where to put
 export const pass = (roomId: string, userId: string) => {
   const playerNum = validSender(roomId, userId);
-  const state = rooms[roomId].state;
   if (playerNum === -1) return;
+  const state = rooms[roomId].state;
   removeFreeUse(roomId);
 
   rooms[roomId].state.turn.movesLeft = 0;
@@ -219,6 +216,7 @@ export const endTurnDiscard = (
   returnVal?: AnyCard
 ) => {
   const playerNum = validSender(roomId, userId);
+  if (playerNum === -1) return;
   const state = rooms[roomId].state;
   if (state.turn.player !== playerNum) return;
 
