@@ -10,7 +10,6 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   const playerNum = validSender(roomId, userId);
   const state = rooms[roomId].state;
 
-  console.log('hi bro');
   if (
     state.turn.phase === 'choose-hero' &&
     state.turn.player === playerNum &&

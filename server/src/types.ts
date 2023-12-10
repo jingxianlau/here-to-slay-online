@@ -188,6 +188,8 @@ interface State {
         num?: number[];
         card?: AnyCard[];
       };
+      activeNumVisible: boolean[];
+      activeCardVisible: boolean[];
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
     } | null;

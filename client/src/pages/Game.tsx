@@ -355,7 +355,6 @@ const Game: React.FC = () => {
               allowedCards.set([]);
             }
 
-            let timeout = false;
             if (newState.turn.phaseChanged) {
               if (newState.turn.effect.card.type === CardType.hero) {
                 showText(showHelperText, 'Hero Ability');
@@ -364,7 +363,6 @@ const Game: React.FC = () => {
               } else {
                 showText(showHelperText, 'Monster Punishment');
               }
-              timeout = true;
             }
 
             if (newState.turn.effect) {
@@ -377,8 +375,8 @@ const Game: React.FC = () => {
                   showHand.set(val => Math.max(val - 1, 0));
                   break;
                 case 'choose-hand':
-                  showHand.setLocked(val => ++val);
-                  showHand.set(val => ++val);
+                  showHand.setLocked(1);
+                  showHand.set(1);
                   shownCard.setLocked(false);
                   setShowEffectPopup(true);
 
@@ -434,8 +432,8 @@ const Game: React.FC = () => {
             }
 
             if (!showBoard) {
-              showHand.set(val => ++val);
-              showHand.setLocked(val => ++val);
+              showHand.set(1);
+              showHand.setLocked(1);
             }
             if (
               newState.turn.player === newState.playerNum &&

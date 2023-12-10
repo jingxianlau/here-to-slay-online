@@ -16,6 +16,7 @@ import {
   MagicCard,
   MonsterCard
 } from '../../../types';
+import cloneDeep from 'lodash.clonedeep';
 
 function isCard(object: AnyCard | number | null): object is AnyCard {
   return typeof object !== 'number' && object !== null;
@@ -148,6 +149,11 @@ export const useEffect = (
     // state.turn.phase === 'modify'
   ) {
     // new effect
+    let privateArr = [];
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+      privateArr.push(true);
+    }
+
     state.turn.phase = 'use-effect';
     state.turn.phaseChanged = true;
     state.mainDeck.preparedCard = null;
@@ -158,6 +164,8 @@ export const useEffect = (
       val: 0,
       step: 0,
       choice: null,
+      activeNumVisible: cloneDeep(privateArr),
+      activeCardVisible: cloneDeep(privateArr),
       purpose: '',
       card: card
     };

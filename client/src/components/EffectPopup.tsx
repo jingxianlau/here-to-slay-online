@@ -119,10 +119,13 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           </div>
         ) : state.turn.effect.action === 'play' &&
           state.turn.effect.active &&
-          state.turn.effect.active.num &&
-          state.turn.effect.active.card ? (
+          (!state.turn.effect.activeNumVisible[state.playerNum] ||
+            state.turn.effect.active.num) &&
+          (!state.turn.effect.activeCardVisible[state.playerNum] ||
+            state.turn.effect.active.card) ? (
           <div className='choose-cover'>
             {state.turn.player === state.playerNum &&
+              state.turn.effect.active.num &&
               (state.turn.effect.active.num[0] === 1 ? (
                 <div
                   className='left active'
@@ -148,7 +151,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                 </div>
               ))}
 
-            {state.turn.effect.active && state.turn.effect.active.card && (
+            {state.turn.effect.active && state.turn.effect.active.card ? (
               <div className='img-container center'>
                 <img
                   src={getImage(state.turn.effect.active.card[0])}
@@ -157,24 +160,34 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   draggable='false'
                 />
               </div>
-            )}
-
-            {state.turn.player === state.playerNum && (
-              <div
-                className='right'
-                onClick={() => {
-                  socket.emit(
-                    'use-effect',
-                    roomId,
-                    userId,
-                    state.turn.effect?.card,
-                    0
-                  );
-                }}
-              >
-                {state.turn.effect.active.num[0] === 1 ? 'Cancel' : 'Next'}
+            ) : (
+              <div className='img-container center'>
+                <img
+                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                  alt='hidden card'
+                  className='small-xl'
+                  draggable='false'
+                />
               </div>
             )}
+
+            {state.turn.player === state.playerNum &&
+              state.turn.effect.active.num && (
+                <div
+                  className='right'
+                  onClick={() => {
+                    socket.emit(
+                      'use-effect',
+                      roomId,
+                      userId,
+                      state.turn.effect?.card,
+                      0
+                    );
+                  }}
+                >
+                  {state.turn.effect.active.num[0] === 1 ? 'Cancel' : 'Next'}
+                </div>
+              )}
           </div>
         ) : (
           <></>

@@ -144,6 +144,14 @@ export const ifMayPlay = (
               ]
             ]
           };
+
+          state.turn.effect.activeNumVisible = [];
+          state.turn.effect.activeCardVisible = [];
+          for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+            state.turn.effect.activeNumVisible.push(i === playerNum);
+            state.turn.effect.activeCardVisible.push(i === playerNum);
+          }
+
           sendGameState(roomId);
         }
       }, 1200);
@@ -157,8 +165,6 @@ export const ifMayPlay = (
         !state.turn.effect.active.num
       )
         return;
-
-      console.log(state.turn.effect.active.num);
 
       if (
         state.turn.effect.active.num[0] === 0 ||

@@ -74,5 +74,15 @@ export const parseState = (userId: string, state: GameState): privateState => {
     }
   }
 
+  if (newState.turn.effect && newState.turn.effect.active) {
+    if (!newState.turn.effect.activeNumVisible[playerNum]) {
+      delete newState.turn.effect.active.num;
+    }
+
+    if (!newState.turn.effect.activeCardVisible[playerNum]) {
+      delete newState.turn.effect.active.card;
+    }
+  }
+
   return newState;
 };
