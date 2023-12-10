@@ -17,7 +17,7 @@ export const addPlayer = (roomId: string, userId: string, username: string) => {
       thief: 0,
       wizard: 0
     },
-    heroCards: [],
+    heroCards: [null, null, null, null, null],
     largeCards: []
   });
 

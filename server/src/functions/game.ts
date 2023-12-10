@@ -9,7 +9,7 @@ import {
   HeroClass
 } from '../types';
 import { sendGameState } from '../server';
-import { reshuffleDeck } from './gameHelpers';
+import { addHero, removeHero, reshuffleDeck } from './gameHelpers';
 
 function findCard(roomId: string, playerNum: number, cardId: string) {
   return rooms[roomId].state.players[playerNum].hand.findIndex(
@@ -55,6 +55,7 @@ export function removeCardIndex(
 export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
   const length = cards.length;
   for (let i = 0; i < length; i++) {
+    cards[i].player = playerNum;
     rooms[roomId].state.players[playerNum].hand.push(cards[i]);
   }
   rooms[roomId].state.players[playerNum].numCards += length;
@@ -77,7 +78,7 @@ export function playCard(
 ) {
   const state = rooms[roomId].state;
   if (card.type === CardType.hero) {
-    state.board[playerNum].heroCards.push(card);
+    addHero(roomId, playerNum, card);
     state.board[playerNum].classes[card.class]++;
   }
 
@@ -113,12 +114,12 @@ export function playCard(
   }, 1200);
 }
 
-export function removeBoard(roomId: string, playerNum: number, card: HeroCard) {
+export function destroyCard(roomId: string, playerNum: number, card: HeroCard) {
   const state = rooms[roomId].state;
-  const heroCard = state.board[playerNum].heroCards.find(
-    val => val.id === card.id
-  );
+
+  const heroCard = removeHero(roomId, playerNum, card.id);
   if (!heroCard) return;
+
   delete heroCard.player;
   if (heroCard.item && heroCard.item.name.includes('Mask')) {
     state.board[playerNum].classes[
@@ -137,18 +138,14 @@ export function removeBoard(roomId: string, playerNum: number, card: HeroCard) {
     state.mainDeck.discardPile.push(heroCard.item);
   }
   state.mainDeck.discardPile.push(heroCard);
-
-  state.board[playerNum].heroCards = state.board[playerNum].heroCards.filter(
-    val => val.id !== card.id
-  );
 }
 
-export function removeItem(roomId: string, itemCard: ItemCard) {
+export function destroyItem(roomId: string, itemCard: ItemCard) {
   const state = rooms[roomId].state;
   let cardIndex: number | undefined;
   const boardIndex = state.board.findIndex(val =>
     val.heroCards.some((val, i) => {
-      const hero = val.item && val.item.id === itemCard.id;
+      const hero = val && val.item && val.item.id === itemCard.id;
       if (hero) {
         cardIndex = i;
       }
@@ -157,7 +154,7 @@ export function removeItem(roomId: string, itemCard: ItemCard) {
   );
   if (boardIndex === -1 || cardIndex === undefined) return;
 
-  const card = state.board[boardIndex].heroCards[cardIndex].item;
+  const card = state.board[boardIndex].heroCards[cardIndex]?.item;
   if (!card) return;
 
   delete card.player;
@@ -165,7 +162,7 @@ export function removeItem(roomId: string, itemCard: ItemCard) {
 
   state.mainDeck.discardPile.push(card);
 
-  delete state.board[boardIndex].heroCards[cardIndex].item;
+  delete state.board[boardIndex].heroCards[cardIndex]?.item;
 }
 
 export function drawCards(roomId: string, playerNum: number, num: number) {

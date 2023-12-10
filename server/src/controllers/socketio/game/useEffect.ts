@@ -74,7 +74,7 @@ export const useEffectRoll = (
       removeFreeUse(roomId);
     }
     gameState.board[playerNum].heroCards.forEach(val => {
-      if (val.id === heroCard.id) {
+      if (val && val.id === heroCard.id) {
         val.abilityUsed = true;
       }
     });
@@ -114,7 +114,7 @@ export const useEffect = (
     abilities[cardName][++state.turn.effect.step](
       roomId,
       state.turn.player,
-      returnVal
+      returnVal !== undefined
         ? {
             card: isCard(returnVal) ? returnVal : undefined,
             num: typeof returnVal === 'number' ? returnVal : undefined
@@ -123,6 +123,7 @@ export const useEffect = (
       state.turn.player !== playerNum ? playerNum : undefined
     );
 
+    if (!state.turn.effect) return;
     if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
       setTimeout(() => {
         if (state.turn.effect)
@@ -258,7 +259,9 @@ export const endTurnDiscard = (
     }
   } else {
     // new effect
-    if (state.board[state.turn.player].heroCards.some(val => val.freeUse)) {
+    if (
+      state.board[state.turn.player].heroCards.some(val => val && val.freeUse)
+    ) {
       state.turn.phase = 'play';
       state.turn.phaseChanged = true;
       sendGameState(roomId);

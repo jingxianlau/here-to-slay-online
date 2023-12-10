@@ -18,8 +18,7 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
       setShow,
       customText,
       setCustomText,
-      customCenter,
-      setCustomCenter
+      customCenter
     },
     shownCard,
     state: { val: state }
@@ -36,12 +35,12 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
               card.type === CardType.magic) &&
             !state.turn.pause &&
             !state.board[state.playerNum].heroCards.some(
-              val => val.id === card.id
+              val => val && val.id === card.id
             ) &&
-            !(
-              card.type === CardType.hero &&
-              state.board[state.playerNum].heroCards.length >= 5
-            ) &&
+            (card.type !== CardType.hero ||
+              state.board[state.playerNum].heroCards.some(
+                val => val === null
+              )) &&
             state.turn.movesLeft
           ) {
             socket.emit('prepare-card', roomId, userId, card);
@@ -49,7 +48,7 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
             state.turn.player === state.playerNum &&
             card.type === CardType.hero &&
             state.board[state.playerNum].heroCards.some(
-              val => val.id === card.id
+              val => val && val.id === card.id
             ) &&
             (state.turn.movesLeft || card.freeUse) &&
             !card.abilityUsed

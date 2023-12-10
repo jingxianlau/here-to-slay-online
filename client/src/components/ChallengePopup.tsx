@@ -66,7 +66,7 @@ const ChallengePopup: React.FC<{
       setHeroCardPlayer(
         state.board.findIndex(val =>
           val.heroCards.some(
-            card => card.item && card.item.id === preppedCard.card.id
+            card => card && card.item && card.item.id === preppedCard.card.id
           )
         )
       );
@@ -163,14 +163,19 @@ const ChallengePopup: React.FC<{
                     <img
                       src={getImage(
                         state.board[heroCardPlayer].heroCards.find(
-                          val => val.item && val.item.id === preppedCard.card.id
+                          val =>
+                            val &&
+                            val.item &&
+                            val.item.id === preppedCard.card.id
                         ) as HeroCard
                       )}
                       alt={
                         (
                           state.board[heroCardPlayer].heroCards.find(
                             val =>
-                              val.item && val.item.id === preppedCard.card.id
+                              val &&
+                              val.item &&
+                              val.item.id === preppedCard.card.id
                           ) as HeroCard
                         ).name
                       }
@@ -246,20 +251,24 @@ const ChallengePopup: React.FC<{
                   ) : (
                     heroCardPlayer !== -1 &&
                     state.board[heroCardPlayer].heroCards.find(
-                      val => val.item && val.item.id === preppedCard.card.id
+                      val =>
+                        val && val.item && val.item.id === preppedCard.card.id
                     ) && (
                       <>
                         <img
                           src={getImage(
                             state.board[heroCardPlayer].heroCards.find(
                               val =>
-                                val.item && val.item.id === preppedCard.card.id
+                                val &&
+                                val.item &&
+                                val.item.id === preppedCard.card.id
                             ) as HeroCard
                           )}
                           alt={
                             (
                               state.board[heroCardPlayer].heroCards.find(
                                 val =>
+                                  val &&
                                   val.item &&
                                   val.item.id === preppedCard.card.id
                               ) as HeroCard

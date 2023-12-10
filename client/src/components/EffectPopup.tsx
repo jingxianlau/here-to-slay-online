@@ -67,38 +67,54 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   : ' list'
               }`}
             >
-              {Array.from(Array(state.turn.effect.active.num[1]), (_, i) => (
-                <img
-                  key={i}
-                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
-                  alt='card'
-                  onClick={
-                    state.turn.effect?.players.some(
-                      val => val === state.playerNum
-                    )
-                      ? () => {
-                          socket.emit(
-                            'use-effect',
-                            roomId,
-                            userId,
-                            state.turn.effect?.card,
-                            i
-                          );
-                        }
-                      : () => {}
-                  }
-                  className={`small-md ${
-                    state.turn.effect?.players.some(
-                      val => val === state.playerNum
-                    )
-                      ? 'active'
-                      : state.turn.effect?.choice &&
-                        state.turn.effect.choice[0] === i
-                      ? 'chosen'
-                      : ''
-                  }`}
-                />
-              ))}
+              {state.turn.effect.active.num[0] !== state.playerNum
+                ? Array.from(Array(state.turn.effect.active.num[1]), (_, i) => (
+                    <img
+                      key={i}
+                      src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                      alt='card'
+                      onClick={
+                        state.turn.effect?.players.some(
+                          val => val === state.playerNum
+                        )
+                          ? () => {
+                              socket.emit(
+                                'use-effect',
+                                roomId,
+                                userId,
+                                state.turn.effect?.card,
+                                i
+                              );
+                            }
+                          : () => {}
+                      }
+                      className={`small-md ${
+                        state.turn.effect?.players.some(
+                          val => val === state.playerNum
+                        )
+                          ? 'active'
+                          : state.turn.effect?.choice &&
+                            state.turn.effect.choice[0] === i
+                          ? 'chosen'
+                          : ''
+                      }`}
+                    />
+                  ))
+                : state.players[state.playerNum].hand.map((val, i) => (
+                    <>
+                      <img
+                        key={val.id}
+                        src={getImage(val)}
+                        alt={val.name}
+                        className={`small-md ${
+                          state.turn.effect?.choice &&
+                          state.turn.effect.choice[0] === i
+                            ? 'chosen'
+                            : ''
+                        }`}
+                      />
+                    </>
+                  ))}
             </div>
           </div>
         ) : state.turn.effect.action === 'play' &&

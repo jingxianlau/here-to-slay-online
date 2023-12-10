@@ -1,5 +1,11 @@
 import { rooms } from '../rooms';
-import { AnyCard, GameState, LeaderCard, MonsterCard } from '../types';
+import {
+  AnyCard,
+  GameState,
+  HeroCard,
+  LeaderCard,
+  MonsterCard
+} from '../types';
 import shuffle from 'lodash.shuffle';
 import random from 'lodash.random';
 import { heroCards, initialState } from '../cards';
@@ -29,7 +35,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       wizard: 0
     };
     state.board[i].largeCards = [];
-    state.board[i].heroCards = [];
+    state.board[i].heroCards = [null, null, null, null, null];
 
     for (let _ = 0; _ < 5; _++) {
       let card = state.secret.deck.pop() as AnyCard;
@@ -62,7 +68,11 @@ export function nextPlayer(roomId: string) {
 
   const heroes = rooms[roomId].state.board[newPlayer].heroCards;
   for (let i = 0; i < heroes.length; i++) {
-    heroes.forEach(val => (val.abilityUsed = false));
+    heroes.forEach(val => {
+      if (val) {
+        val.abilityUsed = false;
+      }
+    });
   }
 
   sendGameState(roomId);
@@ -83,6 +93,38 @@ export function reshuffleDeck(roomId: string) {
 export function removeFreeUse(roomId: string) {
   const boards = rooms[roomId].state.board;
   for (let i = 0; i < boards.length; i++) {
-    boards[i].heroCards.forEach(val => (val.freeUse = false));
+    boards[i].heroCards.forEach(val => {
+      if (val) {
+        val.freeUse = false;
+      }
+    });
   }
+}
+
+export function addHero(roomId: string, playerNum: number, card: HeroCard) {
+  const state = rooms[roomId].state;
+  for (let i = 0; i < 5; i++) {
+    if (state.board[playerNum].heroCards[i] === null) {
+      card.player = playerNum;
+      card.abilityUsed = false;
+      state.board[playerNum].heroCards[i] = card;
+      return;
+    }
+  }
+}
+
+export function removeHero(
+  roomId: string,
+  playerNum: number,
+  cardId: string
+): HeroCard | null {
+  const state = rooms[roomId].state;
+  for (let i = 0; i < 5; i++) {
+    const card = state.board[playerNum].heroCards[i];
+    if (card !== null && card.id === cardId) {
+      state.board[playerNum].heroCards[i] = null;
+      return card;
+    }
+  }
+  return null;
 }

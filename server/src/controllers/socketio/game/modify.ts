@@ -1,5 +1,5 @@
 import { rollRequirements } from '../../../functions/abilities';
-import { discardCard, removeBoard, removeItem } from '../../../functions/game';
+import { discardCard, destroyCard, destroyItem } from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { disconnectAll, sendGameState } from '../../../server';
@@ -71,7 +71,7 @@ export const modifyRoll = (
             if (state.mainDeck.preparedCard.card.type === CardType.hero) {
               const player = state.mainDeck.preparedCard.card.player;
               if (player === undefined) return;
-              removeBoard(
+              destroyCard(
                 roomId,
                 state.mainDeck.preparedCard.card.player,
                 state.mainDeck.preparedCard.card
@@ -87,11 +87,11 @@ export const modifyRoll = (
               state.board[itemCard.heroPlayer].classes[
                 (
                   state.board[itemCard.heroPlayer].heroCards.find(
-                    val => val.id === itemCard.heroId
+                    val => val && val.id === itemCard.heroId
                   ) as HeroCard
                 ).class
               ]++;
-              removeItem(roomId, state.mainDeck.preparedCard.card);
+              destroyItem(roomId, state.mainDeck.preparedCard.card);
             }
             sendGameState(roomId);
 

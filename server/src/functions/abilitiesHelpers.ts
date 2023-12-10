@@ -14,17 +14,15 @@ export const endEffect = (
   playerNum: number,
   updatePhase = true
 ) => {
-  setTimeout(() => {
-    const state = rooms[roomId].state;
-    state.turn.effect = null;
-    if (updatePhase) {
-      if (state.turn.movesLeft > 0) {
-        state.turn.phase = 'play';
-        state.turn.phaseChanged = true;
-        sendGameState(roomId);
-      } else endTurnDiscard(roomId, state.secret.playerIds[playerNum]);
-    }
-  }, 2400);
+  const state = rooms[roomId].state;
+  state.turn.effect = null;
+  if (updatePhase) {
+    if (state.turn.movesLeft > 0) {
+      state.turn.phase = 'play';
+      state.turn.phaseChanged = true;
+      sendGameState(roomId);
+    } else endTurnDiscard(roomId, state.secret.playerIds[playerNum]);
+  }
 };
 
 export const choosePlayer = (
@@ -156,14 +154,26 @@ export const ifMayPlay = (
         !state.turn.effect ||
         !state.turn.effect.active ||
         !state.turn.effect.active.card ||
-        !state.turn.effect.active.num ||
-        state.turn.effect.active.card[0].type !== type
+        !state.turn.effect.active.num
       )
         return;
 
-      state.turn.effect.val--;
-      if (state.turn.effect.active.num[0] === 1 && returnVal && returnVal.num) {
+      console.log(state.turn.effect.active.num);
+
+      if (
+        state.turn.effect.active.num[0] === 0 ||
+        (returnVal && returnVal.num === 0)
+      ) {
+        state.turn.effect.val--;
+        endEffect(roomId, playerNum);
+      } else if (
+        state.turn.effect.active.num[0] === 1 &&
+        returnVal &&
+        returnVal.num === 1 &&
+        state.turn.effect.active.card[0].type === type
+      ) {
         playCard(roomId, playerNum, state.turn.effect.active.card[0], true);
+        state.turn.effect.val--;
       }
     }
   ];

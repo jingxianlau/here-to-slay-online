@@ -117,7 +117,13 @@ export interface GameState {
     };
 
     // players' public board
-    heroCards: HeroCard[];
+    heroCards: [
+      HeroCard | null,
+      HeroCard | null,
+      HeroCard | null,
+      HeroCard | null,
+      HeroCard | null
+    ];
     largeCards: LargeCard[];
   }[];
   mainDeck: {

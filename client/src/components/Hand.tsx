@@ -113,7 +113,7 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
           !state.turn.pause &&
           !(
             card.type === CardType.hero &&
-            state.board[state.playerNum].heroCards.length >= 5
+            state.board[state.playerNum].heroCards.every(val => val !== null)
           )
         ) {
           chosenCard.set(card);
@@ -234,7 +234,9 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                   if (
                     allowedCard(allowedCards.val, card.type) &&
                     ((card.type === CardType.hero &&
-                      state.board[state.playerNum].heroCards.length < 5) ||
+                      state.board[state.playerNum].heroCards.some(
+                        val => val === null
+                      )) ||
                       card.type !== CardType.hero)
                   )
                     playCard(card);
@@ -251,7 +253,9 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                       ? 'active'
                       : allowedCard(allowedCards.val, card.type) &&
                         ((card.type === CardType.hero &&
-                          state.board[state.playerNum].heroCards.length < 5) ||
+                          state.board[state.playerNum].heroCards.some(
+                            val => val === null
+                          )) ||
                           card.type !== CardType.hero) &&
                         (state.turn.phase === 'challenge' ||
                           state.turn.phase === 'challenge-roll' ||
@@ -259,7 +263,9 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                       ? 'active glow'
                       : allowedCard(allowedCards.val, card.type) &&
                         ((card.type === CardType.hero &&
-                          state.board[state.playerNum].heroCards.length < 5) ||
+                          state.board[state.playerNum].heroCards.some(
+                            val => val === null
+                          )) ||
                           card.type !== CardType.hero)
                       ? 'active'
                       : 'inactive'

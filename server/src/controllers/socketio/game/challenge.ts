@@ -10,6 +10,7 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   const playerNum = validSender(roomId, userId);
   const state = rooms[roomId].state;
 
+  console.log('hi bro');
   if (
     state.turn.phase === 'choose-hero' &&
     state.turn.player === playerNum &&
@@ -22,8 +23,11 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
     // chosen hero for item
     const itemHero =
       state.board[card.player].heroCards[
-        state.board[card.player].heroCards.findIndex(val => val.id === card.id)
+        state.board[card.player].heroCards.findIndex(
+          val => val && val.id === card.id
+        )
       ];
+    if (!itemHero) return;
     itemHero.item = state.mainDeck.preparedCard.card;
     itemHero.item.heroId = card.id;
     itemHero.item.heroPlayer = card.player;
@@ -48,9 +52,9 @@ export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
       card.type === CardType.magic ||
       card.type === CardType.item) &&
     (card.type !== CardType.hero ||
-      state.board[playerNum].heroCards.length < 5) &&
+      state.board[playerNum].heroCards.some(val => val === null)) &&
     (card.type !== CardType.item ||
-      state.board.some(val => val.heroCards.some(val => !val.item))) &&
+      state.board.some(val => val.heroCards.some(val => val && !val.item))) &&
     state.turn.movesLeft >= 1
   ) {
     removeFreeUse(roomId);
