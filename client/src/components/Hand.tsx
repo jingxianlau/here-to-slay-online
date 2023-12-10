@@ -36,68 +36,70 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     }
 
     const currHand = state.players[state.playerNum].hand;
-    if (prevHand) {
-      if (currHand.length > prevHand.length) {
-        showHand.set(val => ++val);
-        showHand.setLocked(val => ++val);
-        setTimeout(() => {
-          showHand.set(val => --val);
-          showHand.setLocked(val => --val);
-        }, (currHand.length - prevHand.length) * 450 + 250);
+    setTimeout(() => {
+      if (prevHand) {
+        if (currHand.length > prevHand.length) {
+          showHand.set(val => ++val);
+          showHand.setLocked(val => ++val);
+          setTimeout(() => {
+            showHand.set(val => --val);
+            showHand.setLocked(val => --val);
+          }, (currHand.length - prevHand.length) * 450 + 250);
 
-        setPrevHand(_ => currHand);
+          setPrevHand(_ => currHand);
 
-        setSolidCards([]);
-        for (let i = 0; i < currHand.length; i++) {
-          setSolidCards(arr => [...arr, i < prevHand.length]);
-        }
-
-        let i = prevHand.length;
-        let int = setInterval(() => {
-          setSolidCards(arr => {
-            return arr.map((_, index) => index < i);
-          });
-          if (i === currHand.length) {
-            clearInterval(int);
-          } else i++;
-        }, 250);
-      } else if (currHand < prevHand) {
-        showHand.set(val => ++val);
-        showHand.setLocked(val => ++val);
-        setTimeout(() => {
-          showHand.set(val => --val);
-          showHand.setLocked(val => --val);
-        }, (prevHand.length - currHand.length) * 450 + 250);
-
-        setSolidCards([]);
-        let cards: number[] = [];
-        for (let i = 0; i < prevHand.length; i++) {
-          const id = prevHand[i].id;
-          if (!id) return;
-          if (!currHand.some(val => val.id === id)) {
-            cards.push(i);
+          setSolidCards([]);
+          for (let i = 0; i < currHand.length; i++) {
+            setSolidCards(arr => [...arr, i < prevHand.length]);
           }
-          setSolidCards(arr => [...arr, true]);
-        }
 
-        let i = -1;
-        let int = setInterval(() => {
-          if (++i === cards.length) {
-            setSolidCards([]);
-            for (let i = 0; i < currHand.length; i++) {
-              setSolidCards(arr => [...arr, true]);
+          let i = prevHand.length;
+          let int = setInterval(() => {
+            setSolidCards(arr => {
+              return arr.map((_, index) => index < i);
+            });
+            if (i === currHand.length) {
+              clearInterval(int);
+            } else i++;
+          }, 250);
+        } else if (currHand < prevHand) {
+          showHand.set(val => ++val);
+          showHand.setLocked(val => ++val);
+          setTimeout(() => {
+            showHand.set(val => --val);
+            showHand.setLocked(val => --val);
+          }, (prevHand.length - currHand.length) * 450 + 250);
+
+          setSolidCards([]);
+          let cards: number[] = [];
+          for (let i = 0; i < prevHand.length; i++) {
+            const id = prevHand[i].id;
+            if (!id) return;
+            if (!currHand.some(val => val.id === id)) {
+              cards.push(i);
             }
-            setPrevHand(_ => currHand);
-            clearInterval(int);
-            return;
+            setSolidCards(arr => [...arr, true]);
           }
 
-          setSolidCards(arr =>
-            arr.map((val, index) => (index !== cards[i] ? val : false))
-          );
-        }, 250);
+          let i = -1;
+          let int = setInterval(() => {
+            if (++i === cards.length) {
+              setSolidCards([]);
+              for (let i = 0; i < currHand.length; i++) {
+                setSolidCards(arr => [...arr, true]);
+              }
+              setPrevHand(_ => currHand);
+              clearInterval(int);
+              return;
+            }
+
+            setSolidCards(arr =>
+              arr.map((val, index) => (index !== cards[i] ? val : false))
+            );
+          }, 250);
+        }
       }
-    }
+    }, 10);
   }, [state.players[state.playerNum].hand]);
 
   const playCard = (card: AnyCard) => {

@@ -126,13 +126,7 @@ export const useEffect = (
 
     if (!state.turn.effect) return;
     if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
-      setTimeout(() => {
-        if (state.turn.effect)
-          abilities[cardName][++state.turn.effect.step](
-            roomId,
-            state.turn.player
-          );
-      }, 1200);
+      abilities[cardName][++state.turn.effect.step](roomId, state.turn.player);
     } else {
       state.turn.effect.step--;
     }

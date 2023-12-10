@@ -201,10 +201,8 @@ export const drawCard = (num = 1) => [
     const state = rooms[roomId].state;
     if (!state.turn.effect) return;
     drawCards(roomId, playerNum, num);
-    state.turn.effect.active = {
-      card: [state.players[playerNum].hand[state.players[playerNum].numCards]]
-    };
     state.turn.effect.val--;
+    sendGameState(roomId);
   }
 ];
 
@@ -219,7 +217,9 @@ export const playFromHand = (
     state.turn.effect.allowedCards = [type];
     state.turn.effect.val = 1;
     state.turn.effect.players = [playerNum];
-    state.turn.effect.purpose = `Play ${type}`;
+    state.turn.effect.purpose = `Play ${
+      type.charAt(0).toUpperCase() + type.slice(1)
+    }`;
     sendGameState(roomId);
   },
   (roomId: string, playerNum: number, returnVal?: returnType) => {
