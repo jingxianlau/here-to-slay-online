@@ -139,6 +139,7 @@ const Game: React.FC = () => {
             break;
 
           case 'challenge':
+            setShowDiscardPopup(false);
             setShowEffectPopup(false);
             setActiveDice(0);
             showPopup.set(true);
@@ -152,6 +153,7 @@ const Game: React.FC = () => {
             break;
 
           case 'challenge-roll':
+            setShowDiscardPopup(false);
             setShowEffectPopup(false);
             setActiveDice(0);
             showPopup.set(true);
@@ -187,6 +189,8 @@ const Game: React.FC = () => {
             break;
 
           case 'attack-roll':
+            setShowEffectPopup(false);
+            setShowDiscardPopup(false);
             showRoll.set(false);
             showHand.setLocked(val => Math.max(val - 1, 0));
             if (!showBoard) {
@@ -206,6 +210,7 @@ const Game: React.FC = () => {
             break;
 
           case 'use-effect-roll':
+            setShowDiscardPopup(false);
             setShowEffectPopup(false);
             showRoll.set(false);
             showHand.setLocked(val => Math.max(val - 1, 0));
@@ -280,9 +285,13 @@ const Game: React.FC = () => {
 
           case 'play':
             showPopup.set(false);
+            setShowDiscardPopup(false);
             setShowEffectPopup(false);
+            showHand.set(val => Math.max(val - 1, 0));
             showHand.setLocked(val => Math.max(val - 1, 0));
             shownCard.setLocked(false);
+            shownCard.set(null);
+            shownCard.setPos(null);
             allowedCards.set([]);
 
             if (
@@ -321,6 +330,7 @@ const Game: React.FC = () => {
             break;
 
           case 'choose-hero':
+            setShowDiscardPopup(false);
             showPopup.set(false);
             if (newState.turn.player === newState.playerNum) {
               showHand.setLocked(1);
@@ -336,6 +346,7 @@ const Game: React.FC = () => {
             break;
 
           case 'use-effect':
+            setShowDiscardPopup(false);
             showPopup.set(false);
             if (!newState.turn.effect) return;
             showHand.setLocked(val => Math.max(val - 1, 0));
@@ -375,25 +386,40 @@ const Game: React.FC = () => {
                   showHand.set(val => Math.max(val - 1, 0));
                   break;
                 case 'choose-hand':
-                  showHand.setLocked(1);
-                  showHand.set(1);
+                  if (!showBoard) {
+                    showHand.set(1);
+                    showHand.setLocked(1);
+                  }
                   shownCard.setLocked(false);
-                  setShowEffectPopup(true);
 
                   if (
-                    newState.turn.effect.choice &&
-                    newState.turn.effect.choice[0] === 0
+                    newState.turn.effect &&
+                    !newState.turn.effect.purpose.includes('Discard')
                   ) {
-                    showText(showHelperText, 'No Card Picked');
-                  } else if (
-                    newState.turn.effect.choice &&
-                    isCard(newState.turn.effect.choice[0])
-                  ) {
-                    setShowEffectPopup(false);
-                    shownCard.set(newState.turn.effect.choice[0]);
-                    shownCard.setPos('center');
-                    shownCard.setLocked(true);
+                    setShowEffectPopup(true);
+                    if (
+                      newState.turn.effect.choice &&
+                      newState.turn.effect.choice[0] === 0
+                    ) {
+                      showText(showHelperText, 'No Card Picked');
+                    } else if (
+                      newState.turn.effect.choice &&
+                      isCard(newState.turn.effect.choice[0])
+                    ) {
+                      setShowEffectPopup(false);
+                      shownCard.set(newState.turn.effect.choice[0]);
+                      shownCard.setPos('center');
+                      shownCard.setLocked(true);
+                    }
+                  } else if (newState.turn.effect) {
+                    setShowDiscardPopup(true);
                   }
+                  break;
+                case 'choose-cards':
+                  setShowEffectPopup(true);
+                  showHand.setLocked(1);
+                  showHand.set(val => Math.max(val - 1, 0));
+                  shownCard.setLocked(false);
                   break;
                 case 'choose-other-hand-hide':
                   setShowEffectPopup(true);

@@ -169,18 +169,21 @@ interface State {
       action:
         | 'none' // DONE
         | 'draw' // DONE
-        | 'play'
-        | 'choose-boards'
-        | 'choose-own-board'
-        | 'choose-other-boards'
+        | 'play' // DONE
+        | 'reveal'
+        | 'choose-boards' // DONE
+        | 'choose-own-board' // DONE
+        | 'choose-other-boards' // DONE
         | 'choose-player' // DONE
         | 'choose-hand' // DONE
         | 'choose-other-hand-hide' // DONE
         | 'choose-other-hand-show'
-        | 'choose-discard';
+        | 'choose-discard'
+        | 'choose-cards'; // DONE
       actionChanged: boolean;
       players: number[]; // active players who can choose
-      val: number; // num of items to choose
+      val: { min: number; max: number; curr: number }; // num of items to choose
+      goNext: boolean;
       step: number; // to access functions in ability array
       card: HeroCard | MagicCard | MonsterCard; // card in use
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)

@@ -5,7 +5,7 @@ import {
 } from '../../../functions/gameHelpers';
 import { discardCard } from '../../../functions/game';
 import { checkCredentials, validSender } from '../../../functions/helpers';
-import { abilities } from '../../../functions/abilities';
+import { heroAbilities } from '../../../functions/abilities';
 import { rooms } from '../../../rooms';
 import { disconnectAll, sendGameState } from '../../../server';
 import {
@@ -38,6 +38,11 @@ export const useEffectRoll = (
   ) {
     return;
   }
+
+  // DEV
+  useEffect(roomId, userId, heroCard);
+  return;
+  // DEV
 
   if (
     gameState.turn.phase === 'use-effect-roll' &&
@@ -112,7 +117,7 @@ export const useEffect = (
       val => val !== playerNum
     );
 
-    abilities[cardName][++state.turn.effect.step](
+    heroAbilities[cardName][++state.turn.effect.step](
       roomId,
       state.turn.player,
       returnVal !== undefined
@@ -125,8 +130,18 @@ export const useEffect = (
     );
 
     if (!state.turn.effect) return;
-    if (state.turn.effect.players.length === 0 && state.turn.effect.val === 0) {
-      abilities[cardName][++state.turn.effect.step](roomId, state.turn.player);
+    if (
+      state.turn.effect.players.length === 0 &&
+      ((state.turn.effect.val.max === state.turn.effect.val.min &&
+        state.turn.effect.val.max === state.turn.effect.val.curr) ||
+        (state.turn.effect.val.curr >= state.turn.effect.val.min &&
+          state.turn.effect.val.curr <= state.turn.effect.val.max &&
+          state.turn.effect.goNext))
+    ) {
+      heroAbilities[cardName][++state.turn.effect.step](
+        roomId,
+        state.turn.player
+      );
     } else {
       state.turn.effect.step--;
     }
@@ -155,7 +170,8 @@ export const useEffect = (
       action: 'none',
       actionChanged: false,
       players: [],
-      val: 0,
+      val: { min: -1, max: -1, curr: -1 },
+      goNext: false,
       step: 0,
       choice: null,
       activeNumVisible: cloneDeep(privateArr),
@@ -164,7 +180,7 @@ export const useEffect = (
       card: card
     };
 
-    abilities[cardName][0](roomId, playerNum);
+    heroAbilities[cardName][0](roomId, playerNum);
   }
 };
 

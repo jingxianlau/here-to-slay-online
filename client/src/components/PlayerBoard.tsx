@@ -28,7 +28,13 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
         (state.board[playerNum].largeCards[0] as LeaderCard).class
       } ${
         (playerNum === state.turn.player &&
-          state.turn.phase !== 'choose-hero') ||
+          ((state.turn.phase !== 'choose-hero' &&
+            (state.turn.phase !== 'use-effect' ||
+              !state.turn.effect ||
+              (state.turn.effect.action !== 'choose-other-boards' &&
+                state.turn.effect.action !== 'choose-own-board' &&
+                state.turn.effect.action !== 'choose-boards'))) ||
+            state.turn.player !== state.playerNum)) ||
         state.turn.phase === 'end-game'
           ? 'active'
           : 'inactive'
@@ -40,6 +46,16 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             state.turn.effect?.action === 'choose-player' &&
             !state.turn.effect.choice &&
             playerNum === state.turn.player) ||
+          (state.turn.player === state.playerNum &&
+            state.turn.phase === 'use-effect' &&
+            state.turn.effect?.action === 'choose-other-boards' &&
+            !state.turn.effect.choice &&
+            playerNum === state.turn.player) ||
+          (state.turn.player === state.playerNum &&
+            state.turn.phase === 'use-effect' &&
+            state.turn.effect?.action === 'choose-own-board' &&
+            !state.turn.effect.choice &&
+            playerNum !== state.turn.player) ||
           (state.turn.effect && state.turn.effect.action === 'none')
             ? 'brightness(35%)'
             : 'none'
@@ -86,6 +102,20 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       chosenCard.set(card);
                       chosenCard.setShow(true);
                       chosenCard.setCustomText('Select');
+                    } else if (
+                      state.turn.phase === 'use-effect' &&
+                      state.turn.effect &&
+                      ((state.turn.effect.action === 'choose-other-boards' &&
+                        playerNum !== state.turn.player) ||
+                        (state.turn.effect.action === 'choose-own-board' &&
+                          playerNum === state.turn.player) ||
+                        state.turn.effect.action === 'choose-boards')
+                    ) {
+                      chosenCard.set(card);
+                      chosenCard.setShow(true);
+                      chosenCard.setCustomCenter(
+                        state.turn.effect.purpose.split(' ')[0]
+                      );
                     }
                   }
                 }}
@@ -112,6 +142,15 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                         state.turn.effect &&
                         state.turn.effect.card.id === card.id
                       ? 'glow-purple'
+                      : state.turn.phase === 'use-effect' &&
+                        state.turn.effect &&
+                        (state.turn.effect.action === 'choose-other-boards' ||
+                          state.turn.effect.action === 'choose-own-board' ||
+                          state.turn.effect.action === 'choose-boards') &&
+                        state.turn.effect.choice &&
+                        typeof state.turn.effect.choice[0] !== 'number' &&
+                        card.id === state.turn.effect.choice[0].id
+                      ? 'glow-red'
                       : ''
                   } ${
                     state.turn.phase !== 'end-game' &&
@@ -123,7 +162,22 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       (state.turn.movesLeft || card.freeUse)) ||
                       (state.turn.phase === 'choose-hero' &&
                         state.turn.player === state.playerNum &&
-                        !card.item))
+                        !card.item) ||
+                      (state.turn.phase === 'use-effect' &&
+                        state.turn.effect &&
+                        state.turn.effect.players.some(
+                          pn => pn === state.playerNum
+                        ) &&
+                        (state.turn.effect.action === 'choose-boards' ||
+                          (state.turn.effect.players.some(
+                            pn => pn === playerNum
+                          ) &&
+                            state.turn.effect.action === 'choose-own-board') ||
+                          (!state.turn.effect.players.some(
+                            pn => pn === playerNum
+                          ) &&
+                            state.turn.effect.action ===
+                              'choose-other-boards'))))
                       ? 'click'
                       : state.turn.phase !== 'end-game' &&
                         playerNum === state.playerNum
@@ -193,8 +247,24 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 draggable='false'
                 style={{
                   filter:
-                    state.turn.phase === 'choose-hero' &&
-                    state.turn.player === state.playerNum
+                    (state.turn.phase === 'choose-hero' &&
+                      state.turn.player === state.playerNum) ||
+                    (state.turn.phase === 'use-effect' &&
+                      state.turn.effect &&
+                      state.turn.effect.players.some(
+                        pn => pn === state.playerNum
+                      ) &&
+                      (state.turn.effect.action === 'choose-boards' ||
+                        (state.turn.effect.players.some(
+                          pn => pn === playerNum
+                        ) &&
+                          state.turn.effect.action === 'choose-own-board') ||
+                        (!state.turn.effect.players.some(
+                          pn => pn === playerNum
+                        ) &&
+                          state.turn.effect.action ===
+                            'choose-other-boards')) &&
+                      state.turn.player === state.playerNum)
                       ? 'brightness(35%)'
                       : 'none'
                 }}

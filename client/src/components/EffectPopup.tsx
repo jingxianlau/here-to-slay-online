@@ -16,7 +16,9 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
 }) => {
   const {
     state: { val: state },
-    credentials: { roomId, userId }
+    credentials: { roomId, userId },
+    shownCard,
+    chosenCard
   } = useClientContext();
 
   return (
@@ -29,7 +31,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
       }}
     >
       {state.turn.effect &&
-        (state.turn.effect.action === 'choose-hand' ? (
+        (state.turn.effect.action === 'choose-hand' &&
+        !state.turn.effect.purpose.includes('Discard') ? (
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -188,6 +191,83 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   {state.turn.effect.active.num[0] === 1 ? 'Cancel' : 'Next'}
                 </div>
               )}
+          </div>
+        ) : state.turn.effect.action === 'choose-cards' &&
+          state.turn.effect.active &&
+          state.turn.effect.active.num &&
+          (!state.turn.effect.activeCardVisible[state.playerNum] ||
+            state.turn.effect.active.card) ? (
+          <div className='content'>
+            <div className='top'>
+              <div className='img-container'>
+                <img
+                  src={getImage(state.turn.effect.card)}
+                  alt={state.turn.effect.card.name}
+                  className='small-lg'
+                />
+              </div>
+              <h1>{state.turn.effect.purpose}</h1>
+            </div>
+
+            <div
+              className={`bottom${
+                state.turn.effect.active.num[1] *
+                  ((19 / 100) * window.innerHeight) >
+                window.innerWidth
+                  ? ' cover'
+                  : ' list'
+              }`}
+              style={{
+                bottom: '1vh'
+              }}
+            >
+              {!state.turn.effect.active.card
+                ? Array.from(Array(state.turn.effect.active.num[1]), (_, i) => (
+                    <img
+                      key={i}
+                      src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                      alt='card'
+                      className='small-md'
+                    />
+                  ))
+                : state.turn.effect.active.card.map(val => (
+                    <img
+                      key={val.id}
+                      src={getImage(val)}
+                      alt={val.name}
+                      onMouseEnter={() => {
+                        shownCard.set(val);
+                        shownCard.setPos('top');
+                      }}
+                      onMouseLeave={() => {
+                        shownCard.set(null);
+                        shownCard.setPos(null);
+                      }}
+                      onClick={
+                        state.turn.effect?.players.some(
+                          val => val === state.playerNum
+                        )
+                          ? () => {
+                              chosenCard.set(val);
+                              chosenCard.setShow(true);
+                            }
+                          : () => {}
+                      }
+                      className={`small-md  ${
+                        state.turn.effect?.players.some(
+                          val => val === state.playerNum
+                        )
+                          ? 'active'
+                          : state.turn.effect &&
+                            state.turn.effect.choice &&
+                            typeof state.turn.effect.choice[0] !== 'number' &&
+                            state.turn.effect.choice[0].id === val.id
+                          ? 'chosen'
+                          : ''
+                      }`}
+                    />
+                  ))}
+            </div>
           </div>
         ) : (
           <></>

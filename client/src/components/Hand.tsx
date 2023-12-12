@@ -297,7 +297,10 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
         {state.turn.phase === 'use-effect' &&
           state.turn.effect &&
           state.turn.effect.players.some(val => val === state.playerNum) &&
-          state.turn.effect.action === 'choose-hand' && (
+          state.turn.effect.action === 'choose-hand' &&
+          state.players[state.playerNum].hand.every(card =>
+            state.turn.effect?.allowedCards?.every(type => card.type !== type)
+          ) && (
             <button
               className='circular skip'
               onClick={() => {

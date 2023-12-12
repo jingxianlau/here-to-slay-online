@@ -105,7 +105,7 @@ header img {
   opacity: 0;
 }
 .help-cards .img-container img {
-  box-shadow: #1a1a1a 0 0 20px 20px;
+  box-shadow: #1a1a1a 0 0 1.5vh 1.5vh;
 }
 
 .dice-box {
@@ -238,9 +238,6 @@ header img {
 }
 .shown-card.left {
   left: 0;
-}
-.shown-card-top img {
-  box-shadow: none;
 }
 .shown-card-top {
   bottom: 33.3vh;
@@ -442,7 +439,7 @@ header img {
 
 .player-board .mat {
   padding: 3vh 2vh;
-  border: 1px solid;
+  border: 0.15vh solid;
   width: 44.1vh;
   height: 30.4vh;
   position: relative;
@@ -667,7 +664,7 @@ img.large-lg {
   padding: 3vh 0 3vh 3.5vh;
   height: 16vh;
   width: 50vh;
-  border: 1px solid;
+  border: 0.15vh solid;
   border-radius: 2.5vh;
   position: relative;
   transition: opacity 0.25s ease-in-out;
@@ -773,7 +770,7 @@ img.large-lg {
   opacity: 0.9;
 }
 .mat.inactive .background {
-  opacity: 0.3;
+  opacity: 0.2;
 }
 .mat.bard .background {
   background-image: url('./assets/mats/bard.png');
@@ -814,6 +811,9 @@ img.glow {
 }
 img.glow-purple {
   box-shadow: #9f2df6 0 0 1.2vh 1.2vh;
+}
+img.glow-red {
+  box-shadow: #fe2e2e 0 0 1.2vh 1.2vh;
 }
 img.click:hover {
   cursor: pointer;
@@ -1382,6 +1382,10 @@ div.cross {
   position: absolute;
   bottom: 4vh;
   width: 90%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 999;
 }
 .effect-cover .content .bottom img.small-md {
   transition: 0.25s ease-in-out;
@@ -1502,6 +1506,19 @@ div.cross {
 }
 .discard-cover.hide {
   opacity: 0;
+}
+.discard-cover .effect-container {
+  position: absolute;
+  top: 0;
+  height: 80%;
+  width: 93%;
+}
+.discard-cover .effect-container .top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
 }
 .discard-cover .content {
   display: flex;

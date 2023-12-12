@@ -106,10 +106,13 @@ export function playCard(
   state.turn.pause = false;
 
   setTimeout(() => {
-    state.turn.phase =
-      card.type !== CardType.item ? 'challenge' : 'choose-hero';
+    // state.turn.phase =
+    //   card.type !== CardType.item ? 'challenge' : 'choose-hero';
+    // state.turn.phaseChanged = true;
 
-    state.turn.phaseChanged = true;
+    // DEV
+    state.turn.phase = 'play';
+    // DEV
     sendGameState(roomId);
   }, 1200);
 }
@@ -138,6 +141,72 @@ export function destroyCard(roomId: string, playerNum: number, card: HeroCard) {
     state.mainDeck.discardPile.push(heroCard.item);
   }
   state.mainDeck.discardPile.push(heroCard);
+}
+
+export function stealCard(
+  roomId: string,
+  stealer: number,
+  stealee: number,
+  card: HeroCard
+): HeroCard | null {
+  const state = rooms[roomId].state;
+
+  const heroCard = removeHero(roomId, stealee, card.id);
+  if (!heroCard) return null;
+  addHero(roomId, stealer, heroCard);
+
+  if (heroCard.item && heroCard.item.name.includes('Mask')) {
+    state.board[stealee].classes[
+      heroCard.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]--;
+    state.board[stealer].classes[
+      heroCard.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]++;
+  } else {
+    state.board[stealee].classes[card.class]--;
+    state.board[stealer].classes[card.class]++;
+  }
+
+  return card;
+}
+
+export function swapCard(
+  roomId: string,
+  player1: number,
+  card1: HeroCard,
+  player2: number,
+  card2: HeroCard
+) {
+  const state = rooms[roomId].state;
+
+  const heroCard1 = removeHero(roomId, player1, card1.id);
+  const heroCard2 = removeHero(roomId, player2, card2.id);
+  if (!heroCard1 || !heroCard2) return;
+  addHero(roomId, player1, heroCard2);
+  addHero(roomId, player2, heroCard1);
+
+  if (heroCard1.item && heroCard1.item.name.includes('Mask')) {
+    state.board[player1].classes[
+      heroCard1.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]--;
+    state.board[player2].classes[
+      heroCard1.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]++;
+  } else {
+    state.board[player1].classes[heroCard1.class]--;
+    state.board[player2].classes[heroCard1.class]++;
+  }
+  if (heroCard2.item && heroCard2.item.name.includes('Mask')) {
+    state.board[player2].classes[
+      heroCard2.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]--;
+    state.board[player1].classes[
+      heroCard2.item.name.split(' ')[0].toLowerCase() as HeroClass
+    ]++;
+  } else {
+    state.board[player2].classes[heroCard2.class]--;
+    state.board[player1].classes[heroCard2.class]++;
+  }
 }
 
 export function destroyItem(roomId: string, itemCard: ItemCard) {

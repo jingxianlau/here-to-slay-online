@@ -102,7 +102,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                 (state.turn.effect.action === 'choose-hand' ||
                   state.turn.effect.action === 'choose-other-hand-hide' ||
                   state.turn.effect.action === 'choose-other-hand-show' ||
-                  state.turn.effect.action === 'play')) ||
+                  state.turn.effect.action === 'play' ||
+                  state.turn.effect.action === 'choose-cards')) ||
               state.turn.phase === 'end-turn-discard'
             ) {
               if (showBoard) {
