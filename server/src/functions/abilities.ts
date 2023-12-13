@@ -8,6 +8,7 @@ import { AnyCard, CardType, HeroClass, allCards } from '../types';
 import {
   addCards,
   discardCard,
+  drawCards,
   removeCard,
   stealCard,
   swapCard,
@@ -16,6 +17,7 @@ import {
 import {
   addCard,
   choosePlayer,
+  chooseReveal,
   chooseStealHero,
   chooseToAdd,
   destroyHero,
@@ -27,7 +29,8 @@ import {
   playFromHand,
   pullIfPull,
   receiveDiscardCard,
-  receivePlayer
+  receivePlayer,
+  revealCard
 } from './abilitiesHelpers';
 
 export const heroAbilities: {
@@ -289,6 +292,16 @@ export const heroAbilities: {
       setTimeout(() => {
         endEffect(roomId, playerNum);
       }, 2000)
+  ],
+  // DOING
+  'pan-chucks': [
+    ...drawCard(2),
+    ...chooseReveal(2, CardType.challenge),
+    ...destroyHero,
+    (roomId, userId) =>
+      setTimeout(() => {
+        endEffect(roomId, userId);
+      }, 1500)
   ]
 };
 

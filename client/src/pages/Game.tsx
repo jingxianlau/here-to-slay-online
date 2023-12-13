@@ -287,11 +287,7 @@ const Game: React.FC = () => {
             showPopup.set(false);
             setShowDiscardPopup(false);
             setShowEffectPopup(false);
-            showHand.set(val => Math.max(val - 1, 0));
-            showHand.setLocked(val => Math.max(val - 1, 0));
-            shownCard.setLocked(false);
-            shownCard.set(null);
-            shownCard.setPos(null);
+
             allowedCards.set([]);
 
             if (
@@ -326,6 +322,11 @@ const Game: React.FC = () => {
 
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Play');
+              showHand.set(val => Math.max(val - 1, 0));
+              showHand.setLocked(val => Math.max(val - 1, 0));
+              shownCard.setLocked(false);
+              shownCard.set(null);
+              shownCard.setPos(null);
             }
             break;
 
@@ -382,8 +383,10 @@ const Game: React.FC = () => {
                   break;
                 case 'play':
                   setShowEffectPopup(true);
-                  showHand.setLocked(1);
-                  showHand.set(val => Math.max(val - 1, 0));
+                  if (!showBoard) {
+                    showHand.setLocked(1);
+                    showHand.set(val => Math.max(val - 1, 0));
+                  }
                   break;
                 case 'choose-hand':
                   if (!showBoard) {
@@ -417,19 +420,25 @@ const Game: React.FC = () => {
                   break;
                 case 'choose-cards':
                   setShowEffectPopup(true);
-                  showHand.setLocked(1);
-                  showHand.set(val => Math.max(val - 1, 0));
+                  if (!showBoard) {
+                    showHand.setLocked(1);
+                    showHand.set(val => Math.max(val - 1, 0));
+                  }
                   shownCard.setLocked(false);
                   break;
                 case 'choose-other-hand-hide':
                   setShowEffectPopup(true);
-                  showHand.setLocked(1);
-                  showHand.set(val => Math.max(val - 1, 0));
+                  if (!showBoard) {
+                    showHand.setLocked(1);
+                    showHand.set(val => Math.max(val - 1, 0));
+                  }
                   break;
                 case 'choose-other-hand-show':
                   setShowEffectPopup(true);
-                  showHand.setLocked(1);
-                  showHand.set(val => Math.max(val - 1, 0));
+                  if (!showBoard) {
+                    showHand.setLocked(1);
+                    showHand.set(val => Math.max(val - 1, 0));
+                  }
                   break;
                 case 'draw':
                   if (
@@ -440,9 +449,25 @@ const Game: React.FC = () => {
                   }
                   showHand.set(val => Math.max(val - 1, 0));
                   break;
+                case 'choose-reveal':
+                  setShowEffectPopup(true);
+                  if (!showBoard) {
+                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.setLocked(1);
+                  }
+                  break;
+                case 'reveal':
+                  setShowEffectPopup(true);
+                  if (!showBoard) {
+                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.setLocked(1);
+                  }
+                  break;
                 default:
                   setShowEffectPopup(false);
-                  showHand.set(val => Math.max(val - 1, 0));
+                  if (!showBoard) {
+                    showHand.set(val => Math.max(val - 1, 0));
+                  }
                   shownCard.setLocked(false);
               }
             }

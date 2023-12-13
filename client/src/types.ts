@@ -171,7 +171,8 @@ export interface GameState {
         | 'none'
         | 'draw'
         | 'play'
-        | 'reveal'
+        | 'choose-reveal' // TODO
+        | 'reveal' // TODO
         | 'choose-boards'
         | 'choose-own-board'
         | 'choose-other-boards'

@@ -170,6 +170,7 @@ interface State {
         | 'none' // DONE
         | 'draw' // DONE
         | 'play' // DONE
+        | 'choose-reveal'
         | 'reveal'
         | 'choose-boards' // DONE
         | 'choose-own-board' // DONE

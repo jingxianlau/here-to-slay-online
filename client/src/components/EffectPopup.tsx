@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useClientContext from '../hooks/useClientContext';
 import { getImage } from '../helpers/getImage';
 import { Socket } from 'socket.io-client';
@@ -21,6 +21,17 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
     chosenCard
   } = useClientContext();
 
+  const [revealActiveCard, setRevealActiveCard] = useState(0);
+  useEffect(() => {
+    if (
+      state.turn.effect &&
+      state.turn.effect.action === 'choose-reveal' &&
+      state.turn.effect.actionChanged
+    ) {
+      setRevealActiveCard(0);
+    }
+  }, [state.turn.effect]);
+
   return (
     <div
       className={`effect-cover${
@@ -33,6 +44,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
       {state.turn.effect &&
         (state.turn.effect.action === 'choose-hand' &&
         !state.turn.effect.purpose.includes('Discard') ? (
+          // CHOOSE HAND (NOT DISCARD)
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -49,6 +61,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           state.turn.effect.active &&
           state.turn.effect.active.num &&
           state.turn.effect.active.num.length === 2 ? (
+          // PICK FROM HAND
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -126,6 +139,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
             state.turn.effect.active.num) &&
           (!state.turn.effect.activeCardVisible[state.playerNum] ||
             state.turn.effect.active.card) ? (
+          // PLAY IMMEDIATELY
           <div className='choose-cover'>
             {state.turn.player === state.playerNum &&
               state.turn.effect.active.num &&
@@ -197,6 +211,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           state.turn.effect.active.num &&
           (!state.turn.effect.activeCardVisible[state.playerNum] ||
             state.turn.effect.active.card) ? (
+          // CHOOSE CARDS
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -268,6 +283,203 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                     />
                   ))}
             </div>
+          </div>
+        ) : state.turn.effect.action === 'choose-reveal' &&
+          state.turn.effect.active &&
+          ((state.turn.effect.active.num &&
+            state.turn.effect.active.card &&
+            state.turn.effect.active.num.length ===
+              state.turn.effect.active.card.length &&
+            state.turn.effect.active.card.length > 0) ||
+            state.turn.player !== state.playerNum) ? (
+          // CHOOSE CARDS TO REVEAL
+          <div className='choose-cover' style={{ justifyContent: 'center' }}>
+            {state.turn.player === state.playerNum &&
+            state.turn.effect.active.num &&
+            state.turn.effect.active.num[revealActiveCard] ? (
+              <div
+                className='left active'
+                onClick={() => {
+                  socket.emit(
+                    'use-effect',
+                    roomId,
+                    userId,
+                    state.turn.effect?.card,
+                    revealActiveCard
+                  );
+                }}
+              >
+                Reveal
+              </div>
+            ) : (
+              state.turn.player === state.playerNum && (
+                <div
+                  className='left inactive'
+                  onClick={() => {}}
+                  style={{ opacity: 0 }}
+                ></div>
+              )
+            )}
+
+            {state.turn.player === state.playerNum &&
+            state.turn.effect.active.card &&
+            revealActiveCard !== 0 ? (
+              <div
+                className='arrow'
+                onClick={() => setRevealActiveCard(val => --val)}
+              >
+                <span className='material-symbols-outlined icon'>
+                  chevron_left
+                </span>
+              </div>
+            ) : (
+              <div className='arrow inactive'>
+                <span className='material-symbols-outlined icon'>
+                  chevron_left
+                </span>
+              </div>
+            )}
+
+            {state.turn.effect.active && state.turn.effect.active.card ? (
+              <div className='img-container center'>
+                <img
+                  src={getImage(
+                    state.turn.effect.active.card[revealActiveCard]
+                  )}
+                  alt={state.turn.effect.active.card[revealActiveCard].name}
+                  className='small-xl'
+                  draggable='false'
+                />
+              </div>
+            ) : (
+              <div className='img-container center'>
+                <img
+                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                  alt='hidden card'
+                  className='small-xl'
+                  draggable='false'
+                />
+              </div>
+            )}
+
+            {state.turn.player === state.playerNum &&
+            state.turn.effect.active.card &&
+            state.turn.effect.active.card.length !== revealActiveCard + 1 ? (
+              <div
+                className='arrow'
+                onClick={() => setRevealActiveCard(val => ++val)}
+              >
+                <span className='material-symbols-outlined icon'>
+                  chevron_right
+                </span>
+              </div>
+            ) : (
+              <div className='arrow inactive'>
+                <span className='material-symbols-outlined icon'>
+                  chevron_right
+                </span>
+              </div>
+            )}
+
+            {state.turn.player === state.playerNum &&
+            state.turn.effect.active.num &&
+            state.turn.effect.active.card?.length === revealActiveCard + 1 ? (
+              <div
+                className='right active'
+                onClick={() => {
+                  if (
+                    revealActiveCard + 1 ===
+                    state.turn.effect?.active?.card?.length
+                  ) {
+                    socket.emit(
+                      'use-effect',
+                      roomId,
+                      userId,
+                      state.turn.effect?.card,
+                      -1
+                    );
+                  } else {
+                    setRevealActiveCard(val => ++val);
+                  }
+                }}
+              >
+                Cancel
+              </div>
+            ) : (
+              state.turn.player === state.playerNum && (
+                <div
+                  className='right inactive'
+                  onClick={() => {}}
+                  style={{ opacity: 0 }}
+                ></div>
+              )
+            )}
+          </div>
+        ) : state.turn.effect.action === 'reveal' &&
+          state.turn.effect.active &&
+          state.turn.effect.active.card &&
+          state.turn.effect.active.card.length === 1 ? (
+          // REVEAL CARD
+          <div className='choose-cover'>
+            <div
+              className='left inactive'
+              onClick={() => {}}
+              style={{ opacity: 0 }}
+            ></div>
+
+            <div className='center'>
+              <h1
+                style={
+                  !state.turn.effect.players.some(
+                    val => val === state.playerNum
+                  )
+                    ? {
+                        marginTop: '-10vh',
+                        marginBottom: '2vh',
+                        marginRight: '0.8vh'
+                      }
+                    : {
+                        marginTop: '-10vh',
+                        marginBottom: '2vh',
+                        marginRight: 0
+                      }
+                }
+              >
+                {!state.turn.effect.players.some(val => val === state.playerNum)
+                  ? '...Waiting'
+                  : 'Revealed'}
+              </h1>
+              <div className='img-container center'>
+                <img
+                  src={getImage(state.turn.effect.active.card[0])}
+                  alt={state.turn.effect.active.card[0].name}
+                  className='small-xl'
+                  draggable='false'
+                />
+              </div>
+            </div>
+
+            {state.turn.effect.players.some(val => val === state.playerNum) ? (
+              <div
+                className='right active'
+                onClick={() => {
+                  socket.emit(
+                    'use-effect',
+                    roomId,
+                    userId,
+                    state.turn.effect?.card
+                  );
+                }}
+              >
+                Next
+              </div>
+            ) : (
+              <div
+                className='right inactive'
+                onClick={() => {}}
+                style={{ opacity: 0 }}
+              ></div>
+            )}
           </div>
         ) : (
           <></>

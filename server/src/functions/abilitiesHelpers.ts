@@ -186,7 +186,6 @@ export const ifMayPlay = (
         state.turn.effect.active.num[0] === 0 ||
         (returnVal && returnVal.num === 0)
       ) {
-        state.turn.effect.val.curr++;
         endEffect(roomId, playerNum);
       } else if (
         state.turn.effect.active.num[0] === 1 &&
@@ -195,7 +194,6 @@ export const ifMayPlay = (
         state.turn.effect.active.card[0].type === type
       ) {
         playCard(roomId, playerNum, state.turn.effect.active.card[0], true);
-        state.turn.effect.val.curr++;
       }
     }
   ];
@@ -480,3 +478,104 @@ export const receiveCard = (
   }, 1200);
 };
 export const chooseToAdd = [chooseCard, receiveCard];
+
+export const revealCard = [
+  (roomId: string, playerNum: number) => {
+    const state = rooms[roomId].state;
+    if (
+      !state.turn.effect ||
+      !state.turn.effect.active ||
+      !state.turn.effect.active.card
+    )
+      return;
+    state.turn.effect.action = 'reveal';
+    state.turn.effect.actionChanged = true;
+    state.turn.effect.allowedCards = [];
+    state.turn.effect.val = { min: 0, max: 0, curr: 0 };
+
+    // everyone (but owner) must confirm
+    state.turn.effect.players = [];
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+      state.turn.effect.players.push(i);
+    }
+
+    // every can see
+    state.turn.effect.activeCardVisible = [];
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+      state.turn.effect.activeCardVisible.push(true);
+    }
+
+    sendGameState(roomId);
+  },
+  (roomId: string, playerNum: number) => sendGameState(roomId)
+];
+
+export const chooseReveal = (num: number, type: CardType) => [
+  (roomId: string, playerNum: number) => {
+    const state = rooms[roomId].state;
+    if (!state.turn.effect) return;
+    state.turn.effect.action = 'choose-reveal';
+    state.turn.effect.actionChanged = true;
+    state.turn.effect.allowedCards = [];
+    state.turn.effect.val = { min: 1, max: 1, curr: 0 };
+    state.turn.effect.players = [playerNum];
+    state.turn.effect.active = {};
+    state.turn.effect.active.card = [];
+    state.turn.effect.active.num = [];
+
+    for (let i = num; i >= 1; i--) {
+      const card =
+        state.players[playerNum].hand[state.players[playerNum].numCards - i];
+      state.turn.effect.active.card.push(card);
+    }
+
+    for (let i = 0; i < num; i++) {
+      state.turn.effect.active.num.push(
+        state.turn.effect.active.card[i].type === type ? 1 : 0
+      );
+    }
+
+    state.turn.effect.activeCardVisible = [];
+    state.turn.effect.activeNumVisible = [];
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+      state.turn.effect.activeCardVisible.push(i === playerNum);
+      state.turn.effect.activeNumVisible.push(i === playerNum);
+    }
+
+    setTimeout(() => {
+      sendGameState(roomId);
+    }, 1200);
+  },
+  (roomId: string, playerNum: number, returnVal?: returnType) => {
+    const state = rooms[roomId].state;
+    if (
+      !state.turn.effect ||
+      !returnVal ||
+      returnVal.num === undefined ||
+      !state.turn.effect.active ||
+      !state.turn.effect.active.card
+    )
+      return;
+
+    if (
+      returnVal.num !== -1 &&
+      state.turn.effect.active.card[returnVal.num].type === type
+    ) {
+      state.turn.effect.active = {
+        card: [state.turn.effect.active.card[returnVal.num]]
+      };
+
+      state.turn.effect.activeCardVisible = [];
+      state.turn.effect.activeNumVisible = [];
+      for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+        state.turn.effect.activeCardVisible.push(true);
+        state.turn.effect.activeNumVisible.push(true);
+      }
+
+      state.turn.effect.val.curr++;
+    } else {
+      endEffect(roomId, playerNum);
+    }
+  },
+  ...revealCard
+];
