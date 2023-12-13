@@ -127,10 +127,9 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
     } else if (customText === 'Skip') {
       if (
         state.turn.effect &&
-        state.turn.effect.players.some(val => val === state.playerNum) &&
-        state.turn.effect.action === 'choose-hand'
+        state.turn.effect.players.some(val => val === state.playerNum)
       ) {
-        socket.emit('use-effect', roomId, userId, state.turn.effect.card);
+        socket.emit('use-effect', roomId, userId, state.turn.effect.card, -2);
       }
     }
 
@@ -148,7 +147,7 @@ const ConfirmCard: React.FC<ConfirmCardProps> = ({ socket }) => {
         customText === 'Skip') &&
         state.turn.phase !== 'modify' && (
           <>
-            {state.turn.phase !== 'use-effect' || !state.turn.effect ? (
+            {customText || !state.turn.effect ? (
               <div className='left' onClick={playCard}>
                 <h1>{customText ? customText : 'Play'}</h1>
               </div>

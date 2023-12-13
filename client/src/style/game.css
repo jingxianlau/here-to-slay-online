@@ -36,6 +36,12 @@ header img {
   z-index: 9999;
 }
 
+.game .skip {
+  position: absolute;
+  top: 1vh;
+  right: 1.5vw;
+}
+
 .game button {
   margin: 1vh 0vh;
 }
@@ -326,11 +332,6 @@ header img {
 .bottomMenu .discard {
   position: absolute;
   left: 1vw;
-  bottom: 2vh;
-}
-.bottomMenu .skip {
-  position: absolute;
-  right: 1vw;
   bottom: 2vh;
 }
 
@@ -1424,10 +1425,17 @@ div.cross {
   text-align: center;
 }
 .content h1.purpose {
-  font-size: 8vh;
   transition: opacity 0.25s ease-in-out;
 }
-.content h1.purpose.show {
+.content h1.purpose div:first-child {
+  font-size: 8vh;
+}
+.content h1.purpose div:nth-child(2) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.content h1.purpose span .content h1.purpose.show {
   opacity: 1;
 }
 .content h1.purpose.hide {

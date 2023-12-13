@@ -133,6 +133,92 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   ))}
             </div>
           </div>
+        ) : state.turn.effect.action === 'choose-other-hand-show' &&
+          state.turn.effect.active &&
+          state.turn.effect.active.num &&
+          state.turn.effect.active.num.length === 2 &&
+          (!state.turn.effect.activeCardVisible[state.playerNum] ||
+            state.turn.effect.active.card) ? (
+          <div className='content'>
+            <div className='top'>
+              <div className='img-container'>
+                <img
+                  src={getImage(state.turn.effect.card)}
+                  alt={state.turn.effect.card.name}
+                  className='small-lg'
+                />
+              </div>
+              <h2>{state.match.players[state.turn.effect.active.num[0]]}</h2>
+              <h1>{state.turn.effect.purpose}</h1>
+            </div>
+            <div
+              className={`bottom${
+                state.turn.effect.active.num[1] *
+                  ((19 / 100) * window.innerHeight) >
+                window.innerWidth
+                  ? ' cover'
+                  : ' list'
+              }`}
+            >
+              {!state.turn.effect.active.card
+                ? Array.from(Array(state.turn.effect.active.num[1]), (_, i) => (
+                    <img
+                      key={i}
+                      src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+                      alt='card'
+                      className={`small-md ${
+                        state.turn.effect?.choice &&
+                        state.turn.effect.choice[0] === i
+                          ? 'chosen'
+                          : ''
+                      }`}
+                    />
+                  ))
+                : state.turn.effect.active.card.map((val, i) => (
+                    <>
+                      <img
+                        key={val.id}
+                        src={getImage(val)}
+                        alt={val.name}
+                        onClick={() => {
+                          if (
+                            state.turn.effect?.players.some(
+                              val => val === state.playerNum
+                            ) &&
+                            state.turn.effect.val.max
+                          ) {
+                            socket.emit(
+                              'use-effect',
+                              roomId,
+                              userId,
+                              state.turn.effect.card,
+                              i
+                            );
+                          }
+                        }}
+                        onMouseEnter={() => {
+                          shownCard.set(val);
+                          shownCard.setPos('top');
+                        }}
+                        onMouseLeave={() => {
+                          shownCard.set(null);
+                          shownCard.set(null);
+                        }}
+                        className={`small-md ${
+                          state.turn.effect?.players.some(
+                            val => val === state.playerNum
+                          ) && state.turn.effect.val.max
+                            ? 'active'
+                            : state.turn.effect?.choice &&
+                              state.turn.effect.choice[0] === i
+                            ? 'chosen'
+                            : ''
+                        }`}
+                      />
+                    </>
+                  ))}
+            </div>
+          </div>
         ) : state.turn.effect.action === 'play' &&
           state.turn.effect.active &&
           (!state.turn.effect.activeNumVisible[state.playerNum] ||
@@ -209,6 +295,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
         ) : state.turn.effect.action === 'choose-cards' &&
           state.turn.effect.active &&
           state.turn.effect.active.num &&
+          state.turn.effect.active.num.length === 2 &&
           (!state.turn.effect.activeCardVisible[state.playerNum] ||
             state.turn.effect.active.card) ? (
           // CHOOSE CARDS
@@ -242,10 +329,18 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                       key={i}
                       src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
                       alt='card'
-                      className='small-md'
+                      className={`small-md ${
+                        state.turn.effect &&
+                        state.turn.effect.choice &&
+                        state.turn.effect.choice.length > 0 &&
+                        typeof state.turn.effect.choice[0] === 'number' &&
+                        state.turn.effect.choice[0] === i
+                          ? 'chosen'
+                          : ''
+                      }`}
                     />
                   ))
-                : state.turn.effect.active.card.map(val => (
+                : state.turn.effect.active.card.map((val, i) => (
                     <img
                       key={val.id}
                       src={getImage(val)}
@@ -275,8 +370,12 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                           ? 'active'
                           : state.turn.effect &&
                             state.turn.effect.choice &&
-                            typeof state.turn.effect.choice[0] !== 'number' &&
-                            state.turn.effect.choice[0].id === val.id
+                            state.turn.effect.choice.length > 0 &&
+                            ((typeof state.turn.effect.choice[0] !== 'number' &&
+                              state.turn.effect.choice[0].id === val.id) ||
+                              (typeof state.turn.effect.choice[0] ===
+                                'number' &&
+                                state.turn.effect.choice[0] === i))
                           ? 'chosen'
                           : ''
                       }`}

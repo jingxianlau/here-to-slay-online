@@ -439,6 +439,7 @@ const Game: React.FC = () => {
                     showHand.setLocked(1);
                     showHand.set(val => Math.max(val - 1, 0));
                   }
+                  shownCard.setLocked(false);
                   break;
                 case 'draw':
                   if (

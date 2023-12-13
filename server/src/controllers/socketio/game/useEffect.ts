@@ -136,7 +136,9 @@ export const useEffect = (
         state.turn.effect.val.max === state.turn.effect.val.curr) ||
         (state.turn.effect.val.curr >= state.turn.effect.val.min &&
           state.turn.effect.val.curr <= state.turn.effect.val.max &&
-          state.turn.effect.goNext))
+          state.turn.effect.goNext) ||
+        (state.turn.effect.val.min !== state.turn.effect.val.max &&
+          state.turn.effect.val.max === state.turn.effect.val.curr))
     ) {
       heroAbilities[cardName][++state.turn.effect.step](
         roomId,

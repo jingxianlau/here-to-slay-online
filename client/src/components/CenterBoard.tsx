@@ -84,7 +84,28 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
             : 'hide'
         }`}
       >
-        {state.turn.effect && state.turn.effect.purpose}
+        {state.turn.effect && (
+          <>
+            <div>{state.turn.effect.purpose}</div>
+            <div>
+              <span
+                style={{
+                  color:
+                    state.turn.effect.val.curr < state.turn.effect.val.min
+                      ? '#f95151'
+                      : '#2eee9b',
+                  fontSize: '8.5vh',
+                  marginRight: '1.2vh'
+                }}
+              >
+                {state.turn.effect.val.curr}
+              </span>{' '}
+              {state.turn.effect.val.max !== state.turn.effect.val.min
+                ? `(Max ${state.turn.effect.val.max})`
+                : `/ ${state.turn.effect.val.min}`}
+            </div>
+          </>
+        )}
       </h1>
 
       <div

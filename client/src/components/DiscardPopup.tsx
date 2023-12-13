@@ -179,7 +179,11 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                       display: 'flex',
                       alignItems: 'center',
                       position: 'absolute',
-                      bottom: '4vh'
+                      bottom: '4vh',
+                      marginLeft:
+                        state.turn.effect.val.max !== state.turn.effect.val.min
+                          ? '19vh'
+                          : 0
                     }}
                   >
                     <span
@@ -195,7 +199,9 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                     >
                       {state.turn.effect.choice.length}
                     </span>{' '}
-                    / {state.turn.effect.val.min}
+                    {state.turn.effect.val.max !== state.turn.effect.val.min
+                      ? `(Max ${state.turn.effect.val.max})`
+                      : `/ ${state.turn.effect.val.min}`}
                   </h1>
                 )}
               </div>

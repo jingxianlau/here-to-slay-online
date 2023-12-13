@@ -49,12 +49,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
           (state.turn.player === state.playerNum &&
             state.turn.phase === 'use-effect' &&
             state.turn.effect?.action === 'choose-other-boards' &&
-            !state.turn.effect.choice &&
             playerNum === state.turn.player) ||
           (state.turn.player === state.playerNum &&
             state.turn.phase === 'use-effect' &&
             state.turn.effect?.action === 'choose-own-board' &&
-            !state.turn.effect.choice &&
             playerNum !== state.turn.player) ||
           (state.turn.effect && state.turn.effect.action === 'none')
             ? 'brightness(35%)'
@@ -148,6 +146,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                           state.turn.effect.action === 'choose-own-board' ||
                           state.turn.effect.action === 'choose-boards') &&
                         state.turn.effect.choice &&
+                        state.turn.effect.choice.length > 0 &&
                         typeof state.turn.effect.choice[0] !== 'number' &&
                         card.id === state.turn.effect.choice[0].id
                       ? 'glow-red'

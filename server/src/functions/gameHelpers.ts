@@ -43,7 +43,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       state.players[i].hand.push(card);
     }
 
-    let card2 = cloneDeep(heroCards[13]);
+    let card2 = cloneDeep(heroCards[36]);
     card2.player = i;
     state.players[i].hand.push(card2);
     state.players[i].numCards = 6;

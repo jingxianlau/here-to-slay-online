@@ -238,7 +238,7 @@ export function drawCards(roomId: string, playerNum: number, num: number) {
   const state = rooms[roomId].state;
 
   for (let i = 0; i < num; i++) {
-    let card = state.secret.deck.pop() as AnyCard;
+    let card = state.secret.deck.pop();
     if (!card) {
       card = reshuffleDeck(roomId);
     }

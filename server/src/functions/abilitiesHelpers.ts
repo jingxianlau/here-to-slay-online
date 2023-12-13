@@ -64,6 +64,10 @@ export const receivePlayer = (
   state.turn.effect.val.curr++;
   sendGameState(roomId);
 };
+export const pickPlayer = (text = 'Choose Player') => [
+  (roomId: string, playerNum: number) => choosePlayer(roomId, playerNum, text),
+  receivePlayer
+];
 
 export const pickCard = (roomId: string, playerNum: number) => {
   const state = rooms[roomId].state;
@@ -335,18 +339,18 @@ export const receiveDestroyHero = (
 export const destroyHero = [chooseDestroyHero, receiveDestroyHero];
 
 export const chooseDiscardCard =
-  (num: number) => (roomId: string, playerNum: number) => {
+  (min: number, max: number) => (roomId: string, playerNum: number) => {
     const state = rooms[roomId].state;
-    if (!state.turn.effect || !state.turn.effect.choice) return;
+    if (!state.turn.effect) return;
 
     state.turn.effect.action = 'choose-hand';
     state.turn.effect.actionChanged = true;
-    state.turn.effect.val = { min: num, max: num, curr: 0 };
+    state.turn.effect.val = { min, max, curr: 0 };
     state.turn.effect.allowedCards = allCards;
     state.turn.effect.players = [playerNum];
-    state.turn.effect.purpose = num === 1 ? 'Discard Card' : 'Discard Cards';
+    state.turn.effect.purpose = max === 1 ? 'Discard Card' : 'Discard Cards';
     state.turn.effect.active = {
-      num: [playerNum, num]
+      num: [playerNum, min]
     };
     state.turn.effect.choice = [];
     sendGameState(roomId);
@@ -381,8 +385,8 @@ export const receiveDiscardCard = (
   discardCard(roomId, state.turn.effect.active.num[0], returnVal.card.id);
   sendGameState(roomId);
 };
-export const discardCards = (num: number) => [
-  chooseDiscardCard(num),
+export const discardCards = (min: number, max = min) => [
+  chooseDiscardCard(min, max),
   receiveDiscardCard
 ];
 
@@ -578,4 +582,90 @@ export const chooseReveal = (num: number, type: CardType) => [
     }
   },
   ...revealCard
+];
+
+export const eachOtherWithHeroInBoardDiscard = (heroClass: HeroClass) => [
+  (roomId: string, playerNum: number) => {
+    const state = rooms[roomId].state;
+    if (!state.turn.effect) return;
+
+    state.turn.effect.action = 'choose-hand';
+    state.turn.effect.actionChanged = true;
+    state.turn.effect.val = { min: 1, max: 1, curr: 0 };
+    state.turn.effect.allowedCards = allCards;
+    state.turn.effect.purpose = 'Discard Card';
+
+    state.turn.effect.active = {};
+    state.turn.effect.active.num = [playerNum, 1, 3];
+
+    for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+      if (
+        state.board[i].heroCards.some(val => val?.class === heroClass) &&
+        i !== playerNum
+      ) {
+        state.turn.effect.active.num.push(i);
+      }
+    }
+
+    if (state.turn.effect.active.num.length - 3 > 0) {
+      state.turn.effect.active.num[0] = state.turn.effect.active.num[3];
+      state.turn.effect.players = [
+        state.turn.effect.active.num[state.turn.effect.active.num[2]]
+      ];
+      state.turn.effect.choice = [];
+    } else {
+      endEffect(roomId, playerNum);
+    }
+    sendGameState(roomId);
+  },
+  (roomId: string, playerNum: number, returnVal?: returnType) => {
+    const state = rooms[roomId].state;
+    if (
+      !state.turn.effect ||
+      !returnVal ||
+      !returnVal.card ||
+      !state.turn.effect ||
+      !state.turn.effect.active ||
+      !state.turn.effect.active.num ||
+      returnVal.card.player !== state.turn.effect.active.num[0]
+    )
+      return;
+
+    state.turn.effect.choice = [returnVal.card];
+    discardCard(roomId, state.turn.effect.active.num[0], returnVal.card.id);
+
+    sendGameState(roomId);
+
+    console.log(
+      state.turn.effect.active.num[2] - 2 <
+        state.turn.effect.active.num.length - 3,
+      state.turn.effect.active.num[2] - 3,
+      state.turn.effect.active.num.length - 3
+    );
+    if (
+      state.turn.effect.active.num[2] - 2 <
+      state.turn.effect.active.num.length - 3
+    ) {
+      const next =
+        state.turn.effect.active.num[++state.turn.effect.active.num[2]];
+      state.turn.effect.players = [next];
+      state.turn.effect.active.num[0] = next;
+      state.turn.effect.val = {
+        min: 1,
+        max: 1,
+        curr: 0
+      };
+      state.turn.effect.choice = null;
+    } else {
+      state.turn.effect.val.curr++;
+    }
+
+    setTimeout(() => {
+      sendGameState(roomId);
+    }, 1200);
+  },
+  (roomId: string, playerNum: number) =>
+    setTimeout(() => {
+      endEffect(roomId, playerNum);
+    }, 1500)
 ];

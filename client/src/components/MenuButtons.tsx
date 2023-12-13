@@ -147,6 +147,38 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
       >
         <span className='material-symbols-outlined icon'>flip</span>
       </button>
+
+      {/* SKIP (USE EFFECT) */}
+      {state.turn.phase === 'use-effect' &&
+        state.turn.effect &&
+        state.turn.effect.players.some(val => val === state.playerNum) &&
+        state.turn.effect.val.curr >= state.turn.effect.val.min && (
+          <button
+            className='circular skip'
+            onClick={() => {
+              chosenCard.setShow(true);
+              chosenCard.setCustomText('Skip');
+              chosenCard.setCustomCenter('start');
+            }}
+            style={{
+              right:
+                state.turn.phase === 'use-effect' &&
+                state.turn.effect &&
+                (state.turn.effect.action === 'choose-player' ||
+                  state.turn.effect.action === 'choose-hand' ||
+                  state.turn.effect.action === 'choose-other-hand-hide' ||
+                  state.turn.effect.action === 'choose-other-hand-show' ||
+                  state.turn.effect.action === 'choose-discard' ||
+                  state.turn.effect.action === 'play' ||
+                  state.turn.effect.action === 'choose-reveal' ||
+                  state.turn.effect.action === 'reveal')
+                  ? '9.4vh'
+                  : '1.5vh'
+            }}
+          >
+            <span className='material-symbols-outlined'>start</span>
+          </button>
+        )}
     </>
   );
 };

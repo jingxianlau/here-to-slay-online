@@ -264,10 +264,11 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                           state.turn.phase === 'modify')
                       ? 'active glow'
                       : allowedCard(allowedCards.val, card.type) &&
-                        ((card.type === CardType.hero &&
-                          state.board[state.playerNum].heroCards.some(
-                            val => val === null
-                          )) ||
+                        (state.turn.phase !== 'play' ||
+                          (card.type === CardType.hero &&
+                            state.board[state.playerNum].heroCards.some(
+                              val => val === null
+                            )) ||
                           card.type !== CardType.hero)
                       ? 'active'
                       : 'inactive'
@@ -293,25 +294,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
               </div>
             )}
         </div>
-
-        {state.turn.phase === 'use-effect' &&
-          state.turn.effect &&
-          state.turn.effect.players.some(val => val === state.playerNum) &&
-          state.turn.effect.action === 'choose-hand' &&
-          state.players[state.playerNum].hand.every(card =>
-            state.turn.effect?.allowedCards?.every(type => card.type !== type)
-          ) && (
-            <button
-              className='circular skip'
-              onClick={() => {
-                chosenCard.setShow(true);
-                chosenCard.setCustomText('Skip');
-                chosenCard.setCustomCenter('start');
-              }}
-            >
-              <span className='material-symbols-outlined'>start</span>
-            </button>
-          )}
       </div>
     </div>
   );
