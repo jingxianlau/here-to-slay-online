@@ -119,7 +119,8 @@ export const useEffect = (
 
     heroAbilities[cardName][++state.turn.effect.step](
       roomId,
-      state.turn.player,
+      state,
+      state.turn.effect,
       returnVal !== undefined
         ? {
             card: isCard(returnVal) ? returnVal : undefined,
@@ -142,7 +143,8 @@ export const useEffect = (
     ) {
       heroAbilities[cardName][++state.turn.effect.step](
         roomId,
-        state.turn.player
+        state,
+        state.turn.effect
       );
     } else {
       state.turn.effect.step--;
@@ -164,7 +166,6 @@ export const useEffect = (
     for (let i = 0; i < rooms[roomId].numPlayers; i++) {
       privateArr.push(true);
     }
-
     state.turn.phase = 'use-effect';
     state.turn.phaseChanged = true;
     state.mainDeck.preparedCard = null;
@@ -182,7 +183,7 @@ export const useEffect = (
       card: card
     };
 
-    heroAbilities[cardName][0](roomId, playerNum);
+    heroAbilities[cardName][0](roomId, state, state.turn.effect);
   }
 };
 
@@ -279,20 +280,26 @@ export const endTurnDiscard = (
     }
   } else {
     // new effect
-    if (
-      state.board[state.turn.player].heroCards.some(val => val && val.freeUse)
-    ) {
-      state.turn.phase = 'play';
-      state.turn.phaseChanged = true;
-      sendGameState(roomId);
-      return;
-    } else if (state.players[playerNum].numCards > 7) {
-      state.turn.phase = 'end-turn-discard';
-      state.turn.toDiscard = state.players[playerNum].numCards - 7;
-      state.turn.phaseChanged = true;
-      sendGameState(roomId);
+    if (state.turn.cachedEvent) {
+      state.turn.phase = state.turn.cachedEvent.phase;
+      state.turn.effect = state.turn.cachedEvent.effect;
+      state.turn.cachedEvent = null;
     } else {
-      nextPlayer(roomId);
+      if (
+        state.board[state.turn.player].heroCards.some(val => val && val.freeUse)
+      ) {
+        state.turn.phase = 'play';
+        state.turn.phaseChanged = true;
+        sendGameState(roomId);
+        return;
+      } else if (state.players[playerNum].numCards > 7) {
+        state.turn.phase = 'end-turn-discard';
+        state.turn.toDiscard = state.players[playerNum].numCards - 7;
+        state.turn.phaseChanged = true;
+        sendGameState(roomId);
+      } else {
+        nextPlayer(roomId);
+      }
     }
   }
 };

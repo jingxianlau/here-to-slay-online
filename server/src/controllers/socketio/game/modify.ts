@@ -106,8 +106,15 @@ export const modifyRoll = (
             if (state.turn.movesLeft === 0) {
               endTurnDiscard(roomId, cardUserId);
             } else {
-              rooms[roomId].state.turn.phase = 'play';
-              rooms[roomId].state.turn.phaseChanged = true;
+              if (state.turn.cachedEvent) {
+                state.turn.phase = state.turn.cachedEvent.phase;
+                state.turn.effect = state.turn.cachedEvent.effect;
+                state.turn.cachedEvent = null;
+              } else {
+                state.turn.phase = 'play';
+                state.turn.phaseChanged = true;
+              }
+
               setTimeout(() => {
                 sendGameState(roomId);
               }, 1200);
@@ -125,8 +132,14 @@ export const modifyRoll = (
               if (preppedCard.type === 'hero') {
                 preppedCard.freeUse = true;
               }
-              state.turn.phaseChanged = true;
-              state.turn.phase = 'play';
+              if (state.turn.cachedEvent) {
+                state.turn.phase = state.turn.cachedEvent.phase;
+                state.turn.effect = state.turn.cachedEvent.effect;
+                state.turn.cachedEvent = null;
+              } else {
+                state.turn.phase = 'play';
+                state.turn.phaseChanged = true;
+              }
 
               state.dice.main.roll = [1, 1];
               state.dice.main.total = 0;
@@ -205,8 +218,14 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                state.turn.phase = 'play';
-                state.turn.phaseChanged = true;
+                if (state.turn.cachedEvent) {
+                  state.turn.phase = state.turn.cachedEvent.phase;
+                  state.turn.effect = state.turn.cachedEvent.effect;
+                  state.turn.cachedEvent = null;
+                } else {
+                  state.turn.phase = 'play';
+                  state.turn.phaseChanged = true;
+                }
                 sendGameState(roomId);
               }
             }, 1200);
@@ -237,8 +256,14 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                state.turn.phase = 'play';
-                state.turn.phaseChanged = true;
+                if (state.turn.cachedEvent) {
+                  state.turn.phase = state.turn.cachedEvent.phase;
+                  state.turn.effect = state.turn.cachedEvent.effect;
+                  state.turn.cachedEvent = null;
+                } else {
+                  state.turn.phase = 'play';
+                  state.turn.phaseChanged = true;
+                }
                 sendGameState(roomId);
               }
             }, 1200);
@@ -280,8 +305,14 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                state.turn.phase = 'play';
-                state.turn.phaseChanged = true;
+                if (state.turn.cachedEvent) {
+                  state.turn.phase = state.turn.cachedEvent.phase;
+                  state.turn.effect = state.turn.cachedEvent.effect;
+                  state.turn.cachedEvent = null;
+                } else {
+                  state.turn.phase = 'play';
+                  state.turn.phaseChanged = true;
+                }
                 sendGameState(roomId);
               }
             }, 1200);

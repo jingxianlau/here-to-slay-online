@@ -169,16 +169,15 @@ interface State {
       action:
         | 'none' // DONE
         | 'draw' // DONE
-        | 'play' // DONE
-        | 'choose-reveal'
-        | 'reveal'
+        | 'choose-two' // DONE
+        | 'reveal' // DONE
         | 'choose-boards' // DONE
         | 'choose-own-board' // DONE
         | 'choose-other-boards' // DONE
         | 'choose-player' // DONE
         | 'choose-hand' // DONE
         | 'choose-other-hand-hide' // DONE
-        | 'choose-other-hand-show'
+        | 'choose-other-hand-show' // DONE
         | 'choose-discard'
         | 'choose-cards'; // DONE
       actionChanged: boolean;
@@ -196,6 +195,50 @@ interface State {
       activeCardVisible: boolean[];
       purpose: string; // message (e.g. destroy, swap deck etc.)
       allowedCards?: CardType[];
+    } | null;
+    cachedEvent: {
+      phase:
+        | 'end-turn-discard'
+        | 'draw'
+        | 'play'
+        | 'choose-hero'
+        | 'attack-roll'
+        | 'challenge'
+        | 'challenge-roll'
+        | 'use-effect-roll'
+        | 'use-effect'
+        | 'modify';
+      effect: {
+        action:
+          | 'none' // DONE
+          | 'draw' // DONE
+          | 'choose-two' // DONE
+          | 'reveal' // DONE
+          | 'choose-boards' // DONE
+          | 'choose-own-board' // DONE
+          | 'choose-other-boards' // DONE
+          | 'choose-player' // DONE
+          | 'choose-hand' // DONE
+          | 'choose-other-hand-hide' // DONE
+          | 'choose-other-hand-show' // DONE
+          | 'choose-discard'
+          | 'choose-cards'; // DONE
+        actionChanged: boolean;
+        players: number[]; // active players who can choose
+        val: { min: number; max: number; curr: number }; // num of items to choose
+        goNext: boolean;
+        step: number; // to access functions in ability array
+        card: HeroCard | MagicCard | MonsterCard; // card in use
+        choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
+        active?: {
+          num?: number[];
+          card?: AnyCard[];
+        };
+        activeNumVisible: boolean[];
+        activeCardVisible: boolean[];
+        purpose: string; // message (e.g. destroy, swap deck etc.)
+        allowedCards?: CardType[];
+      } | null;
     } | null;
     phaseChanged: boolean;
     isRolling: boolean;

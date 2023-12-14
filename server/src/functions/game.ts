@@ -106,13 +106,14 @@ export function playCard(
   state.turn.pause = false;
 
   setTimeout(() => {
-    // state.turn.phase =
-    //   card.type !== CardType.item ? 'challenge' : 'choose-hero';
-    // state.turn.phaseChanged = true;
+    state.turn.phase =
+      card.type !== CardType.item ? 'challenge' : 'choose-hero';
+    state.turn.phaseChanged = true;
 
     // DEV
-    state.turn.phase = 'play';
+    // state.turn.phase = 'play';
     // DEV
+
     sendGameState(roomId);
   }, 1200);
 }
