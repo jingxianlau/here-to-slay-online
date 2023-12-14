@@ -1117,8 +1117,53 @@ export const heroAbilities: {
     // TODO: PROTECTION
     'calming-voice': [],
     'guiding-light': searchDiscard(CardType.hero),
-    // TODO: CHOOSE ITEM,
-    'holy-curselifter': [],
+    // TEST & CLIENT TODO: CHOOSE ITEM,
+    'holy-curselifter': [
+      (roomId, state, effect) => {
+        effect.action = 'choose-own-board';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = [CardType.item];
+        effect.players = [state.turn.player];
+        effect.purpose = 'Return Cursed Item';
+        effect.active = {
+          num: [state.turn.player]
+        };
+        sendGameState(roomId);
+      },
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.card ||
+          returnVal.card.player === undefined ||
+          returnVal.card.type !== CardType.hero ||
+          !returnVal.card.item ||
+          !effect.active ||
+          !effect.active.num ||
+          !effect.active.num.length ||
+          returnVal.card.player !== effect.active.num[0]
+        )
+          return;
+
+        effect.choice = [returnVal.card];
+        effect.val.curr++;
+        sendGameState(roomId);
+
+        delete returnVal.card.item.heroId;
+        delete returnVal.card.item.heroPlayer;
+        returnVal.card.item.heroPlayer = state.turn.player;
+        addCards(roomId, [returnVal.card.item], state.turn.player);
+        delete returnVal.card.item;
+
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 2400)
+    ],
     // TODO: PROTECTION
     'iron-resolve': [],
     // TODO: PROTECTION
@@ -1199,9 +1244,80 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2400)
     ],
-    'forceful-winds': [],
-    // TODO: CHOOSE ITEMS
-    'winds-of-change': []
+    // TEST
+    /* CURRENT VERSION: RETURNS ITEM CARD TO PLAYER OF THE BOARD INSTEAD OF ORIGINAL PLAYER */
+    'forceful-winds': [
+      (roomId, state, _) => {
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          state.board[i].heroCards.map(val => {
+            if (val?.item) {
+              delete val.item.heroId;
+              delete val.item.heroPlayer;
+              val.item.heroPlayer = i;
+              addCards(roomId, [val.item], i);
+              delete val.item;
+            }
+          });
+        }
+        sendGameState(roomId);
+      }
+    ],
+    // TEST & CLIENT TODO: CHOOSE ITEMS
+    'winds-of-change': [
+      (roomId, state, effect) => {
+        effect.action = 'choose-boards';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = [CardType.item];
+        effect.players = [state.turn.player];
+        effect.purpose = 'Return Item';
+        sendGameState(roomId);
+      },
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.card ||
+          returnVal.card.player === undefined ||
+          returnVal.card.type !== CardType.hero ||
+          !returnVal.card.item
+        )
+          return;
+
+        effect.choice = [returnVal.card];
+        effect.val.curr++;
+        sendGameState(roomId);
+
+        delete returnVal.card.item.heroId;
+        delete returnVal.card.item.heroPlayer;
+        returnVal.card.item.heroPlayer = returnVal.card.player;
+        addCards(roomId, [returnVal.card.item], returnVal.card.player);
+        delete returnVal.card.item;
+
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
+      (roomId: string, state: GameState, effect: Effect) => {
+        effect.action = 'draw';
+        effect.actionChanged = true;
+        effect.allowedCards = [];
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.players = [state.turn.player];
+        effect.purpose = 'Draw Card';
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 2400);
+      },
+      (roomId: string, state: GameState, effect: Effect) => {
+        drawCards(roomId, state.turn.player, 1);
+        effect.val.curr++;
+        sendGameState(roomId);
+      },
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 800)
+    ]
   },
 
   // MONSTER

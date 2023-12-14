@@ -328,7 +328,6 @@ export const chooseDestroyHero = (
   effect.allowedCards = [];
   effect.players = [state.turn.player];
   effect.purpose = 'Destroy Hero';
-  effect.active = { num: [state.turn.player] };
   sendGameState(roomId);
 };
 export const receiveDestroyHero = (
