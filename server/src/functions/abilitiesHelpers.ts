@@ -139,12 +139,10 @@ export const addCard = (
     return;
 
   effect.choice = [returnVal.num];
-  effect.val.curr++;
-  sendGameState(roomId);
-
-  if (effect.val.curr < effect.val.max) {
+  if (++effect.val.curr < effect.val.max) {
     effect.players = [state.turn.player];
   }
+  sendGameState(roomId);
 
   const card = removeCardIndex(roomId, effect.active.num[0], returnVal.num);
   if (card === -1) return;
@@ -360,6 +358,48 @@ export const receiveDestroyHero = (
   }, 1200);
 };
 export const destroyHero = [chooseDestroyHero, receiveDestroyHero];
+
+export const chooseSacrificeHero = (
+  roomId: string,
+  state: GameState,
+  effect: Effect
+) => {
+  effect.action = 'choose-own-board';
+  effect.actionChanged = true;
+  effect.val = { min: 1, max: 1, curr: 0 };
+  effect.allowedCards = [];
+  effect.players = [state.turn.player];
+  effect.purpose = 'Sacrifice Hero';
+  effect.active = { num: [state.turn.player] };
+  sendGameState(roomId);
+};
+export const receiveSacrificeHero = (
+  roomId: string,
+  state: GameState,
+  effect: Effect,
+  returnVal?: returnType
+) => {
+  if (
+    !returnVal ||
+    !returnVal.card ||
+    returnVal.card.player === undefined ||
+    returnVal.card.type !== CardType.hero ||
+    !effect.active ||
+    !effect.active.num ||
+    returnVal.card.player !== effect.active.num[0]
+  )
+    return;
+
+  effect.choice = [returnVal.card];
+  effect.val.curr++;
+  sendGameState(roomId);
+
+  destroyCard(roomId, returnVal.card.player, returnVal.card);
+  setTimeout(() => {
+    sendGameState(roomId);
+  }, 1200);
+};
+export const sacrificeHero = [chooseSacrificeHero, receiveSacrificeHero];
 
 export const chooseDiscardCard =
   (min: number, max: number) =>

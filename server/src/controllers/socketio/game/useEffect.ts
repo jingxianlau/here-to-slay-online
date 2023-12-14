@@ -150,16 +150,7 @@ export const useEffect = (
       state.turn.effect.step--;
     }
   } else if (
-    // DEV
-    true
-    // DEV
-
-    // state.mainDeck.preparedCard?.card.id === card.id &&
-    // ((card.type === CardType.hero && state.mainDeck.preparedCard?.successful) ||
-    //   (card.type === CardType.large &&
-    //     card.player === undefined &&
-    //     !state.mainDeck.preparedCard.successful)) &&
-    // state.turn.phase === 'modify'
+    state.board[playerNum].heroCards.some(val => val?.id === card.id)
   ) {
     // new effect
     let privateArr = [];
