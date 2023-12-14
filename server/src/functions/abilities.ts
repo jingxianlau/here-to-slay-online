@@ -15,6 +15,8 @@ import {
 } from './game';
 import {
   Effect,
+  addCard,
+  chooseDestroyHero,
   choosePlayer,
   chooseReveal,
   chooseStealHero,
@@ -25,6 +27,7 @@ import {
   eachOtherWithHeroInBoardDiscard,
   endEffect,
   ifMayPlay,
+  pickCard,
   pickFromHand,
   pickPlayer,
   playFromHand,
@@ -35,7 +38,7 @@ import {
   searchDiscard,
   stealHero
 } from './abilitiesHelpers';
-import { reshuffleDeck } from './gameHelpers';
+import { removeHero, reshuffleDeck } from './gameHelpers';
 import cloneDeep from 'lodash.clonedeep';
 
 export const heroAbilities: {
@@ -108,7 +111,7 @@ export const heroAbilities: {
       (roomId, state, effect) => endEffect(roomId, state, effect)
     ],
     'lucky-bucky': [
-      ...pickFromHand,
+      ...pickFromHand(),
       ...ifMayPlay(1, CardType.hero),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
@@ -585,12 +588,122 @@ export const heroAbilities: {
   // THIEF
   ...{
     'kit-napper': stealHero,
-    // TODO: COMBINATION
-    meowzio: [],
-    // TODO: COMBINATION
-    'plundering-puma': [],
-    // TODO: MODIFIED DESTROY
-    shurikitty: [],
+    // TEST
+    meowzio: [
+      ...stealHero,
+      (roomId, state, effect) => {
+        if (
+          !effect.choice ||
+          typeof effect.choice[0] === 'number' ||
+          !effect.choice[0].player
+        )
+          return;
+
+        effect.action = 'choose-other-hand-hide';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = [];
+        effect.players = [state.turn.player];
+        effect.purpose = 'Choose Card';
+        effect.active = {
+          num: [
+            effect.choice[0].player,
+            state.players[effect.choice[0].player].numCards
+          ]
+        };
+        effect.choice = null;
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
+      addCard,
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1200)
+    ],
+    // TEST
+    'plundering-puma': [
+      ...pickFromHand(2),
+      (roomId, state, effect) => {
+        if (
+          !effect.choice ||
+          typeof effect.choice[0] === 'number' ||
+          !effect.choice[0].player
+        )
+          return;
+
+        effect.action = 'draw';
+        effect.actionChanged = true;
+        effect.allowedCards = [];
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.players = [effect.choice[0].player];
+        effect.purpose = 'Draw Card';
+        effect.choice = null;
+        sendGameState(roomId);
+      },
+      (roomId: string, state: GameState, effect: Effect) => {
+        drawCards(roomId, state.turn.player, 1);
+        effect.val.curr++;
+        sendGameState(roomId);
+      },
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1200)
+    ],
+    // TEST
+    shurikitty: [
+      chooseDestroyHero,
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.card ||
+          returnVal.card.player === undefined ||
+          returnVal.card.type !== CardType.hero ||
+          !effect.active ||
+          !effect.active.num ||
+          returnVal.card.player === effect.active.num[0]
+        )
+          return;
+
+        effect.choice = [returnVal.card];
+        effect.val.curr++;
+        sendGameState(roomId);
+
+        // MODIFIED DESTROY
+        const heroCard = removeHero(
+          roomId,
+          returnVal.card.player,
+          returnVal.card.id
+        );
+        if (!heroCard) return;
+
+        delete heroCard.player;
+        if (heroCard.item && heroCard.item.name.includes('Mask')) {
+          state.board[returnVal.card.player].classes[
+            heroCard.item.name.split(' ')[0].toLowerCase() as HeroClass
+          ]--;
+        } else {
+          state.board[returnVal.card.player].classes[returnVal.card.class]--;
+        }
+
+        heroCard.freeUse = false;
+        heroCard.abilityUsed = false;
+        if (heroCard.item) {
+          delete heroCard.item.heroId;
+          delete heroCard.item.heroPlayer;
+          heroCard.item.player = state.turn.player;
+          addCards(roomId, [heroCard.item], state.turn.player);
+        }
+        delete heroCard.item;
+        state.mainDeck.discardPile.push(heroCard);
+
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      }
+    ],
     'silent-shadow': [
       ...pickPlayer('Peek Hand'),
       (roomId, state, effect) => {
@@ -650,10 +763,73 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 1200)
     ],
-    // TODO: COMBINATION
-    'slippery-paws': [],
+    // TEST
+    'slippery-paws': [
+      ...pickFromHand(2),
+      (roomId, state, effect) => {
+        effect.action = 'choose-cards';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = [];
+        effect.players = [state.turn.player];
+        effect.purpose = 'Discard Card';
+        effect.active = { num: [state.turn.player, 2] };
+
+        effect.active.card = [];
+        for (let i = 1; i <= 2; i++) {
+          effect.active.card.push(
+            state.players[state.turn.player].hand[
+              state.players[state.turn.player].numCards - i
+            ]
+          );
+        }
+
+        effect.activeCardVisible = [];
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          effect.activeCardVisible.push(i === state.turn.player);
+        }
+
+        effect.choice = null;
+        sendGameState(roomId);
+      },
+
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.card ||
+          !effect.active ||
+          !effect.active.card ||
+          !effect.active.num
+        )
+          return;
+
+        const cardIndex = effect.active.card.findIndex(
+          val => val.id === returnVal.card?.id
+        );
+        effect.choice = [cardIndex];
+        effect.val.curr++;
+        sendGameState(roomId);
+
+        discardCard(
+          roomId,
+          state.turn.player,
+          effect.active.card[cardIndex].id
+        );
+
+        effect.active.card = effect.active.card.filter(
+          val => val.id !== returnVal.card?.id
+        );
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1800)
+    ],
     'sly-pickings': [
-      ...pickFromHand,
+      ...pickFromHand(),
       ...ifMayPlay(1, CardType.item),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
@@ -664,11 +840,11 @@ export const heroAbilities: {
   ...{
     'bun-bun': searchDiscard(CardType.magic),
     buttons: [
-      ...pickFromHand,
+      ...pickFromHand(),
       ...ifMayPlay(1, CardType.magic),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
-    // TODO: TEST
+    // TEST
     fluffy: [
       (roomId, state, effect) => {
         effect.action = 'choose-other-boards';
@@ -714,7 +890,7 @@ export const heroAbilities: {
     snowball: [],
     // TODO
     spooky: [],
-    // TODO: TEST
+    // TEST
     whiskers: [
       ...stealHero,
       ...destroyHero,

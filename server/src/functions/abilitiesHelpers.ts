@@ -110,23 +110,25 @@ export const pickPlayer = (text = 'Choose Player') => [
   receivePlayer
 ];
 
-export const pickCard = (roomId: string, state: GameState, effect: Effect) => {
-  if (!effect.choice || typeof effect.choice[0] !== 'number') return;
+export const pickCard =
+  (num = 1) =>
+  (roomId: string, state: GameState, effect: Effect) => {
+    if (!effect.choice || typeof effect.choice[0] !== 'number') return;
 
-  effect.action = 'choose-other-hand-hide';
-  effect.actionChanged = true;
-  effect.val = { min: 1, max: 1, curr: 0 };
-  effect.allowedCards = [];
-  effect.players = [state.turn.player];
-  effect.purpose = 'Choose Card';
-  effect.active = {
-    num: [effect.choice[0], state.players[effect.choice[0]].numCards]
+    effect.action = 'choose-other-hand-hide';
+    effect.actionChanged = true;
+    effect.val = { min: num, max: num, curr: 0 };
+    effect.allowedCards = [];
+    effect.players = [state.turn.player];
+    effect.purpose = 'Choose Card';
+    effect.active = {
+      num: [effect.choice[0], state.players[effect.choice[0]].numCards]
+    };
+    effect.choice = null;
+    setTimeout(() => {
+      sendGameState(roomId);
+    }, 1200);
   };
-  effect.choice = null;
-  setTimeout(() => {
-    sendGameState(roomId);
-  }, 1200);
-};
 export const addCard = (
   roomId: string,
   state: GameState,
@@ -140,6 +142,10 @@ export const addCard = (
   effect.val.curr++;
   sendGameState(roomId);
 
+  if (effect.val.curr < effect.val.max) {
+    effect.players = [state.turn.player];
+  }
+
   const card = removeCardIndex(roomId, effect.active.num[0], returnVal.num);
   if (card === -1) return;
   addCards(roomId, [card], state.turn.player);
@@ -151,11 +157,11 @@ export const addCard = (
     }
   }, 400);
 };
-export const pickFromHand = [
+export const pickFromHand = (num = 1) => [
   (roomId: string, state: GameState, effect: Effect) =>
     choosePlayer(roomId, state, effect),
   receivePlayer,
-  pickCard,
+  pickCard(num),
   addCard
 ];
 
@@ -401,7 +407,7 @@ export const discardCards = (min: number, max = min) => [
 ];
 
 export const pullIfPull = (cardType: CardType) => [
-  ...pickFromHand,
+  ...pickFromHand(),
   (roomId: string, state: GameState, effect: Effect) => {
     if (!effect.active || !effect.active.num) return;
 
@@ -410,7 +416,6 @@ export const pullIfPull = (cardType: CardType) => [
     setTimeout(() => {
       if (!state.turn.effect || state.players[state.turn.player].numCards <= 0)
         return;
-      console.log('hi bro');
       if (
         state.players[state.turn.player].hand[
           state.players[state.turn.player].numCards - 1
@@ -425,7 +430,7 @@ export const pullIfPull = (cardType: CardType) => [
       }
     }, 1200);
   },
-  pickCard,
+  pickCard(),
   addCard,
   (roomId: string, state: GameState, effect: Effect) =>
     setTimeout(() => {

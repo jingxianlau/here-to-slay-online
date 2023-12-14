@@ -141,6 +141,7 @@ export function destroyCard(roomId: string, playerNum: number, card: HeroCard) {
     delete heroCard.item.player;
     state.mainDeck.discardPile.push(heroCard.item);
   }
+  delete heroCard.item;
   state.mainDeck.discardPile.push(heroCard);
 }
 
