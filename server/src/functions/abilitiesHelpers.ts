@@ -650,3 +650,35 @@ export const eachOtherWithHeroInBoardDiscard = (heroClass: HeroClass) => [
       endEffect(roomId, state, effect);
     }, 1500)
 ];
+
+export const searchDiscard = (type: CardType) => [
+  (roomId: string, state: GameState, effect: Effect) => {
+    effect.action = 'choose-discard';
+    effect.actionChanged = true;
+    effect.val = { min: 1, max: 1, curr: 0 };
+    effect.allowedCards = [type];
+    effect.players = [state.turn.player];
+    effect.purpose = 'Add Card';
+    effect.choice = null;
+    sendGameState(roomId);
+  },
+  (
+    roomId: string,
+    state: GameState,
+    effect: Effect,
+    returnVal?: returnType
+  ) => {
+    if (!returnVal || !returnVal.card || returnVal.card.type !== type) return;
+    effect.val.curr++;
+    effect.choice = [returnVal.card];
+    state.mainDeck.discardPile = state.mainDeck.discardPile.filter(
+      val => val.id !== returnVal.card?.id
+    );
+    addCards(roomId, [returnVal.card], state.turn.player);
+    sendGameState(roomId);
+  },
+  (roomId: string, state: GameState, effect: Effect) =>
+    setTimeout(() => {
+      endEffect(roomId, state, effect);
+    }, 1200)
+];

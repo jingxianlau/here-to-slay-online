@@ -127,14 +127,14 @@ const Game: React.FC = () => {
             setShowEffectPopup(false);
             setShowDiscardPopup(false);
             showHand.setLocked(false);
-            showHand.set(false);
             shownCard.setLocked(false);
-            shownCard.set(null);
-            shownCard.setPos(null);
             allowedCards.set([]);
 
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Draw');
+              showHand.set(false);
+              shownCard.set(null);
+              shownCard.setPos(null);
             }
             break;
 
@@ -144,11 +144,15 @@ const Game: React.FC = () => {
             setActiveDice(0);
             showPopup.set(true);
             showHand.setLocked(false);
-            showHand.set(false);
+
             if (!showBoard) {
               shownCard.setLocked(true);
+            }
+
+            if (newState.turn.phaseChanged) {
               shownCard.setPos(null);
               shownCard.set(null);
+              showHand.set(false);
             }
             break;
 
@@ -161,8 +165,6 @@ const Game: React.FC = () => {
             showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
-              shownCard.setPos(null);
-              shownCard.set(null);
             }
             if (newState.dice.defend && newState.dice.defend.total > 0) {
               setActiveDice(1);
@@ -186,6 +188,12 @@ const Game: React.FC = () => {
                 }
               }, 3000);
             }
+
+            if (newState.turn.phaseChanged) {
+              shownCard.setPos(null);
+              shownCard.set(null);
+              showHand.set(false);
+            }
             break;
 
           case 'attack-roll':
@@ -195,8 +203,6 @@ const Game: React.FC = () => {
             showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
-              shownCard.setPos(null);
-              shownCard.set(null);
             }
 
             if (newState.dice.main.total > 0) {
@@ -206,6 +212,12 @@ const Game: React.FC = () => {
               setTimeout(() => {
                 hasRolled.set(false);
               }, 3000);
+            }
+
+            if (newState.turn.phaseChanged) {
+              shownCard.setPos(null);
+              shownCard.set(null);
+              showHand.set(false);
             }
             break;
 
@@ -216,8 +228,6 @@ const Game: React.FC = () => {
             showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
-              shownCard.setPos(null);
-              shownCard.set(null);
             }
 
             if (newState.dice.main.total > 0) {
@@ -228,6 +238,12 @@ const Game: React.FC = () => {
                 hasRolled.set(false);
               }, 3000);
             }
+
+            if (newState.turn.phaseChanged) {
+              shownCard.setPos(null);
+              shownCard.set(null);
+              showHand.set(false);
+            }
             break;
 
           case 'modify':
@@ -235,8 +251,6 @@ const Game: React.FC = () => {
             showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
-              shownCard.setPos(null);
-              shownCard.set(null);
             }
 
             if (!newState.mainDeck.preparedCard) return;
@@ -281,12 +295,20 @@ const Game: React.FC = () => {
                 }
               }
             }
+
+            if (newState.turn.phaseChanged) {
+              shownCard.setPos(null);
+              shownCard.set(null);
+              showHand.set(false);
+            }
             break;
 
           case 'play':
             showPopup.set(false);
             setShowDiscardPopup(false);
             setShowEffectPopup(false);
+            showHand.setLocked(false);
+            shownCard.setLocked(false);
 
             allowedCards.set([]);
 
@@ -323,8 +345,6 @@ const Game: React.FC = () => {
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Play');
               showHand.set(false);
-              showHand.setLocked(false);
-              shownCard.setLocked(false);
               shownCard.set(null);
               shownCard.setPos(null);
             }
@@ -332,15 +352,15 @@ const Game: React.FC = () => {
 
           case 'choose-hero':
             setShowDiscardPopup(false);
-            showHand.set(false);
             showHand.setLocked(false);
             showPopup.set(false);
             shownCard.setLocked(false);
-            shownCard.set(null);
-            shownCard.setPos(null);
             allowedCards.set([]);
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Place Item');
+              shownCard.set(null);
+              shownCard.setPos(null);
+              showHand.set(false);
             }
             break;
 
@@ -378,6 +398,11 @@ const Game: React.FC = () => {
             if (newState.turn.effect) {
               switch (newState.turn.effect.action) {
                 case 'choose-discard':
+                  setShowEffectPopup(true);
+                  if (!showBoard) {
+                    showHand.set(false);
+                    showHand.setLocked(true);
+                  }
                   break;
                 case 'choose-hand':
                   if (!showBoard) {

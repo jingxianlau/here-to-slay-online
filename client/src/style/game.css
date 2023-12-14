@@ -1473,6 +1473,7 @@ div.cross {
 }
 .effect-cover .choose-cover .arrow .icon {
   font-size: 10vh;
+  user-select: none;
 }
 .effect-cover .choose-cover .left {
   font-size: 10vh;

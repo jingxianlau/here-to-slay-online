@@ -23,12 +23,12 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
 
   const [revealActiveCard, setRevealActiveCard] = useState(0);
   useEffect(() => {
-    if (
-      state.turn.effect &&
-      state.turn.effect.action === 'choose-two' &&
-      state.turn.effect.actionChanged
-    ) {
-      setRevealActiveCard(0);
+    if (state.turn.effect && state.turn.effect.actionChanged) {
+      if (state.turn.effect.action === 'choose-two') {
+        setRevealActiveCard(0);
+      } else if (state.turn.effect.action === 'choose-discard') {
+        setRevealActiveCard(state.mainDeck.discardPile.length - 1);
+      }
     }
   }, [state.turn.effect]);
 
@@ -517,6 +517,114 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                 Next
               </div>
             ) : (
+              <div
+                className='right inactive'
+                onClick={() => {}}
+                style={{ opacity: 0 }}
+              ></div>
+            )}
+          </div>
+        ) : state.turn.effect.action === 'choose-discard' ? (
+          <div className='choose-cover' style={{ justifyContent: 'center' }}>
+            {state.turn.player === state.playerNum &&
+            state.turn.effect.allowedCards &&
+            state.mainDeck.discardPile[revealActiveCard].type ===
+              state.turn.effect.allowedCards[0] ? (
+              <div
+                className='left active'
+                onClick={() => {
+                  socket.emit(
+                    'use-effect',
+                    roomId,
+                    userId,
+                    state.turn.effect?.card,
+                    state.mainDeck.discardPile[revealActiveCard]
+                  );
+                }}
+              >
+                {state.turn.effect.purpose.split(' ')[0]}
+              </div>
+            ) : (
+              state.turn.player === state.playerNum && (
+                <div
+                  className='left inactive'
+                  onClick={() => {}}
+                  style={{ opacity: 0 }}
+                ></div>
+              )
+            )}
+
+            <div
+              className={`arrow ${
+                !state.turn.effect.choice && revealActiveCard !== 0
+                  ? 'active'
+                  : 'inactive'
+              }`}
+              onClick={() => {
+                if (!state.turn.effect?.choice && revealActiveCard !== 0) {
+                  setRevealActiveCard(val => --val);
+                }
+              }}
+            >
+              <span className='material-symbols-outlined icon'>
+                chevron_left
+              </span>
+            </div>
+
+            <div className='center'>
+              <h1
+                style={{
+                  marginTop: '-10vh',
+                  marginBottom: '2vh',
+                  marginRight: '0.8vh'
+                }}
+              >
+                {state.turn.effect.choice
+                  ? 'Chosen Card'
+                  : state.turn.effect.purpose}
+              </h1>
+              <div className='img-container'>
+                {state.turn.effect.choice &&
+                typeof state.turn.effect.choice[0] !== 'number' ? (
+                  <img
+                    src={getImage(state.turn.effect.choice[0])}
+                    alt={state.turn.effect.choice[0].name}
+                    className='small-xl'
+                    draggable='false'
+                  />
+                ) : (
+                  <img
+                    src={getImage(state.mainDeck.discardPile[revealActiveCard])}
+                    alt={state.mainDeck.discardPile[revealActiveCard].name}
+                    className='small-xl'
+                    draggable='false'
+                  />
+                )}
+              </div>
+            </div>
+
+            <div
+              className={`arrow ${
+                !state.turn.effect.choice &&
+                state.mainDeck.discardPile.length !== revealActiveCard + 1
+                  ? 'active'
+                  : 'inactive'
+              }`}
+              onClick={() => {
+                if (
+                  !state.turn.effect?.choice &&
+                  state.mainDeck.discardPile.length !== revealActiveCard + 1
+                ) {
+                  setRevealActiveCard(val => ++val);
+                }
+              }}
+            >
+              <span className='material-symbols-outlined icon'>
+                chevron_right
+              </span>
+            </div>
+
+            {state.turn.player === state.playerNum && (
               <div
                 className='right inactive'
                 onClick={() => {}}

@@ -210,19 +210,19 @@ export interface GameState {
         | 'modify';
       effect: {
         action:
-          | 'none' // DONE
-          | 'draw' // DONE
-          | 'choose-two' // DONE
-          | 'reveal' // DONE
-          | 'choose-boards' // DONE
-          | 'choose-own-board' // DONE
-          | 'choose-other-boards' // DONE
-          | 'choose-player' // DONE
-          | 'choose-hand' // DONE
-          | 'choose-other-hand-hide' // DONE
-          | 'choose-other-hand-show' // DONE
+          | 'none'
+          | 'draw'
+          | 'choose-two'
+          | 'reveal'
+          | 'choose-boards'
+          | 'choose-own-board'
+          | 'choose-other-boards'
+          | 'choose-player'
+          | 'choose-hand'
+          | 'choose-other-hand-hide'
+          | 'choose-other-hand-show'
           | 'choose-discard'
-          | 'choose-cards'; // DONE
+          | 'choose-cards';
         actionChanged: boolean;
         players: number[]; // active players who can choose
         val: { min: number; max: number; curr: number }; // num of items to choose

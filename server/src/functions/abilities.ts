@@ -32,6 +32,7 @@ import {
   receiveDestroyHero,
   receiveDiscardCard,
   receivePlayer,
+  searchDiscard,
   stealHero
 } from './abilitiesHelpers';
 import { reshuffleDeck } from './gameHelpers';
@@ -90,6 +91,7 @@ export const heroAbilities: {
         }
       }
       effect.players = players;
+      effect.val = { min: players.length, max: players.length, curr: 0 };
       sendGameState(roomId);
     },
     (roomId, state, effect, returnVal, fromPlayer) => {
@@ -100,6 +102,7 @@ export const heroAbilities: {
       if (card === -1) return;
 
       addCards(roomId, [card], state.turn.player);
+      effect.val.curr++;
 
       sendGameState(roomId);
     },
@@ -507,8 +510,8 @@ export const heroAbilities: {
         endEffect(roomId, state, effect);
       }, 800)
   ],
-  // TODO: SEARCH DISCARD PILE
-  'lookie-rookie': [],
+  // DONE
+  'lookie-rookie': searchDiscard(CardType.item),
   // DONE
   'quick-draw': [
     ...drawCard(2),
