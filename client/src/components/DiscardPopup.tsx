@@ -72,14 +72,14 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                         } else {
                           shownCard.setPos('left');
                         }
-                        showHand.set(val => --val);
+                        showHand.set(false);
                       }
                     }}
                     onMouseLeave={() => {
                       if (show) {
                         shownCard.set(null);
                         shownCard.setPos(null);
-                        showHand.set(val => ++val);
+                        showHand.set(true);
                       }
                     }}
                   >
@@ -151,14 +151,14 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                                   } else {
                                     shownCard.setPos('left');
                                   }
-                                  showHand.set(val => --val);
+                                  showHand.set(false);
                                 }
                               }}
                               onMouseLeave={() => {
                                 if (show) {
                                   shownCard.set(null);
                                   shownCard.setPos(null);
-                                  showHand.set(val => ++val);
+                                  showHand.set(true);
                                 }
                               }}
                             >

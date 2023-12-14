@@ -20,9 +20,6 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
   const [prevHand, setPrevHand] = useState<AnyCard[] | undefined>();
   const [solidCards, setSolidCards] = useState<boolean[]>([]);
 
-  // fixes onenter triggering twice for some reason
-  const [trigger, setTrigger] = useState(false);
-
   useEffect(() => {
     if (!prevHand) {
       setPrevHand(_ => {
@@ -39,11 +36,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     setTimeout(() => {
       if (prevHand) {
         if (currHand.length > prevHand.length) {
-          showHand.set(val => ++val);
-          showHand.setLocked(val => ++val);
+          const prevShowHand = showHand.val;
+          const prevHandLock = showHand.locked;
+          showHand.set(true);
+          showHand.setLocked(true);
+          showHand.setAnimation(true);
           setTimeout(() => {
-            showHand.set(val => --val);
-            showHand.setLocked(val => --val);
+            showHand.set(prevShowHand);
+            showHand.setLocked(prevHandLock);
+            showHand.setAnimation(false);
           }, (currHand.length - prevHand.length) * 450 + 250);
 
           setPrevHand(_ => currHand);
@@ -63,11 +64,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
             } else i++;
           }, 250);
         } else if (currHand < prevHand) {
-          showHand.set(val => ++val);
-          showHand.setLocked(val => ++val);
+          const prevShowHand = showHand.val;
+          const prevHandLock = showHand.locked;
+          showHand.set(true);
+          showHand.setLocked(true);
+          showHand.setAnimation(true);
           setTimeout(() => {
-            showHand.set(val => --val);
-            showHand.setLocked(val => --val);
+            showHand.set(prevShowHand);
+            showHand.setLocked(prevHandLock);
+            showHand.setAnimation(false);
           }, (prevHand.length - currHand.length) * 450 + 250);
 
           setSolidCards([]);
@@ -165,19 +170,17 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     <div
       className='hand-trigger'
       onMouseEnter={() => {
-        if (showHand.locked <= 0 && !trigger) {
-          showHand.set(val => ++val);
-          setTrigger(_ => true);
+        if (!showHand.locked && !showHand.animation) {
+          showHand.set(true);
         }
       }}
       onMouseLeave={() => {
-        if (showHand.locked <= 0 && trigger) {
-          showHand.set(val => --val);
-          setTrigger(_ => false);
+        if (!showHand.locked && !showHand.animation) {
+          showHand.set(false);
         }
       }}
     >
-      {showHand.val <= 0 && showHand.locked <= 0 && (
+      {!showHand.val && !showHand.locked && (
         <>
           <h5>
             <span>Hand</span>
@@ -189,7 +192,7 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
       )}
       <div
         className='bottomMenu'
-        style={{ bottom: showHand.val > 0 ? 0 : '-30vh' }}
+        style={{ bottom: showHand.val ? 0 : '-30vh' }}
       >
         {state.turn.player === state.playerNum &&
           state.turn.movesLeft === 3 &&
@@ -251,17 +254,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                   src={getImage(card)}
                   alt={card.name}
                   className={`small-md ${
-                    allowedCards.val.length === 5
-                      ? 'active'
-                      : allowedCard(allowedCards.val, card.type) &&
-                        ((card.type === CardType.hero &&
-                          state.board[state.playerNum].heroCards.some(
-                            val => val === null
-                          )) ||
-                          card.type !== CardType.hero) &&
-                        (state.turn.phase === 'challenge' ||
-                          state.turn.phase === 'challenge-roll' ||
-                          state.turn.phase === 'modify')
+                    allowedCard(allowedCards.val, card.type) &&
+                    ((card.type === CardType.hero &&
+                      state.board[state.playerNum].heroCards.some(
+                        val => val === null
+                      )) ||
+                      card.type !== CardType.hero) &&
+                    (state.turn.phase === 'challenge' ||
+                      state.turn.phase === 'challenge-roll' ||
+                      state.turn.phase === 'modify')
                       ? 'active glow'
                       : allowedCard(allowedCards.val, card.type) &&
                         (state.turn.phase !== 'play' ||

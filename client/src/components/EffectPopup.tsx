@@ -25,7 +25,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
   useEffect(() => {
     if (
       state.turn.effect &&
-      state.turn.effect.action === 'choose-reveal' &&
+      state.turn.effect.action === 'choose-two' &&
       state.turn.effect.actionChanged
     ) {
       setRevealActiveCard(0);
@@ -139,6 +139,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           state.turn.effect.active.num.length === 2 &&
           (!state.turn.effect.activeCardVisible[state.playerNum] ||
             state.turn.effect.active.card) ? (
+          // PEEK AND PICK
           <div className='content'>
             <div className='top'>
               <div className='img-container'>
@@ -218,79 +219,6 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                     </>
                   ))}
             </div>
-          </div>
-        ) : state.turn.effect.action === 'play' &&
-          state.turn.effect.active &&
-          (!state.turn.effect.activeNumVisible[state.playerNum] ||
-            state.turn.effect.active.num) &&
-          (!state.turn.effect.activeCardVisible[state.playerNum] ||
-            state.turn.effect.active.card) ? (
-          // PLAY IMMEDIATELY
-          <div className='choose-cover'>
-            {state.turn.player === state.playerNum &&
-              state.turn.effect.active.num &&
-              (state.turn.effect.active.num[0] === 1 ? (
-                <div
-                  className='left active'
-                  onClick={() => {
-                    socket.emit(
-                      'use-effect',
-                      roomId,
-                      userId,
-                      state.turn.effect?.card,
-                      1
-                    );
-                  }}
-                >
-                  {state.turn.effect.purpose}
-                </div>
-              ) : (
-                <div
-                  className='left inactive'
-                  onClick={() => {}}
-                  style={{ opacity: 0 }}
-                >
-                  {state.turn.effect.purpose}
-                </div>
-              ))}
-
-            {state.turn.effect.active && state.turn.effect.active.card ? (
-              <div className='img-container center'>
-                <img
-                  src={getImage(state.turn.effect.active.card[0])}
-                  alt={state.turn.effect.active.card[0].name}
-                  className='small-xl'
-                  draggable='false'
-                />
-              </div>
-            ) : (
-              <div className='img-container center'>
-                <img
-                  src='https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
-                  alt='hidden card'
-                  className='small-xl'
-                  draggable='false'
-                />
-              </div>
-            )}
-
-            {state.turn.player === state.playerNum &&
-              state.turn.effect.active.num && (
-                <div
-                  className='right'
-                  onClick={() => {
-                    socket.emit(
-                      'use-effect',
-                      roomId,
-                      userId,
-                      state.turn.effect?.card,
-                      0
-                    );
-                  }}
-                >
-                  {state.turn.effect.active.num[0] === 1 ? 'Cancel' : 'Next'}
-                </div>
-              )}
           </div>
         ) : state.turn.effect.action === 'choose-cards' &&
           state.turn.effect.active &&
@@ -383,7 +311,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   ))}
             </div>
           </div>
-        ) : state.turn.effect.action === 'choose-reveal' &&
+        ) : state.turn.effect.action === 'choose-two' &&
           state.turn.effect.active &&
           ((state.turn.effect.active.num &&
             state.turn.effect.active.card &&
@@ -391,7 +319,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
               state.turn.effect.active.card.length &&
             state.turn.effect.active.card.length > 0) ||
             state.turn.player !== state.playerNum) ? (
-          // CHOOSE CARDS TO REVEAL
+          // CHOOSE CARD(S) TO REVEAL/PLAY/ETC
           <div className='choose-cover' style={{ justifyContent: 'center' }}>
             {state.turn.player === state.playerNum &&
             state.turn.effect.active.num &&
@@ -408,7 +336,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   );
                 }}
               >
-                Reveal
+                {state.turn.effect.purpose.split(' ')[0]}
               </div>
             ) : (
               state.turn.player === state.playerNum && (
@@ -420,24 +348,32 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
               )
             )}
 
-            {state.turn.player === state.playerNum &&
-            state.turn.effect.active.card &&
-            revealActiveCard !== 0 ? (
-              <div
-                className='arrow'
-                onClick={() => setRevealActiveCard(val => --val)}
-              >
-                <span className='material-symbols-outlined icon'>
-                  chevron_left
-                </span>
-              </div>
-            ) : (
-              <div className='arrow inactive'>
-                <span className='material-symbols-outlined icon'>
-                  chevron_left
-                </span>
-              </div>
-            )}
+            <div
+              className={`arrow ${
+                state.turn.player === state.playerNum &&
+                state.turn.effect &&
+                state.turn.effect.active &&
+                state.turn.effect.active.card &&
+                revealActiveCard !== 0
+                  ? 'active'
+                  : 'inactive'
+              }`}
+              onClick={() => {
+                if (
+                  state.turn.player === state.playerNum &&
+                  state.turn.effect &&
+                  state.turn.effect.active &&
+                  state.turn.effect.active.card &&
+                  revealActiveCard !== 0
+                ) {
+                  setRevealActiveCard(val => --val);
+                }
+              }}
+            >
+              <span className='material-symbols-outlined icon'>
+                chevron_left
+              </span>
+            </div>
 
             {state.turn.effect.active && state.turn.effect.active.card ? (
               <div className='img-container center'>
@@ -461,24 +397,32 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
               </div>
             )}
 
-            {state.turn.player === state.playerNum &&
-            state.turn.effect.active.card &&
-            state.turn.effect.active.card.length !== revealActiveCard + 1 ? (
-              <div
-                className='arrow'
-                onClick={() => setRevealActiveCard(val => ++val)}
-              >
-                <span className='material-symbols-outlined icon'>
-                  chevron_right
-                </span>
-              </div>
-            ) : (
-              <div className='arrow inactive'>
-                <span className='material-symbols-outlined icon'>
-                  chevron_right
-                </span>
-              </div>
-            )}
+            <div
+              className={`arrow ${
+                state.turn.player === state.playerNum &&
+                state.turn.effect &&
+                state.turn.effect.active &&
+                state.turn.effect.active.card &&
+                state.turn.effect.active.card.length !== revealActiveCard + 1
+                  ? 'active'
+                  : 'inactive'
+              }`}
+              onClick={() => {
+                if (
+                  state.turn.player === state.playerNum &&
+                  state.turn.effect &&
+                  state.turn.effect.active &&
+                  state.turn.effect.active.card &&
+                  state.turn.effect.active.card.length !== revealActiveCard + 1
+                ) {
+                  setRevealActiveCard(val => ++val);
+                }
+              }}
+            >
+              <span className='material-symbols-outlined icon'>
+                chevron_right
+              </span>
+            </div>
 
             {state.turn.player === state.playerNum &&
             state.turn.effect.active.num &&
@@ -502,7 +446,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   }
                 }}
               >
-                Cancel
+                {state.turn.effect.purpose.split(' ')[1]}
               </div>
             ) : (
               state.turn.player === state.playerNum && (

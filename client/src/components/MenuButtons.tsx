@@ -56,45 +56,45 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
       </div>
       <button
         className={`circular show-board-trigger ${
-          state.turn.phase === 'attack-roll' ||
-          state.turn.phase === 'challenge' ||
-          state.turn.phase === 'challenge-roll' ||
-          state.turn.phase === 'modify' ||
-          (state.turn.phase === 'use-effect' &&
-            state.turn.effect &&
-            (state.turn.effect.action === 'choose-player' ||
-              state.turn.effect.action === 'choose-hand' ||
-              state.turn.effect.action === 'choose-other-hand-hide' ||
-              state.turn.effect.action === 'choose-other-hand-show' ||
-              state.turn.effect.action === 'choose-discard' ||
-              state.turn.effect.action === 'play' ||
-              state.turn.effect.action === 'choose-reveal' ||
-              state.turn.effect.action === 'reveal')) ||
-          state.turn.phase === 'use-effect-roll' ||
-          state.turn.phase === 'end-turn-discard' ||
-          state.turn.phase === 'end-game'
-            ? 'show'
-            : 'hide'
-        }`}
-        onClick={() => {
-          if (
-            state.turn.phase === 'attack-roll' ||
+          !showHand.animation &&
+          (state.turn.phase === 'attack-roll' ||
             state.turn.phase === 'challenge' ||
             state.turn.phase === 'challenge-roll' ||
             state.turn.phase === 'modify' ||
             (state.turn.phase === 'use-effect' &&
               state.turn.effect &&
-              (state.turn.effect.action === 'choose-hand' ||
+              (state.turn.effect.action === 'choose-player' ||
+                state.turn.effect.action === 'choose-hand' ||
                 state.turn.effect.action === 'choose-other-hand-hide' ||
                 state.turn.effect.action === 'choose-other-hand-show' ||
                 state.turn.effect.action === 'choose-discard' ||
-                state.turn.effect.action === 'play' ||
-                state.turn.effect.action === 'choose-cards' ||
-                state.turn.effect.action === 'choose-reveal' ||
+                state.turn.effect.action === 'choose-two' ||
                 state.turn.effect.action === 'reveal')) ||
             state.turn.phase === 'use-effect-roll' ||
             state.turn.phase === 'end-turn-discard' ||
-            state.turn.phase === 'end-game'
+            state.turn.phase === 'end-game')
+            ? 'show'
+            : 'hide'
+        }`}
+        onClick={() => {
+          if (
+            !showHand.animation &&
+            (state.turn.phase === 'attack-roll' ||
+              state.turn.phase === 'challenge' ||
+              state.turn.phase === 'challenge-roll' ||
+              state.turn.phase === 'modify' ||
+              (state.turn.phase === 'use-effect' &&
+                state.turn.effect &&
+                (state.turn.effect.action === 'choose-hand' ||
+                  state.turn.effect.action === 'choose-other-hand-hide' ||
+                  state.turn.effect.action === 'choose-other-hand-show' ||
+                  state.turn.effect.action === 'choose-discard' ||
+                  state.turn.effect.action === 'choose-two' ||
+                  state.turn.effect.action === 'choose-cards' ||
+                  state.turn.effect.action === 'reveal')) ||
+              state.turn.phase === 'use-effect-roll' ||
+              state.turn.phase === 'end-turn-discard' ||
+              state.turn.phase === 'end-game')
           ) {
             setShowBoard(val => !val);
 
@@ -107,9 +107,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                 (state.turn.effect.action === 'choose-hand' ||
                   state.turn.effect.action === 'choose-other-hand-hide' ||
                   state.turn.effect.action === 'choose-other-hand-show' ||
-                  state.turn.effect.action === 'play' ||
+                  state.turn.effect.action === 'choose-two' ||
                   state.turn.effect.action === 'choose-cards' ||
-                  state.turn.effect.action === 'choose-reveal' ||
                   state.turn.effect.action === 'reveal')) ||
               state.turn.phase === 'end-turn-discard'
             ) {
@@ -118,28 +117,26 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                   !state.turn.effect ||
                   (state.turn.effect.action !== 'choose-other-hand-hide' &&
                     state.turn.effect.action !== 'choose-other-hand-show' &&
-                    state.turn.effect.action !== 'play' &&
+                    state.turn.effect.action !== 'choose-two' &&
                     state.turn.effect.action !== 'choose-cards' &&
-                    state.turn.effect.action !== 'choose-reveal' &&
                     state.turn.effect.action !== 'reveal')
                 ) {
                   // show hand when popup active
-                  showHand.set(val => ++val);
+                  showHand.set(true);
                 }
-                showHand.setLocked(val => ++val);
+                showHand.setLocked(true);
               } else {
                 if (
                   !state.turn.effect ||
                   (state.turn.effect.action !== 'choose-other-hand-hide' &&
                     state.turn.effect.action !== 'choose-other-hand-show' &&
-                    state.turn.effect.action !== 'play' &&
+                    state.turn.effect.action !== 'choose-two' &&
                     state.turn.effect.action !== 'choose-cards' &&
-                    state.turn.effect.action !== 'choose-reveal' &&
                     state.turn.effect.action !== 'reveal')
                 ) {
-                  showHand.set(val => --val);
+                  showHand.set(false);
                 }
-                showHand.setLocked(val => --val);
+                showHand.setLocked(false);
               }
             }
           }
@@ -169,8 +166,7 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                   state.turn.effect.action === 'choose-other-hand-hide' ||
                   state.turn.effect.action === 'choose-other-hand-show' ||
                   state.turn.effect.action === 'choose-discard' ||
-                  state.turn.effect.action === 'play' ||
-                  state.turn.effect.action === 'choose-reveal' ||
+                  state.turn.effect.action === 'choose-two' ||
                   state.turn.effect.action === 'reveal')
                   ? '9.4vh'
                   : '1.5vh'

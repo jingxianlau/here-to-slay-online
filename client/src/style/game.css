@@ -1452,9 +1452,6 @@ div.cross {
   width: 100%;
   height: 100%;
 }
-/* .effect-cover .choose-cover .center {
-  margin-top: 6vh;
-} */
 .effect-cover .choose-cover .arrow {
   width: 8vh;
   border: 1vh solid transparent;
@@ -1466,7 +1463,7 @@ div.cross {
   transition: 0.25s ease-in-out;
   cursor: pointer;
 }
-.effect-cover .choose-cover .arrow:hover {
+.effect-cover .choose-cover .arrow.active:hover {
   background-color: #67676766;
   border: 1vh solid #555;
 }

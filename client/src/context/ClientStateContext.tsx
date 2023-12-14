@@ -21,8 +21,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [allowedCards, setAllowedCards] = useState<CardType[]>(allCards);
   const [showRoll, setShowRoll] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
-  const [showHand, setShowHand] = useState(0);
-  const [handLock, setHandLock] = useState(0);
+  const [showHand, setShowHand] = useState(false);
+  const [handLock, setHandLock] = useState(false);
+  const [handAnimation, setHandAnimation] = useState(false);
   const [shownCard, setShownCard] = useState<AnyCard | null>(null);
   const [chosenCard, setChosenCard] = useState<AnyCard | null>(null);
   const [showChosenCard, setShowChosenCard] = useState(false);
@@ -77,7 +78,9 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       val: showHand,
       set: setShowHand,
       locked: handLock,
-      setLocked: setHandLock
+      setLocked: setHandLock,
+      animation: handAnimation,
+      setAnimation: setHandAnimation
     },
     shownCard: {
       val: shownCard,

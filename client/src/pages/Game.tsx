@@ -126,8 +126,8 @@ const Game: React.FC = () => {
             showPopup.set(false);
             setShowEffectPopup(false);
             setShowDiscardPopup(false);
-            showHand.setLocked(val => Math.max(val - 1, 0));
-            showHand.set(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
+            showHand.set(false);
             shownCard.setLocked(false);
             shownCard.set(null);
             shownCard.setPos(null);
@@ -143,8 +143,8 @@ const Game: React.FC = () => {
             setShowEffectPopup(false);
             setActiveDice(0);
             showPopup.set(true);
-            showHand.setLocked(val => Math.max(val - 1, 0));
-            showHand.set(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
+            showHand.set(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -158,7 +158,7 @@ const Game: React.FC = () => {
             setActiveDice(0);
             showPopup.set(true);
             showRoll.set(false);
-            showHand.setLocked(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -192,7 +192,7 @@ const Game: React.FC = () => {
             setShowEffectPopup(false);
             setShowDiscardPopup(false);
             showRoll.set(false);
-            showHand.setLocked(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -213,7 +213,7 @@ const Game: React.FC = () => {
             setShowDiscardPopup(false);
             setShowEffectPopup(false);
             showRoll.set(false);
-            showHand.setLocked(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -232,7 +232,7 @@ const Game: React.FC = () => {
 
           case 'modify':
             showPopup.set(true);
-            showHand.setLocked(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -316,14 +316,14 @@ const Game: React.FC = () => {
               shownCard.set(newState.mainDeck.preparedCard.card);
             }
             if (newState.turn.pause) {
-              showHand.set(val => Math.max(val - 1, 0));
-              showHand.setLocked(1);
+              showHand.set(false);
+              showHand.setLocked(true);
             }
 
             if (newState.turn.phaseChanged) {
               showText(showHelperText, 'Play');
-              showHand.set(val => Math.max(val - 1, 0));
-              showHand.setLocked(val => Math.max(val - 1, 0));
+              showHand.set(false);
+              showHand.setLocked(false);
               shownCard.setLocked(false);
               shownCard.set(null);
               shownCard.setPos(null);
@@ -332,11 +332,9 @@ const Game: React.FC = () => {
 
           case 'choose-hero':
             setShowDiscardPopup(false);
+            showHand.set(false);
+            showHand.setLocked(false);
             showPopup.set(false);
-            if (newState.turn.player === newState.playerNum) {
-              showHand.setLocked(1);
-              showHand.set(val => Math.max(val - 1, 0));
-            }
             shownCard.setLocked(false);
             shownCard.set(null);
             shownCard.setPos(null);
@@ -350,7 +348,7 @@ const Game: React.FC = () => {
             setShowDiscardPopup(false);
             showPopup.set(false);
             if (!newState.turn.effect) return;
-            showHand.setLocked(val => Math.max(val - 1, 0));
+            showHand.setLocked(false);
             if (!showBoard) {
               shownCard.setLocked(true);
               shownCard.setPos(null);
@@ -381,17 +379,10 @@ const Game: React.FC = () => {
               switch (newState.turn.effect.action) {
                 case 'choose-discard':
                   break;
-                case 'play':
-                  setShowEffectPopup(true);
-                  if (!showBoard) {
-                    showHand.setLocked(1);
-                    showHand.set(val => Math.max(val - 1, 0));
-                  }
-                  break;
                 case 'choose-hand':
                   if (!showBoard) {
-                    showHand.set(1);
-                    showHand.setLocked(1);
+                    showHand.set(true);
+                    showHand.setLocked(true);
                   }
                   shownCard.setLocked(false);
 
@@ -413,6 +404,7 @@ const Game: React.FC = () => {
                       shownCard.set(newState.turn.effect.choice[0]);
                       shownCard.setPos('center');
                       shownCard.setLocked(true);
+                      showHand.set(false);
                     }
                   } else if (newState.turn.effect) {
                     setShowDiscardPopup(true);
@@ -421,53 +413,55 @@ const Game: React.FC = () => {
                 case 'choose-cards':
                   setShowEffectPopup(true);
                   if (!showBoard) {
-                    showHand.setLocked(1);
-                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.setLocked(true);
+                    showHand.set(false);
                   }
                   shownCard.setLocked(false);
                   break;
                 case 'choose-other-hand-hide':
                   setShowEffectPopup(true);
                   if (!showBoard) {
-                    showHand.setLocked(1);
-                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.setLocked(true);
+                    showHand.set(false);
                   }
                   break;
                 case 'choose-other-hand-show':
                   setShowEffectPopup(true);
                   if (!showBoard) {
-                    showHand.setLocked(1);
-                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.setLocked(true);
+                    showHand.set(false);
                   }
                   shownCard.setLocked(false);
                   break;
                 case 'draw':
+                  setShowEffectPopup(false);
+                  showHand.setLocked(false);
+                  showHand.set(false);
                   if (
                     newState.turn.effect &&
                     newState.turn.effect.actionChanged
                   ) {
                     showText(showHelperText, newState.turn.effect.purpose);
                   }
-                  showHand.set(val => Math.max(val - 1, 0));
                   break;
-                case 'choose-reveal':
+                case 'choose-two':
                   setShowEffectPopup(true);
                   if (!showBoard) {
-                    showHand.set(val => Math.max(val - 1, 0));
-                    showHand.setLocked(1);
+                    showHand.set(false);
+                    showHand.setLocked(true);
                   }
                   break;
                 case 'reveal':
                   setShowEffectPopup(true);
                   if (!showBoard) {
-                    showHand.set(val => Math.max(val - 1, 0));
-                    showHand.setLocked(1);
+                    showHand.set(false);
+                    showHand.setLocked(true);
                   }
                   break;
                 default:
                   setShowEffectPopup(false);
                   if (!showBoard) {
-                    showHand.set(val => Math.max(val - 1, 0));
+                    showHand.set(false);
                   }
                   shownCard.setLocked(false);
               }
@@ -484,8 +478,8 @@ const Game: React.FC = () => {
             }
 
             if (!showBoard) {
-              showHand.set(1);
-              showHand.setLocked(1);
+              showHand.set(true);
+              showHand.setLocked(true);
             }
             if (
               newState.turn.player === newState.playerNum &&
@@ -501,7 +495,7 @@ const Game: React.FC = () => {
           case 'end-game':
             showPopup.set(false);
             setShowEffectPopup(false);
-            showHand.setLocked(-1000);
+            showHand.setLocked(false);
             shownCard.setLocked(false);
             if (showBoard) {
               setShowBoard(true);
