@@ -196,8 +196,29 @@ export const ifMayPlay = (
             effect.active.card.push(card);
           }
 
+          let allowed = true;
+          if (type === CardType.item) {
+            allowed = false;
+            for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+              if (
+                state.board[i].heroCards.some(val => {
+                  if (val === null) {
+                    return false;
+                  } else if (!val.item) {
+                    return true;
+                  }
+                  return false;
+                })
+              ) {
+                allowed = true;
+              }
+            }
+          }
+
           for (let i = 0; i < num; i++) {
-            effect.active.num.push(effect.active.card[i].type === type ? 1 : 0);
+            effect.active.num.push(
+              effect.active.card[i].type === type && allowed ? 1 : 0
+            );
           }
 
           effect.activeNumVisible = [];

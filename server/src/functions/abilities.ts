@@ -444,7 +444,29 @@ export const heroAbilities: {
       (roomId, state, effect) => {
         effect.action = 'choose-hand';
         effect.actionChanged = true;
-        effect.allowedCards = [CardType.item];
+
+        let allowed = false;
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          if (
+            state.board[i].heroCards.some(val => {
+              if (val === null) {
+                return false;
+              } else if (!val.item) {
+                return true;
+              }
+              return false;
+            })
+          ) {
+            allowed = true;
+          }
+        }
+
+        if (allowed) {
+          effect.allowedCards = [CardType.item];
+        } else {
+          effect.allowedCards = [];
+        }
+
         effect.players = [state.turn.player];
         effect.purpose = 'Play Item';
         effect.val = { min: 0, max: 1, curr: 0 };
@@ -975,7 +997,7 @@ export const heroAbilities: {
       (roomId, state, effect, returnVal) => {
         if (
           !returnVal ||
-          ((!returnVal.card || returnVal.card.type !== CardType.item) &&
+          ((!returnVal.card || returnVal.card.type !== CardType.magic) &&
             !returnVal.num)
         )
           return;
@@ -1011,7 +1033,7 @@ export const heroAbilities: {
           });
           state.turn.effect = null;
           setTimeout(() => {
-            if (returnVal.card?.type === CardType.item)
+            if (returnVal.card?.type === CardType.magic)
               playCard(roomId, state.turn.player, returnVal.card, true);
           }, 1200);
         } else if (returnVal.num && returnVal.num === -2) {
