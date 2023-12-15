@@ -34,7 +34,8 @@ export const useEffectRoll = (
     gameState.dice.main.total !== 0 ||
     gameState.turn.player !== playerNum ||
     (gameState.turn.phase !== 'play' &&
-      gameState.turn.phase !== 'use-effect-roll')
+      gameState.turn.phase !== 'use-effect-roll') ||
+    (heroCard.item && heroCard.item.name === 'Sealing Key')
   ) {
     return;
   }

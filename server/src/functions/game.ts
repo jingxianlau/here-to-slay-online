@@ -149,28 +149,32 @@ export function playCard(
 export function destroyCard(roomId: string, playerNum: number, card: HeroCard) {
   const state = rooms[roomId].state;
 
-  const heroCard = removeHero(roomId, playerNum, card.id);
-  if (!heroCard) return;
-
-  delete heroCard.player;
-  if (heroCard.item && heroCard.item.name.includes('Mask')) {
-    state.board[playerNum].classes[
-      heroCard.item.name.split(' ')[0].toLowerCase() as HeroClass
-    ]--;
-  } else {
-    state.board[playerNum].classes[card.class]--;
+  if (!card.item || card.item.name !== 'Decoy Doll') {
+    const heroCard = removeHero(roomId, playerNum, card.id);
+    if (!heroCard) return;
+    delete heroCard.player;
+    if (heroCard.item && heroCard.item.name.includes('Mask')) {
+      state.board[playerNum].classes[
+        heroCard.item.name.split(' ')[0].toLowerCase() as HeroClass
+      ]--;
+    } else {
+      state.board[playerNum].classes[card.class]--;
+    }
   }
 
-  heroCard.freeUse = false;
-  heroCard.abilityUsed = false;
-  if (heroCard.item) {
-    delete heroCard.item.heroId;
-    delete heroCard.item.heroPlayer;
-    delete heroCard.item.player;
-    state.mainDeck.discardPile.push(heroCard.item);
+  card.freeUse = false;
+  card.abilityUsed = false;
+  if (card.item) {
+    delete card.item.heroId;
+    delete card.item.heroPlayer;
+    delete card.item.player;
+    state.mainDeck.discardPile.push(card.item);
   }
-  delete heroCard.item;
-  state.mainDeck.discardPile.push(heroCard);
+
+  if (!card.item || card.item.name !== 'Decoy Doll') {
+    state.mainDeck.discardPile.push(card);
+  }
+  delete card.item;
 }
 
 export function stealCard(

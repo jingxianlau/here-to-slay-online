@@ -1159,7 +1159,8 @@ export const heroAbilities: {
           !effect.active ||
           !effect.active.num ||
           !effect.active.num.length ||
-          returnVal.card.player !== effect.active.num[0]
+          returnVal.card.player !== effect.active.num[0] ||
+          returnVal.card.item.category !== 'cursed'
         )
           return;
 

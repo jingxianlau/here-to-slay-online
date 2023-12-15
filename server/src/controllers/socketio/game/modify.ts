@@ -323,6 +323,14 @@ export const modifyRoll = (
           } else {
             // fail
             state.mainDeck.preparedCard.successful = false;
+
+            if (
+              preppedCard.item &&
+              preppedCard.item.name === 'Particularly Rusty Coin'
+            ) {
+              drawCards(roomId, state.turn.player, 1);
+            }
+
             sendGameState(roomId);
             state.mainDeck.preparedCard = null;
             setTimeout(() => {

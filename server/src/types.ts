@@ -107,7 +107,7 @@ interface State {
   dice: {
     main: {
       roll: [number, number];
-      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard | ItemCard)[];
       modValues: number[];
       total: number;
     };
@@ -115,7 +115,7 @@ interface State {
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard | ItemCard)[];
       modValues: number[];
       total: number;
     } | null;

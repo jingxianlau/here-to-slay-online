@@ -1,6 +1,7 @@
 import { rooms } from '../rooms';
 import {
   AnyCard,
+  CardType,
   GameState,
   HeroCard,
   LeaderCard,
@@ -108,6 +109,23 @@ export function rollDice(roomId: string) {
       state.dice.main.total += passive.mod;
       state.dice.main.modifier.push(passive.card);
       state.dice.main.modValues.push(passive.mod);
+    }
+  }
+
+  if (
+    state.turn.phase === 'use-effect-roll' &&
+    state.mainDeck.preparedCard?.card.type === CardType.hero &&
+    state.mainDeck.preparedCard.card.item
+  ) {
+    const item = state.mainDeck.preparedCard.card.item;
+    if (item.name === "Curse of the Snake's Eyes") {
+      state.dice.main.total -= 2;
+      state.dice.main.modifier.push(item);
+      state.dice.main.modValues.push(-2);
+    } else if (item.name === 'Really Big Ring') {
+      state.dice.main.total += 2;
+      state.dice.main.modifier.push(item);
+      state.dice.main.modValues.push(2);
     }
   }
 

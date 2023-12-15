@@ -88,7 +88,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       !state.turn.pause &&
                       state.turn.phase === 'play' &&
                       !card.abilityUsed &&
-                      state.playerNum === playerNum
+                      state.playerNum === playerNum &&
+                      (!card.item || card.item.name !== 'Sealing Key')
                     ) {
                       chosenCard.set(card);
                       chosenCard.setShow(true);
@@ -182,6 +183,7 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       state.playerNum === playerNum &&
                       state.turn.phase === 'play' &&
                       !card.abilityUsed &&
+                      (!card.item || card.item.name !== 'Sealing Key') &&
                       (state.turn.movesLeft || card.freeUse)) ||
                       (state.turn.phase === 'choose-hero' &&
                         state.turn.player === state.playerNum &&
