@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import useClientContext from '../hooks/useClientContext';
 import { getImage } from '../helpers/getImage';
-import { CardType, ModifierCard } from '../types';
+import {
+  CardType,
+  HeroCard,
+  LargeCard,
+  MagicCard,
+  ModifierCard
+} from '../types';
 import Dice from './Dice';
 import { showText } from '../helpers/showText';
 import ChooseModify from './ChooseModify';
@@ -25,7 +31,9 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
   } = useClientContext();
 
   const [activeModifier, setActiveModifier] = useState(0);
-  const [modifiers, setModifiers] = useState<ModifierCard[]>([]);
+  const [modifiers, setModifiers] = useState<
+    (HeroCard | ModifierCard | MagicCard | LargeCard)[]
+  >([]);
   const [show, setShow] = useState(false);
 
   useEffect(() => {

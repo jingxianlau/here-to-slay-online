@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { CardType, GameState, HeroCard, ModifierCard } from '../types';
+import {
+  CardType,
+  GameState,
+  HeroCard,
+  LargeCard,
+  MagicCard,
+  ModifierCard
+} from '../types';
 import { Socket } from 'socket.io-client';
 import { getImage } from '../helpers/getImage';
 import Dice from './Dice';
@@ -26,7 +33,9 @@ const ChallengePopup: React.FC<{
   } = useClientContext();
 
   const [activeModifier, setActiveModifier] = useState(0);
-  const [modifiers, setModifiers] = useState<ModifierCard[]>([]);
+  const [modifiers, setModifiers] = useState<
+    (HeroCard | ModifierCard | MagicCard | LargeCard)[]
+  >([]);
   const [show, setShow] = useState(false);
 
   // item cards

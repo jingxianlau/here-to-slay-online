@@ -86,13 +86,27 @@ export interface GameState {
     leaderPile: LeaderCard[] | null;
     monsterPile: AnyCard[] | null;
   } | null;
-  players: { hand: AnyCard[]; numCards: number }[];
+  players: {
+    hand: AnyCard[];
+    numCards: number;
+    protection: {
+      type: 'destroy' | 'steal' | 'challenge';
+      turns: number;
+      card: HeroCard | LargeCard;
+    }[];
+    passives: {
+      type: 'roll';
+      mod: number;
+      turns: number;
+      card: HeroCard | LargeCard | MagicCard;
+    }[];
+  }[];
 
   // PUBLIC
   dice: {
     main: {
       roll: [number, number];
-      modifier: ModifierCard[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
       modValues: number[];
       total: number;
     };
@@ -100,7 +114,7 @@ export interface GameState {
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: ModifierCard[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
       modValues: number[];
       total: number;
     } | null;
@@ -210,19 +224,19 @@ export interface GameState {
         | 'modify';
       effect: {
         action:
-          | 'none'
-          | 'draw'
-          | 'choose-two'
-          | 'reveal'
-          | 'choose-boards'
-          | 'choose-own-board'
-          | 'choose-other-boards'
-          | 'choose-player'
-          | 'choose-hand'
-          | 'choose-other-hand-hide'
-          | 'choose-other-hand-show'
+          | 'none' // DONE
+          | 'draw' // DONE
+          | 'choose-two' // DONE
+          | 'reveal' // DONE
+          | 'choose-boards' // DONE
+          | 'choose-own-board' // DONE
+          | 'choose-other-boards' // DONE
+          | 'choose-player' // DONE
+          | 'choose-hand' // DONE
+          | 'choose-other-hand-hide' // DONE
+          | 'choose-other-hand-show' // DONE
           | 'choose-discard'
-          | 'choose-cards';
+          | 'choose-cards'; // DONE
         actionChanged: boolean;
         players: number[]; // active players who can choose
         val: { min: number; max: number; curr: number }; // num of items to choose
@@ -239,7 +253,7 @@ export interface GameState {
         purpose: string; // message (e.g. destroy, swap deck etc.)
         allowedCards?: CardType[];
       } | null;
-    } | null;
+    }[];
     phaseChanged: boolean;
     isRolling: boolean;
     pause: boolean;

@@ -107,7 +107,19 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                         playerNum !== state.turn.player) ||
                         (state.turn.effect.action === 'choose-own-board' &&
                           playerNum === state.turn.player) ||
-                        state.turn.effect.action === 'choose-boards')
+                        state.turn.effect.action === 'choose-boards') &&
+                      (!state.turn.effect.purpose.includes('Destroy') ||
+                        !state.players[playerNum].protection.some(
+                          val => val.type === 'destroy'
+                        )) &&
+                      (!state.turn.effect.purpose.includes('Steal') ||
+                        !state.players[playerNum].protection.some(
+                          val => val.type === 'steal'
+                        )) &&
+                      (state.turn.effect.purpose !== 'Return Item' ||
+                        card.item) &&
+                      (state.turn.effect.purpose !== 'Return Cursed Item' ||
+                        (card.item && card.item.category === 'cursed'))
                     ) {
                       chosenCard.set(card);
                       chosenCard.setShow(true);
@@ -119,9 +131,21 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 }}
                 style={{
                   filter:
-                    state.turn.phase === 'choose-hero' &&
-                    state.turn.player === state.playerNum &&
-                    card.item
+                    (state.turn.phase === 'choose-hero' &&
+                      state.turn.player === state.playerNum &&
+                      card.item) ||
+                    (state.turn.phase === 'use-effect' &&
+                      state.turn.effect &&
+                      state.turn.effect.purpose.includes('Destroy') &&
+                      state.players[playerNum].protection.some(
+                        val => val.type === 'destroy'
+                      )) ||
+                    (state.turn.phase === 'use-effect' &&
+                      state.turn.effect &&
+                      state.turn.effect.purpose.includes('Steal') &&
+                      state.players[playerNum].protection.some(
+                        val => val.type === 'steal'
+                      ))
                       ? 'brightness(35%)'
                       : 'none'
                 }}
