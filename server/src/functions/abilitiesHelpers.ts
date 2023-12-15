@@ -67,13 +67,16 @@ export const endEffect = (
   state.turn.effect = null;
   if (updatePhase) {
     if (state.turn.movesLeft > 0) {
-      if (state.turn.cachedEvent) {
-        state.turn.phase = state.turn.cachedEvent.phase;
-        state.turn.effect = state.turn.cachedEvent.effect;
-        state.turn.cachedEvent = null;
+      if (state.turn.cachedEvent && state.turn.cachedEvent.length >= 1) {
+        const cached = state.turn.cachedEvent.pop();
+        if (!cached) return;
+        state.turn.phase = cached.phase;
+        state.turn.effect = cached.effect;
+        state.turn.cachedEvent = [];
+      } else {
+        state.turn.phase = 'play';
+        state.turn.phaseChanged = true;
       }
-      state.turn.phase = 'play';
-      state.turn.phaseChanged = true;
       sendGameState(roomId);
     } else endTurnDiscard(roomId, state.secret.playerIds[state.turn.player]);
   }

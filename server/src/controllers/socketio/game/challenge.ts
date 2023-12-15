@@ -98,13 +98,15 @@ export const challenge = (
       state.mainDeck.preparedCard = null;
 
       if (state.turn.movesLeft > 0) {
-        if (!state.turn.cachedEvent) {
+        if (!state.turn.cachedEvent || state.turn.cachedEvent.length < 1) {
           state.turn.phase = 'play';
           state.turn.phaseChanged = true;
         } else {
-          state.turn.phase = state.turn.cachedEvent.phase;
-          state.turn.effect = state.turn.cachedEvent.effect;
-          state.turn.cachedEvent = null;
+          const cached = state.turn.cachedEvent.pop();
+          if (!cached) return;
+          state.turn.phase = cached.phase;
+          state.turn.effect = cached.effect;
+          state.turn.cachedEvent = [];
         }
         sendGameState(roomId);
       } else {

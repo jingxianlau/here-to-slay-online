@@ -106,10 +106,15 @@ export const modifyRoll = (
             if (state.turn.movesLeft === 0) {
               endTurnDiscard(roomId, cardUserId);
             } else {
-              if (state.turn.cachedEvent) {
-                state.turn.phase = state.turn.cachedEvent.phase;
-                state.turn.effect = state.turn.cachedEvent.effect;
-                state.turn.cachedEvent = null;
+              if (
+                state.turn.cachedEvent &&
+                state.turn.cachedEvent.length >= 1
+              ) {
+                const cached = state.turn.cachedEvent.pop();
+                if (!cached) return;
+                state.turn.phase = cached.phase;
+                state.turn.effect = cached.effect;
+                state.turn.cachedEvent = [];
               } else {
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
@@ -120,6 +125,7 @@ export const modifyRoll = (
               }, 1200);
             }
           } else {
+            // success
             state.mainDeck.preparedCard.successful = true;
             sendGameState(roomId);
 
@@ -132,10 +138,15 @@ export const modifyRoll = (
               if (preppedCard.type === 'hero') {
                 preppedCard.freeUse = true;
               }
-              if (state.turn.cachedEvent) {
-                state.turn.phase = state.turn.cachedEvent.phase;
-                state.turn.effect = state.turn.cachedEvent.effect;
-                state.turn.cachedEvent = null;
+              if (
+                state.turn.cachedEvent &&
+                state.turn.cachedEvent.length >= 1
+              ) {
+                const cached = state.turn.cachedEvent.pop();
+                if (!cached) return;
+                state.turn.phase = cached.phase;
+                state.turn.effect = cached.effect;
+                state.turn.cachedEvent = [];
               } else {
                 state.turn.phase = 'play';
                 state.turn.phaseChanged = true;
@@ -218,10 +229,15 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                if (state.turn.cachedEvent) {
-                  state.turn.phase = state.turn.cachedEvent.phase;
-                  state.turn.effect = state.turn.cachedEvent.effect;
-                  state.turn.cachedEvent = null;
+                if (
+                  state.turn.cachedEvent &&
+                  state.turn.cachedEvent.length >= 1
+                ) {
+                  const cached = state.turn.cachedEvent.pop();
+                  if (!cached) return;
+                  state.turn.phase = cached.phase;
+                  state.turn.effect = cached.effect;
+                  state.turn.cachedEvent = [];
                 } else {
                   state.turn.phase = 'play';
                   state.turn.phaseChanged = true;
@@ -256,10 +272,15 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                if (state.turn.cachedEvent) {
-                  state.turn.phase = state.turn.cachedEvent.phase;
-                  state.turn.effect = state.turn.cachedEvent.effect;
-                  state.turn.cachedEvent = null;
+                if (
+                  state.turn.cachedEvent &&
+                  state.turn.cachedEvent.length >= 1
+                ) {
+                  const cached = state.turn.cachedEvent.pop();
+                  if (!cached) return;
+                  state.turn.phase = cached.phase;
+                  state.turn.effect = cached.effect;
+                  state.turn.cachedEvent = [];
                 } else {
                   state.turn.phase = 'play';
                   state.turn.phaseChanged = true;
@@ -305,10 +326,15 @@ export const modifyRoll = (
                 endTurnDiscard(roomId, cardUserId);
               } else {
                 state.match.isReady.fill(null);
-                if (state.turn.cachedEvent) {
-                  state.turn.phase = state.turn.cachedEvent.phase;
-                  state.turn.effect = state.turn.cachedEvent.effect;
-                  state.turn.cachedEvent = null;
+                if (
+                  state.turn.cachedEvent &&
+                  state.turn.cachedEvent.length >= 1
+                ) {
+                  const cached = state.turn.cachedEvent.pop();
+                  if (!cached) return;
+                  state.turn.phase = cached.phase;
+                  state.turn.effect = cached.effect;
+                  state.turn.cachedEvent = [];
                 } else {
                   state.turn.phase = 'play';
                   state.turn.phaseChanged = true;

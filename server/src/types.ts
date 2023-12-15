@@ -239,7 +239,7 @@ interface State {
         purpose: string; // message (e.g. destroy, swap deck etc.)
         allowedCards?: CardType[];
       } | null;
-    } | null;
+    }[];
     phaseChanged: boolean;
     isRolling: boolean;
     pause: boolean;

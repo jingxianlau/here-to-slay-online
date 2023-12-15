@@ -271,10 +271,12 @@ export const endTurnDiscard = (
     }
   } else {
     // new effect
-    if (state.turn.cachedEvent) {
-      state.turn.phase = state.turn.cachedEvent.phase;
-      state.turn.effect = state.turn.cachedEvent.effect;
-      state.turn.cachedEvent = null;
+    if (state.turn.cachedEvent && state.turn.cachedEvent.length >= 1) {
+      const cached = state.turn.cachedEvent.pop();
+      if (!cached) return;
+      state.turn.phase = cached.phase;
+      state.turn.effect = cached.effect;
+      state.turn.cachedEvent = [];
     } else {
       if (
         state.board[state.turn.player].heroCards.some(val => val && val.freeUse)

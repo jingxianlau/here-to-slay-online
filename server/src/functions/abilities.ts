@@ -467,7 +467,7 @@ export const heroAbilities: {
           for (let i = 0; i < rooms[roomId].numPlayers; i++) {
             privateArr.push(true);
           }
-          state.turn.cachedEvent = {
+          state.turn.cachedEvent.push({
             phase: 'use-effect',
             effect: {
               action: 'draw',
@@ -483,7 +483,7 @@ export const heroAbilities: {
               step: 2,
               choice: null
             }
-          };
+          });
           state.turn.effect = null;
           setTimeout(() => {
             if (returnVal.card?.type === CardType.item)
@@ -982,7 +982,7 @@ export const heroAbilities: {
           for (let i = 0; i < rooms[roomId].numPlayers; i++) {
             privateArr.push(true);
           }
-          state.turn.cachedEvent = {
+          state.turn.cachedEvent.push({
             phase: 'use-effect',
             effect: {
               action: 'draw',
@@ -998,7 +998,7 @@ export const heroAbilities: {
               step: 3,
               choice: null
             }
-          };
+          });
           state.turn.effect = null;
           setTimeout(() => {
             if (returnVal.card?.type === CardType.item)

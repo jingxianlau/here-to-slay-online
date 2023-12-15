@@ -957,7 +957,7 @@ export const initialState: GameState = {
     player: 0,
     movesLeft: 3,
     phase: 'start-roll',
-    cachedEvent: null,
+    cachedEvent: [],
     toDiscard: 0,
     effect: null,
     phaseChanged: false,
