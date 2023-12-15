@@ -319,7 +319,15 @@ export const modifyRoll = (
             state.dice.main.modValues = [];
             state.mainDeck.preparedCard.successful = true;
             state.match.isReady.fill(null);
-            useEffect(roomId, cardUserId, preppedCard);
+
+            if (
+              preppedCard.item &&
+              preppedCard.item.name === 'Suspiciously Shiny Coin'
+            ) {
+              useEffect(roomId, cardUserId, preppedCard.item);
+            } else {
+              useEffect(roomId, cardUserId, preppedCard);
+            }
           } else {
             // fail
             state.mainDeck.preparedCard.successful = false;

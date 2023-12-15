@@ -106,7 +106,7 @@ export interface GameState {
   dice: {
     main: {
       roll: [number, number];
-      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard | ItemCard)[];
       modValues: number[];
       total: number;
     };
@@ -114,7 +114,7 @@ export interface GameState {
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard | ItemCard)[];
       modValues: number[];
       total: number;
     } | null;
@@ -199,7 +199,7 @@ export interface GameState {
       players: number[]; // active players who can choose
       val: { min: number; max: number; curr: number }; // num of items to choose
       step: number; // to access functions in ability array
-      card: HeroCard | MagicCard | MonsterCard; // card in use
+      card: HeroCard | MagicCard | MonsterCard | ItemCard; // card in use
       choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
       active?: {
         num?: number[];
@@ -242,7 +242,7 @@ export interface GameState {
         val: { min: number; max: number; curr: number }; // num of items to choose
         goNext: boolean;
         step: number; // to access functions in ability array
-        card: HeroCard | MagicCard | MonsterCard; // card in use
+        card: HeroCard | MagicCard | MonsterCard | ItemCard; // card in use
         choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
         active?: {
           num?: number[];

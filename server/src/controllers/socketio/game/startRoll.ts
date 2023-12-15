@@ -1,3 +1,4 @@
+import random from 'lodash.random';
 import { rollDice } from '../../../functions/gameHelpers';
 import { validSender } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
@@ -15,7 +16,7 @@ export const startRoll = (roomId: string, userId: string) => {
   rooms[roomId].state.turn.movesLeft--;
   const startRolls = rooms[roomId].state.match.startRolls;
 
-  let roll = rollDice();
+  let roll: [number, number] = [random(1, 6), random(1, 6)];
   let val = roll[0] + roll[1];
 
   rooms[roomId].state.dice.main.roll = roll;

@@ -3,6 +3,7 @@ import {
   CardType,
   GameState,
   HeroCard,
+  ItemCard,
   LargeCard,
   MagicCard,
   ModifierCard
@@ -34,7 +35,7 @@ const ChallengePopup: React.FC<{
 
   const [activeModifier, setActiveModifier] = useState(0);
   const [modifiers, setModifiers] = useState<
-    (HeroCard | ModifierCard | MagicCard | LargeCard)[]
+    (HeroCard | ModifierCard | MagicCard | LargeCard | ItemCard)[]
   >([]);
   const [show, setShow] = useState(false);
 

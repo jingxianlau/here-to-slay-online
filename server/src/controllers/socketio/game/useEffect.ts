@@ -13,6 +13,7 @@ import {
   CardType,
   HeroCard,
   HeroClass,
+  ItemCard,
   MagicCard,
   MonsterCard
 } from '../../../types';
@@ -82,7 +83,7 @@ export const useEffectRoll = (
 export const useEffect = (
   roomId: string,
   userId: string,
-  card: HeroCard | MagicCard | MonsterCard,
+  card: HeroCard | MagicCard | MonsterCard | ItemCard,
   returnVal?: AnyCard | number
 ) => {
   const playerNum = checkCredentials(roomId, userId);

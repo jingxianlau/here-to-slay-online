@@ -5,6 +5,7 @@ import { getImage } from '../helpers/getImage';
 import {
   CardType,
   HeroCard,
+  ItemCard,
   LargeCard,
   MagicCard,
   ModifierCard
@@ -32,7 +33,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
 
   const [activeModifier, setActiveModifier] = useState(0);
   const [modifiers, setModifiers] = useState<
-    (HeroCard | ModifierCard | MagicCard | LargeCard)[]
+    (HeroCard | ModifierCard | MagicCard | LargeCard | ItemCard)[]
   >([]);
   const [show, setShow] = useState(false);
 

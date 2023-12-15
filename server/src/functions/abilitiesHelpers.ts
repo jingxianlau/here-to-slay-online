@@ -7,6 +7,7 @@ import {
   GameState,
   HeroCard,
   HeroClass,
+  ItemCard,
   MagicCard,
   MonsterCard,
   allCards
@@ -46,7 +47,7 @@ export interface Effect {
   val: { min: number; max: number; curr: number }; // num of items to choose
   goNext: boolean;
   step: number; // to access functions in ability array
-  card: HeroCard | MagicCard | MonsterCard; // card in use
+  card: HeroCard | MagicCard | MonsterCard | ItemCard; // card in use
   choice: AnyCard[] | number[] | null; // player's chosen option(s) (to display)
   active?: {
     num?: number[];

@@ -10,6 +10,7 @@ import {
   GameState,
   HeroCard,
   HeroClass,
+  MagicCard,
   allCards
 } from '../types';
 import {
@@ -1213,7 +1214,7 @@ export const heroAbilities: {
           type: 'roll',
           mod: 5,
           turns: 1,
-          card: effect.card
+          card: effect.card as HeroCard
         });
         endEffect(roomId, state, effect);
       }
@@ -1225,7 +1226,7 @@ export const heroAbilities: {
           type: 'roll',
           mod: 3,
           turns: 1,
-          card: effect.card
+          card: effect.card as HeroCard
         });
         endEffect(roomId, state, effect);
       }
@@ -1244,7 +1245,7 @@ export const heroAbilities: {
           type: 'roll',
           mod: 2,
           turns: 1,
-          card: effect.card
+          card: effect.card as MagicCard
         });
         endEffect(roomId, state, effect);
       }
@@ -1408,7 +1409,22 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2400)
     ]
-  }
+  },
+
+  // ITEM
+  'suspiciously-shiny-coin': [
+    ...discardCards(1),
+    (roomId, state, effect) =>
+      setTimeout(() => {
+        if (!state.mainDeck.preparedCard) return;
+        state.turn.effect = null;
+        useEffect(
+          roomId,
+          state.secret.playerIds[state.turn.player],
+          state.mainDeck.preparedCard.card
+        );
+      }, 2400)
+  ]
 };
 
 export const monsterRequirements: {
