@@ -1114,8 +1114,17 @@ export const heroAbilities: {
 
   // GUARDIAN
   ...{
-    // TODO: PROTECTION
-    'calming-voice': [],
+    // TEST
+    'calming-voice': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].protection.push({
+          type: 'steal',
+          turns: 1,
+          card: effect.card as HeroCard
+        });
+        endEffect(roomId, state, effect);
+      }
+    ],
     'guiding-light': searchDiscard(CardType.hero),
     // TEST & CLIENT TODO: CHOOSE ITEM,
     'holy-curselifter': [
@@ -1164,15 +1173,53 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2400)
     ],
-    // TODO: PROTECTION
-    'iron-resolve': [],
-    // TODO: PROTECTION
-    'mighty-blade': [],
+    // TEST
+    'iron-resolve': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].protection.push({
+          type: 'challenge',
+          turns: 1,
+          card: effect.card as HeroCard
+        });
+        endEffect(roomId, state, effect);
+      }
+    ],
+    // TEST
+    'mighty-blade': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].protection.push({
+          type: 'destroy',
+          turns: 1,
+          card: effect.card as HeroCard
+        });
+        endEffect(roomId, state, effect);
+      }
+    ],
     'radiant-horn': searchDiscard(CardType.modifier),
-    // TODO: ROLL PASSIVE
-    'vibrant-glow': [],
-    // TODO: ROLL PASSIVE
-    'wise-shield': []
+    // TEST
+    'vibrant-glow': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].passives.push({
+          type: 'roll',
+          mod: 5,
+          turns: 1,
+          card: effect.card
+        });
+        endEffect(roomId, state, effect);
+      }
+    ],
+    // TEST
+    'wise-shield': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].passives.push({
+          type: 'roll',
+          mod: 3,
+          turns: 1,
+          card: effect.card
+        });
+        endEffect(roomId, state, effect);
+      }
+    ]
   },
 
   // MAGIC
@@ -1181,7 +1228,17 @@ export const heroAbilities: {
     'critical-boost': [...drawCard(3), ...discardCards(1)],
     'destructive-spell': [...discardCards(1), ...destroyHero],
     // TODO: ROLL PASSIVE
-    'enchanted-spell': [],
+    'enchanted-spell': [
+      (roomId, state, effect) => {
+        state.players[state.turn.player].passives.push({
+          type: 'roll',
+          mod: 2,
+          turns: 1,
+          card: effect.card
+        });
+        endEffect(roomId, state, effect);
+      }
+    ],
     // TEST
     'forced-exchange': [
       (roomId, state, effect) => {

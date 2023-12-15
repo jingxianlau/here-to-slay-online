@@ -7,7 +7,12 @@ export const addPlayer = (roomId: string, userId: string, username: string) => {
   room.numPlayers++;
   room.state.secret.playerIds.push(userId);
   room.state.match.players.push(username);
-  room.state.players.push({ hand: [], numCards: 0 });
+  room.state.players.push({
+    hand: [],
+    numCards: 0,
+    protection: [],
+    passives: []
+  });
   room.state.board.push({
     classes: {
       fighter: 0,

@@ -40,8 +40,8 @@ export const useEffectRoll = (
   }
 
   // DEV
-  useEffect(roomId, userId, heroCard);
-  return;
+  // useEffect(roomId, userId, heroCard);
+  // return;
   // DEV
 
   if (
@@ -50,19 +50,7 @@ export const useEffectRoll = (
     gameState.mainDeck.preparedCard.card.type === CardType.hero &&
     gameState.mainDeck.preparedCard.card.id === heroCard.id
   ) {
-    // const roll = rollDice();
-    const roll: [number, number] = [6, 6];
-    const val = roll[0] + roll[1];
-    gameState.dice.main.roll = roll;
-    gameState.dice.main.total = val;
-    sendGameState(roomId);
-
-    setTimeout(() => {
-      gameState.turn.phaseChanged = true;
-      gameState.turn.phase = 'modify';
-      gameState.turn.isRolling = false;
-      sendGameState(roomId);
-    }, 3000);
+    rollDice(roomId);
   } else {
     if (
       (gameState.turn.movesLeft < 1 && !heroCard.freeUse) ||

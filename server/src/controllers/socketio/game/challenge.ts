@@ -5,6 +5,7 @@ import { rooms } from '../../../rooms';
 import { sendGameState } from '../../../server';
 import { AnyCard, CardType, HeroClass } from '../../../types';
 import { endTurnDiscard, useEffect } from './useEffect';
+import random from 'lodash.random';
 
 export const prepareCard = (roomId: string, userId: string, card: AnyCard) => {
   const playerNum = validSender(roomId, userId);
@@ -147,9 +148,9 @@ export const challengeRoll = (roomId: string, userId: string) => {
     return;
   }
 
-  // const roll = rollDice();
-  const roll: [number, number] = [6, 6];
+  const roll: [number, number] = [random(1, 6), random(1, 6)];
   const val = roll[0] + roll[1];
+
   if (state.dice.main.total === 0) {
     state.dice.main.roll = roll;
     state.dice.main.total = val;
@@ -162,6 +163,14 @@ export const challengeRoll = (roomId: string, userId: string) => {
   } else if (state.dice.defend !== null) {
     state.dice.defend.roll = roll;
     state.dice.defend.total = val;
+    for (let i = 0; i < state.players[state.turn.player].passives.length; i++) {
+      const passive = state.players[state.turn.player].passives[i];
+      if (passive.type === 'roll') {
+        state.dice.defend.total += passive.mod;
+        state.dice.defend.modifier.push(passive.card);
+        state.dice.defend.modValues.push(passive.mod);
+      }
+    }
   }
   sendGameState(roomId);
 

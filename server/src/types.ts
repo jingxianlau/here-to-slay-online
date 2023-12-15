@@ -85,13 +85,27 @@ interface State {
     leaderPile: LeaderCard[] | null;
     monsterPile: AnyCard[] | null;
   } | null;
-  players: { hand: AnyCard[]; numCards: number }[];
+  players: {
+    hand: AnyCard[];
+    numCards: number;
+    protection: {
+      type: 'destroy' | 'steal' | 'challenge';
+      turns: number;
+      card: HeroCard | LargeCard;
+    }[];
+    passives: {
+      type: 'roll';
+      mod: number;
+      turns: number;
+      card: HeroCard | LargeCard | MagicCard;
+    }[];
+  }[];
 
   // PUBLIC
   dice: {
     main: {
       roll: [number, number];
-      modifier: ModifierCard[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
       modValues: number[];
       total: number;
     };
@@ -99,7 +113,7 @@ interface State {
     // for challenging
     defend: {
       roll: [number, number];
-      modifier: ModifierCard[];
+      modifier: (ModifierCard | HeroCard | MagicCard | LargeCard)[];
       modValues: number[];
       total: number;
     } | null;

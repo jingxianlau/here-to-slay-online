@@ -10,6 +10,10 @@ import {
 } from '../types';
 import { sendGameState } from '../server';
 import { addHero, removeHero, reshuffleDeck } from './gameHelpers';
+import {
+  endTurnDiscard,
+  useEffect
+} from '../controllers/socketio/game/useEffect';
 
 function findCard(roomId: string, playerNum: number, cardId: string) {
   return rooms[roomId].state.players[playerNum].hand.findIndex(
@@ -82,20 +86,49 @@ export function playCard(
     state.board[playerNum].classes[card.class]++;
   }
 
-  state.mainDeck.preparedCard = {
-    card: card,
-    successful: null
-  };
-
   state.players[playerNum].hand = state.players[playerNum].hand.filter(
     c => c.id !== card.id
   );
   state.players[playerNum].numCards--;
 
-  if (!free) {
-    state.turn.movesLeft--;
+  // CHALLENGE PROTECTION
+  if (
+    state.players[state.turn.player].protection.some(
+      val => val.type === 'challenge'
+    )
+  ) {
+    if (card.type === CardType.hero) {
+      card.freeUse = true;
+    } else if (card.type === CardType.magic) {
+      useEffect(roomId, state.secret.playerIds[playerNum], card);
+      return;
+    }
+    if (!free) {
+      state.turn.movesLeft--;
+    }
+
+    if (state.turn.movesLeft > 0) {
+      if (!state.turn.cachedEvent || state.turn.cachedEvent.length < 1) {
+        state.turn.phase = 'play';
+        state.turn.phaseChanged = true;
+      } else {
+        const cached = state.turn.cachedEvent.pop();
+        if (!cached) return;
+        state.turn.phase = cached.phase;
+        state.turn.effect = cached.effect;
+        state.turn.cachedEvent = [];
+      }
+      sendGameState(roomId);
+    } else {
+      endTurnDiscard(roomId, state.secret.playerIds[state.turn.player]);
+    }
+    return;
   }
 
+  state.mainDeck.preparedCard = {
+    card: card,
+    successful: null
+  };
   state.match.isReady = [];
   for (let i = 0; i < state.match.players.length; i++) {
     state.match.isReady.push(i === state.turn.player ? false : null);
@@ -109,11 +142,6 @@ export function playCard(
     state.turn.phase =
       card.type !== CardType.item ? 'challenge' : 'choose-hero';
     state.turn.phaseChanged = true;
-
-    // DEV
-    // state.turn.phase = 'play';
-    // DEV
-
     sendGameState(roomId);
   }, 1200);
 }

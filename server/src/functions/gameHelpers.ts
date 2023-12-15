@@ -65,6 +65,24 @@ export function nextPlayer(roomId: string) {
   rooms[roomId].state.turn.movesLeft = 3;
   rooms[roomId].state.turn.phase = 'draw';
   rooms[roomId].state.turn.phaseChanged = true;
+  for (
+    let i = 0;
+    i < rooms[roomId].state.players[newPlayer].passives.length;
+    i++
+  ) {
+    if (rooms[roomId].state.players[newPlayer].passives[i].turns === 1) {
+      rooms[roomId].state.players[newPlayer].passives.splice(i, 1);
+    }
+  }
+  for (
+    let i = 0;
+    i < rooms[roomId].state.players[newPlayer].protection.length;
+    i++
+  ) {
+    if (rooms[roomId].state.players[newPlayer].protection[i].turns === 1) {
+      rooms[roomId].state.players[newPlayer].protection.splice(i, 1);
+    }
+  }
 
   const heroes = rooms[roomId].state.board[newPlayer].heroCards;
   for (let i = 0; i < heroes.length; i++) {
@@ -78,8 +96,29 @@ export function nextPlayer(roomId: string) {
   sendGameState(roomId);
 }
 
-export function rollDice(): [number, number] {
-  return [random(1, 6), random(1, 6)];
+export function rollDice(roomId: string) {
+  const state = rooms[roomId].state;
+  const roll: [number, number] = [random(1, 6), random(1, 6)];
+  const val = roll[0] + roll[1];
+  state.dice.main.roll = roll;
+  state.dice.main.total = val;
+  for (let i = 0; i < state.players[state.turn.player].passives.length; i++) {
+    const passive = state.players[state.turn.player].passives[i];
+    if (passive.type === 'roll') {
+      state.dice.main.total += passive.mod;
+      state.dice.main.modifier.push(passive.card);
+      state.dice.main.modValues.push(passive.mod);
+    }
+  }
+
+  sendGameState(roomId);
+
+  setTimeout(() => {
+    state.turn.phaseChanged = true;
+    state.turn.phase = 'modify';
+    state.turn.isRolling = false;
+    sendGameState(roomId);
+  }, 3000);
 }
 
 export function reshuffleDeck(roomId: string) {
