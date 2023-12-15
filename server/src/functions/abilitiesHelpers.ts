@@ -305,7 +305,10 @@ export const receiveStealHero = (
     !returnVal.card ||
     returnVal.card.player === undefined ||
     returnVal.card.type !== CardType.hero ||
-    returnVal.card.player === state.turn.player
+    returnVal.card.player === state.turn.player ||
+    state.players[returnVal.card.player].protection.some(
+      val => val.type === 'steal'
+    )
   )
     return;
 
@@ -346,7 +349,10 @@ export const receiveDestroyHero = (
     returnVal.card.type !== CardType.hero ||
     !effect.active ||
     !effect.active.num ||
-    returnVal.card.player === effect.active.num[0]
+    returnVal.card.player === effect.active.num[0] ||
+    state.players[returnVal.card.player].protection.some(
+      val => val.type === 'destroy'
+    )
   )
     return;
 
