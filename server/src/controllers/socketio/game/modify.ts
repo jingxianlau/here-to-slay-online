@@ -1,5 +1,10 @@
 import { rollRequirements } from '../../../functions/abilities';
-import { discardCard, destroyCard, destroyItem } from '../../../functions/game';
+import {
+  discardCard,
+  destroyCard,
+  destroyItem,
+  drawCards
+} from '../../../functions/game';
 import { checkCredentials } from '../../../functions/helpers';
 import { rooms } from '../../../rooms';
 import { disconnectAll, sendGameState } from '../../../server';
@@ -194,6 +199,11 @@ export const modifyRoll = (
                   state.secret.monsterPile.pop() as MonsterCard;
               }
             });
+            if (preppedCard.name === 'Mega Slime') {
+              drawCards(roomId, playerNum, 2);
+            } else if (preppedCard.name === 'Corrupted Sabretooth') {
+              drawCards(roomId, playerNum, 1);
+            }
             sendGameState(roomId);
             state.mainDeck.preparedCard = null;
             setTimeout(() => {

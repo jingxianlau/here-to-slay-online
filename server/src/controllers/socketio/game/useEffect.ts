@@ -105,7 +105,9 @@ export const useEffect = (
       val => val !== playerNum
     );
 
-    heroAbilities[cardName][++state.turn.effect.step](
+    heroAbilities[card.type !== CardType.large ? cardName : card.punishment][
+      ++state.turn.effect.step
+    ](
       roomId,
       state,
       state.turn.effect,
@@ -129,11 +131,9 @@ export const useEffect = (
         (state.turn.effect.val.min !== state.turn.effect.val.max &&
           state.turn.effect.val.max === state.turn.effect.val.curr))
     ) {
-      heroAbilities[cardName][++state.turn.effect.step](
-        roomId,
-        state,
-        state.turn.effect
-      );
+      heroAbilities[card.type !== CardType.large ? cardName : card.punishment][
+        ++state.turn.effect.step
+      ](roomId, state, state.turn.effect);
     } else {
       state.turn.effect.step--;
     }
@@ -162,7 +162,11 @@ export const useEffect = (
       card: card
     };
 
-    heroAbilities[cardName][0](roomId, state, state.turn.effect);
+    heroAbilities[card.type !== CardType.large ? cardName : card.punishment][0](
+      roomId,
+      state,
+      state.turn.effect
+    );
   }
 };
 

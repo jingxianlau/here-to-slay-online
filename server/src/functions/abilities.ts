@@ -166,7 +166,10 @@ export const heroAbilities: {
           returnVal.card.type !== CardType.hero ||
           returnVal.card.player === state.turn.player ||
           effect.card.type !== CardType.hero ||
-          effect.card.player === undefined
+          effect.card.player === undefined ||
+          state.players[returnVal.card.player].protection.some(
+            val => val.type === 'steal'
+          )
         ) {
           console.log(returnVal, state.turn.effect);
           return;
@@ -1282,7 +1285,10 @@ export const heroAbilities: {
           effect.choice[0].player === undefined ||
           effect.choice[0].type !== CardType.hero ||
           returnVal.card.player === undefined ||
-          returnVal.card.type !== CardType.hero
+          returnVal.card.type !== CardType.hero ||
+          state.players[returnVal.card.player].protection.some(
+            val => val.type === 'steal'
+          )
         )
           return;
 

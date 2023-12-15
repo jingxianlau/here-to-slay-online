@@ -57,77 +57,92 @@ const monsterCards: MonsterCard[] = [
   {
     name: 'Anuran Cauldron',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Arctic Aries',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Bloodwing',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Orthus',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   },
   {
     name: 'Corrupted Sabretooth',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Crowned Serpent',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Abyss Queen',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Dracos',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Dark Dragon King',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   },
   {
     name: 'Malamammoth',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   },
   {
     name: 'Rex Major',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   },
   {
     name: 'Terratuga',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Mega Slime',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-sacrifice'
   },
   {
     name: 'Titan Wyvern',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   },
   {
     name: 'Warworn Owlbear',
     type: CardType.large,
-    id: uuid()
+    id: uuid(),
+    punishment: 'monster-discard'
   }
 ];
 

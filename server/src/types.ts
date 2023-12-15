@@ -49,8 +49,10 @@ export interface MagicCard extends Card {
 }
 export interface MonsterCard extends Card {
   type: CardType.large;
+  punishment: 'monster-discard' | 'monster-sacrifice';
 }
-export interface LeaderCard extends MonsterCard {
+export interface LeaderCard extends Card {
+  type: CardType.large;
   class: HeroClass;
 }
 export type AnyCard =
