@@ -57,13 +57,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
   return (
     <div className='content'>
       {boardOrder.map((arr, num) => (
-        <div
-          className='col'
-          key={num}
-          style={{
-            justifyContent: arr.length > 1 ? 'space-between' : 'center'
-          }}
-        >
+        <div className={`col${num === 1 ? ' middle' : ''}`} key={num}>
           {arr.map((boardNum, i) =>
             boardNum !== -1 ? (
               <div
@@ -91,7 +85,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
                   </div>
                 )}
                 {boardNum !== state.val.playerNum ? (
-                  <h4
+                  <h5
                     style={{
                       marginBottom: '5px',
                       color:
@@ -99,7 +93,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
                     }}
                   >
                     {state.val.match.players[boardNum]}
-                  </h4>
+                  </h5>
                 ) : (
                   <h2
                     style={{

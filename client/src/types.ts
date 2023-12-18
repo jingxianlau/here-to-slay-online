@@ -63,8 +63,10 @@ export interface MagicCard extends Card {
 }
 export interface MonsterCard extends Card {
   type: CardType.large;
+  punishment: 'monster-sacrifice' | 'monster-discard';
 }
-export interface LeaderCard extends MonsterCard {
+export interface LeaderCard extends Card {
+  type: CardType.large;
   class: HeroClass;
 }
 
@@ -345,6 +347,11 @@ export interface ClientStateObj {
     setText: React.Dispatch<React.SetStateAction<string>>;
     showText: boolean;
     setShowText: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+
+  loadedCards: {
+    val: number;
+    set: React.Dispatch<React.SetStateAction<number>>;
   };
 }
 

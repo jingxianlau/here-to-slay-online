@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { GameState } from '../types';
 import { getCredentials } from '../helpers/getJSON';
 import useClientContext from '../hooks/useClientContext';
-import { match } from 'assert';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { setCredentials } = useClientContext();
+  const { setCredentials, loadedCards } = useClientContext();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);
@@ -82,6 +81,7 @@ const Lobby: React.FC = () => {
         if (socket) socket.disconnect();
       };
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

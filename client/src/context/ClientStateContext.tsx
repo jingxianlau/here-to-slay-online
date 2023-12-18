@@ -39,7 +39,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [helperText, setHelperText] = useState('');
   const [showHelperText, setShowHelperText] = useState(false);
   const [showText, setShowText] = useState(false);
-  const [showBig, setShowBig] = useState(false);
+  const [loadedCards, setLoadedCards] = useState(0);
 
   const initVal: ClientStateObj = {
     credentials,
@@ -105,6 +105,11 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
       setText: setHelperText,
       showText,
       setShowText
+    },
+
+    loadedCards: {
+      val: loadedCards,
+      set: setLoadedCards
     }
   };
 

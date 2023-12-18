@@ -25,6 +25,8 @@ import ConfirmPopup from '../components/ConfirmPopup';
 import RollPopup from '../components/RollPopup';
 import { meetsRollRequirements } from '../helpers/meetsRequirements';
 import EndPage from '../components/EndPage';
+import { everyCard } from '../cards';
+import { getImage } from '../helpers/getImage';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -37,7 +39,8 @@ const Game: React.FC = () => {
     showPopup,
     showHand,
     shownCard,
-    showHelperText
+    showHelperText,
+    loadedCards
   } = useClientContext();
 
   // variables
@@ -536,6 +539,14 @@ const Game: React.FC = () => {
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
 
+      let images: HTMLImageElement[] = [];
+      loadedCards.set(0);
+      for (var i = loadedCards.val; i < everyCard.length; i++) {
+        images[i] = new Image();
+        images[i].src = getImage(everyCard[i]) as string;
+        loadedCards.set(val => ++val);
+      }
+
       return () => {
         if (socket) {
           socket.disconnect();
@@ -570,57 +581,66 @@ const Game: React.FC = () => {
               : () => {}
           }
         >
-          <div className='game'>
-            {state.turn.phase === 'start-roll' ? (
-              <StartRoll rollSummary={rollSummary} />
-            ) : (
-              <>
-                <TopMenu />
+          {loadedCards.val === everyCard.length ? (
+            <div className='game'>
+              {state.turn.phase === 'start-roll' ? (
+                <StartRoll rollSummary={rollSummary} />
+              ) : (
+                <>
+                  <TopMenu />
 
-                <MainBoard
-                  socket={socket}
-                  setShowDiscardPile={setShowDiscardPile}
-                />
+                  <MainBoard
+                    socket={socket}
+                    setShowDiscardPile={setShowDiscardPile}
+                  />
 
-                <DiscardPile
-                  showDiscardPile={showDiscardPile}
-                  setShowDiscardPile={setShowDiscardPile}
-                />
-                <EffectPopup
-                  socket={socket}
-                  show={showEffectPopup}
-                  showBoard={showBoard}
-                />
-                <DiscardPopup show={showDiscardPopup} showBoard={showBoard} />
-                <ChallengePopup
-                  socket={socket}
-                  activeDice={activeDice}
-                  setActiveDice={setActiveDice}
-                  showBoard={showBoard}
-                />
-                <RollPopup socket={socket} showBoard={showBoard} />
+                  <DiscardPile
+                    showDiscardPile={showDiscardPile}
+                    setShowDiscardPile={setShowDiscardPile}
+                  />
+                  <EffectPopup
+                    socket={socket}
+                    show={showEffectPopup}
+                    showBoard={showBoard}
+                  />
+                  <DiscardPopup show={showDiscardPopup} showBoard={showBoard} />
+                  <ChallengePopup
+                    socket={socket}
+                    activeDice={activeDice}
+                    setActiveDice={setActiveDice}
+                    showBoard={showBoard}
+                  />
+                  <RollPopup socket={socket} showBoard={showBoard} />
 
-                <ShownCard />
-                <ShownCardTop />
+                  <ShownCard />
+                  <ShownCardTop />
 
-                <Hand setShowBoard={setShowBoard} />
+                  <Hand setShowBoard={setShowBoard} />
 
-                <HelperText />
+                  <HelperText />
 
-                <MenuButtons
-                  showBoard={showBoard}
-                  setShowBoard={setShowBoard}
-                  setShowHelp={setShowHelp}
-                />
+                  <MenuButtons
+                    showBoard={showBoard}
+                    setShowBoard={setShowBoard}
+                    setShowHelp={setShowHelp}
+                  />
 
-                <EndPage showBoard={showBoard} />
+                  <EndPage showBoard={showBoard} />
 
-                <HelpCards showHelp={showHelp} />
+                  <HelpCards showHelp={showHelp} />
 
-                <ConfirmPopup socket={socket} />
-              </>
-            )}
-          </div>
+                  <ConfirmPopup socket={socket} />
+                </>
+              )}
+            </div>
+          ) : (
+            <div className='load'>
+              <span className='material-symbols-outlined'>HI</span>
+              <h1>
+                {loadedCards.val} / {everyCard.length}
+              </h1>
+            </div>
+          )}
         </div>
       )}
     </>

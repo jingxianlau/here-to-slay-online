@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useClientContext from './hooks/useClientContext';
 
 function App() {
   const navigate = useNavigate();
+  const { loadedCards } = useClientContext();
 
   const [rooms, setRooms] = useState<{ [key: string]: number }>({});
   const [roomId, setRoomId] = useState('');
@@ -97,6 +99,7 @@ function App() {
   // DEV
   useEffect(() => {
     joinRoom('999999');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // DEV
 
@@ -104,6 +107,7 @@ function App() {
     <div className='App' style={{ margin: '25px' }}>
       <img
         src='https://jingxianlau.github.io/here-to-slay/HTS_title.png'
+        rel='preload'
         alt='Here to Slay'
         width='300px'
       />
