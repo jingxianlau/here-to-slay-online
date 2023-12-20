@@ -539,14 +539,6 @@ const Game: React.FC = () => {
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
 
-      let images: HTMLImageElement[] = [];
-      loadedCards.set(0);
-      for (var i = loadedCards.val; i < everyCard.length; i++) {
-        images[i] = new Image();
-        images[i].src = getImage(everyCard[i]) as string;
-        loadedCards.set(val => ++val);
-      }
-
       return () => {
         if (socket) {
           socket.disconnect();
@@ -555,6 +547,19 @@ const Game: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!loadedCards.val) {
+      console.log('hi');
+      let images: HTMLImageElement[] = [];
+      loadedCards.set(0);
+      for (var i = loadedCards.val; i < everyCard.length; i++) {
+        images[i] = new Image();
+        images[i].src = getImage(everyCard[i]) as string;
+        loadedCards.set(val => ++val);
+      }
+    }
+  }, [state]);
 
   return (
     <>
@@ -635,10 +640,24 @@ const Game: React.FC = () => {
             </div>
           ) : (
             <div className='load'>
-              <span className='material-symbols-outlined'>HI</span>
-              <h1>
-                {loadedCards.val} / {everyCard.length}
-              </h1>
+              <div className='content'>
+                <span className='material-symbols-outlined rotate'>
+                  progress_activity
+                </span>
+                <h6>
+                  Loading Assets{'.'.repeat((loadedCards.val % 3) + 1)}
+                  {'  '}
+                  {loadedCards.val} / {everyCard.length}
+                </h6>
+                <div className='loading'>
+                  <div
+                    className='inner'
+                    style={{
+                      width: `${(loadedCards.val / everyCard.length) * 25}vw`
+                    }}
+                  ></div>
+                </div>
+              </div>
             </div>
           )}
         </div>

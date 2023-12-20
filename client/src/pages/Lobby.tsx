@@ -151,10 +151,18 @@ const Lobby: React.FC = () => {
                   </div>
                 )
             )}
+
+          {Array.from(
+            Array(Math.min(2, 3 - matchState.players.length)),
+            (_, i) => (
+              <div className='player blank'>
+                <span className='material-symbols-outlined rotate'>
+                  progress_activity
+                </span>
+              </div>
+            )
+          )}
         </div>
-        {matchState && matchState.players.length < 3 && (
-          <h4>Waiting for Players...</h4>
-        )}
       </div>
     </>
   ) : (

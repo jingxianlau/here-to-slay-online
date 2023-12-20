@@ -29,6 +29,52 @@ header img {
   top: 0;
 }
 
+.load {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.load span.material-symbols-outlined.rotate {
+  animation: rotation 0.7s infinite linear;
+  font-size: 14vh;
+  color: #484848;
+  position: absolute;
+}
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+.load .loading {
+  width: 25vw;
+  height: 1vw;
+  border-radius: 0.5vw;
+  background-color: #393939;
+  margin: 0;
+  position: absolute;
+  bottom: 41.5vh;
+}
+.load h6 {
+  position: absolute;
+  bottom: 45vh;
+  margin: 0;
+  font-size: 3vh;
+}
+.load .loading .inner {
+  height: 1vw;
+  border-radius: 0.5vw;
+  background-color: #fc7c37;
+}
+.load .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .game .show-board-trigger {
   position: absolute;
   top: 1vh;
@@ -449,9 +495,9 @@ header img {
   padding: 1.643vw 1.1vw;
   border: 0.0825vw solid;
   width: 23.8vw;
-  height: 17.781vw;
+  height: 16.6vw;
   position: relative;
-  border-radius: 1.094vw;
+  border-radius: 1.15vw;
   transition: filter 0.25s;
 }
 .player-board .overlay {
@@ -510,35 +556,35 @@ header img {
   width: 31.5vw;
   height: 21.709vw;
   position: relative;
-  border-radius: 1.5916vw;
+  border-radius: 1.6vw;
   transition: filter 0.25s;
 }
 .own-board .small {
-  border: 0.25vh solid #fff;
+  border: 0.135vh solid #fff;
   background-color: #00000044;
-  width: 10.6vh;
-  height: 14.9vh;
-  border-radius: 0.75vh;
+  width: 5.721vw;
+  height: 8.04vw;
+  border-radius: 0.405vh;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .own-board .large {
-  border: 0.25vh solid #fff;
+  border: 0.08vw solid #fff;
   background-color: #00000044;
-  width: 11.8vh;
-  height: 20.3vh;
-  border-radius: 0.75vh;
+  width: 6.368vw;
+  height: 11vw;
+  border-radius: 0.405vw;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .own-board img.small-card {
-  width: 10.6vh;
-  height: 14.9vh;
-  border-radius: 0.5vh;
+  width: 5.721vw;
+  height: 8.04vw;
+  border-radius: 0.405vh;
   user-select: none;
 }
 .own-board img.small-card.item {
@@ -656,9 +702,9 @@ img.small-card.hero {
 }
 
 .own-board img.large-card {
-  width: 11.8vh;
-  height: 20.3vh;
-  border-radius: 0.5vh;
+  width: 6.368vw;
+  height: 11vw;
+  border-radius: 0.405vw;
   user-select: none;
 }
 img.large-lg {
@@ -689,8 +735,8 @@ img.large-lg {
   height: 0;
 }
 .center-board .mat .cards {
-  height: 16vh;
-  width: 48.5vh;
+  height: 8.7936vw;
+  width: 27.48vw;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -721,30 +767,30 @@ img.large-lg {
 }
 
 .small {
-  border: 0.15vh solid #fff;
+  border: 0.081vw solid #fff;
   background-color: #00000044;
-  width: 8.19vh;
-  height: 11.44vh;
-  border-radius: 0.5vh;
+  width: 4.42vw;
+  height: 6.174vw;
+  border-radius: 0.27vw;
   position: relative;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: 0.15s;
+  transition: border 0.25s;
 }
 .large {
-  border: 0.15vh solid #fff;
+  border: 0.081vw solid #fff;
   background-color: #00000044;
-  width: 9.1vh;
-  height: 15.7vh;
-  border-radius: 0.5vh;
+  width: 4.9vw;
+  height: 8.473vw;
+  border-radius: 0.27vw;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.25s;
+  transition: border 0.25s;
 }
 
 .small:hover {
@@ -801,19 +847,19 @@ img.large-lg {
 }
 
 img.small-card {
-  width: 8.19vh;
-  height: 11.44vh;
-  border-radius: 0.35vh;
+  width: 4.42vw;
+  height: 6.174vw;
+  border-radius: 0.27vw;
   user-select: none;
-  transition: ease-out 0.5s;
+  transition: border ease-out 0.5s;
   position: absolute;
 }
 img.large-card {
-  width: 9.2vh;
-  height: 15.7vh;
-  border-radius: 0.4vh;
+  width: 4.9vw;
+  height: 8.473vw;
+  border-radius: 0.27vw;
   user-select: none;
-  transition: ease-out 0.5s;
+  transition: border ease-out 0.5s;
 }
 img.glow {
   box-shadow: #fc7c37 0 0 1.2vh 1.2vh;
