@@ -261,7 +261,7 @@ header img {
 .shown-card.show {
   opacity: 1;
   height: 100vh;
-  width: 50vh;
+  width: 45vh;
   top: 0;
   display: flex;
   justify-content: center;
@@ -285,9 +285,11 @@ header img {
 }
 .shown-card.right {
   right: 0;
+  padding-right: 1.2vw;
 }
 .shown-card.left {
   left: 0;
+  padding-left: 1.2vw;
 }
 .shown-card-top {
   bottom: 33.3vh;
@@ -307,6 +309,9 @@ header img {
   height: 78.5vh;
   border-radius: 2vh;
   user-select: none;
+}
+.shown-card .small-enlarge {
+  margin-left: 1.5vw;
 }
 
 .shown-card .requirements {
@@ -497,7 +502,7 @@ header img {
   width: 23.8vw;
   height: 16.6vw;
   position: relative;
-  border-radius: 1.15vw;
+  border-radius: 1.3vw;
   transition: filter 0.25s;
 }
 .player-board .overlay {
@@ -707,12 +712,6 @@ img.small-card.hero {
   border-radius: 0.405vw;
   user-select: none;
 }
-img.large-lg {
-  width: 43.7vh;
-  height: 74.575vh;
-  border-radius: 2vh;
-  user-select: none;
-}
 
 .center-board .mat {
   padding: 1.5vw 0 1.5vw 1.74vw;
@@ -749,7 +748,7 @@ img.large-lg {
   z-index: -1;
   top: 0;
   left: 0;
-  border-radius: 2vh;
+  border-radius: 1.2vw;
   transition: 0.5s ease-in-out;
   background-image: url('./assets/mats/central.png');
   background-size: cover;
@@ -792,6 +791,12 @@ img.large-lg {
   align-items: center;
   transition: border 0.25s;
 }
+img.large-lg {
+  width: 43.7vh;
+  height: 74.575vh;
+  border-radius: 2vh;
+  user-select: none;
+}
 
 .small:hover {
   border-color: #fc7c37;
@@ -808,7 +813,7 @@ img.large-lg {
   height: 100%;
 }
 .own-board .mat .background {
-  border-radius: 3vh;
+  border-radius: 1.5vw;
 }
 .mat .background {
   background-size: cover;
@@ -818,7 +823,7 @@ img.large-lg {
   z-index: -1;
   top: 0;
   left: 0;
-  border-radius: 2vh;
+  border-radius: 1.3vw;
   transition: 0.5s ease-in-out;
 }
 .mat.active .background {
@@ -884,15 +889,15 @@ img.deny:hover {
   content: '';
   background: url('./assets/cross.png');
   background-color: #f9515150;
-  background-size: 37.8vh;
+  background-size: 24vw;
   background-position: center;
   position: absolute;
   top: 0;
   left: 0;
   cursor: pointer;
-  width: 36.732vh;
-  height: 51.308vh;
-  border-radius: 2.5vh;
+  width: 23.7888vw;
+  height: 33.228vw;
+  border-radius: 1.4vw;
   border: 0vh solid #f95151;
   opacity: 0;
   transition: 0.25s ease-in-out, background-size 0.35s ease-in-out;
@@ -900,7 +905,7 @@ img.deny:hover {
 .img-container.cross-lg:hover::after {
   opacity: 1;
   border: 1vh solid #f95151;
-  background-size: 42vh;
+  background-size: 30vw;
   top: -1vh;
   left: -1vh;
 }
@@ -909,13 +914,12 @@ img.deny:hover {
 /* challenge */
 .popup {
   position: absolute;
-  width: 85vw;
-  height: 80vh;
+  width: 90vw;
+  height: 85vh;
   background-color: #1e1e1e;
-  left: 7.5vw;
-  top: 9.5vh;
-  border-radius: 5vh;
-  box-shadow: #1e1e1e 0 0 10px 10px;
+  left: 5vw;
+  border-radius: 2vw;
+  box-shadow: #1e1e1e 0 0 1vw 1vw;
   transition: opacity ease-in-out 0.2s, top 0.15s;
 
   display: flex;
@@ -933,9 +937,9 @@ img.deny:hover {
   height: 0;
 }
 .popup .img-container.left {
-  margin-right: -6vh;
-  width: 45.045vh;
-  height: 62.92vh;
+  /* margin-right: -3vw; */
+  width: 26.52vw;
+  height: 37.044vw;
   display: flex;
   flex-direction: column;
 }
@@ -953,9 +957,9 @@ img.deny:hover {
   align-items: center;
 }
 .small-xl {
-  width: 45.045vh;
-  height: 62.92vh;
-  border-radius: 2vh;
+  width: 26.52vw;
+  height: 37.044vw;
+  border-radius: 1.2vw;
   user-select: none;
 }
 .small-xl.challenge-hero {
@@ -980,9 +984,9 @@ img.deny:hover {
   transition: 0.3s ease-in-out;
 }
 .small-lg {
-  width: 36.732vh;
-  height: 51.308vh;
-  border-radius: 1.5vh;
+  width: 23.7888vw; /* 36.732 */
+  height: 33.228vw; /* 51.308 */
+  border-radius: 0.8vw;
 }
 /* ok i'm just running out of names */
 .small-lg-minus {
@@ -994,19 +998,21 @@ img.deny:hover {
   margin-top: -10vh;
 }
 .side-modifier {
-  width: 45.045vh;
+  width: 26.52vw;
   height: 80vh;
-  margin-left: -5vh;
+  margin: 0;
+  /* background-color: red; */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .side-modifier .has-modifier {
-  width: 45.045vh;
+  width: 26.52vw;
   height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 .side-modifier h3 {
   font-size: 3vh;
@@ -1014,9 +1020,9 @@ img.deny:hover {
 }
 
 .side-list {
-  width: 36.732vh;
-  margin-right: 5vw;
-  margin-left: -5vw;
+  width: 28vw;
+  margin-left: -4vh;
+  margin-right: -2vh;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1089,7 +1095,7 @@ div.cross {
   font-weight: 800;
 }
 .popup .side-modifier .arrows {
-  width: 40%;
+  width: 50%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1192,6 +1198,8 @@ div.cross {
   justify-content: space-around;
   z-index: 99;
   width: 100vw;
+  height: 100vh;
+  left: -5vh;
 }
 .choose-modifier.hide {
   opacity: 0;
@@ -1690,7 +1698,7 @@ div.cross {
   top: 100vh;
 }
 .helper-text-container {
-  top: 17.5vh;
+  top: calc(50vh - 15.4vw);
   left: 3.6vw;
   width: 92vw;
   height: 30.8vw;

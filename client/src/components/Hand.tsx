@@ -14,7 +14,8 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     showHand,
     allowedCards,
     chosenCard,
-    shownCard
+    shownCard,
+    mode
   } = useClientContext();
 
   const [prevHand, setPrevHand] = useState<AnyCard[] | undefined>();
@@ -141,6 +142,8 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
           shownCard.setLocked(true);
           shownCard.set(null);
           chosenCard.set(card);
+          showHand.set(false);
+          showHand.setLocked(true);
         }
         break;
 
@@ -242,7 +245,11 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                       state.board[state.playerNum].heroCards.some(
                         val => val === null
                       )) ||
-                      card.type !== CardType.hero)
+                      card.type !== CardType.hero) &&
+                    (mode.val !== 'touch' ||
+                      shownCard.val?.id === card.id ||
+                      card.type === CardType.modifier ||
+                      card.type === CardType.challenge)
                   )
                     playCard(card);
                 }}

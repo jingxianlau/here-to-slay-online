@@ -40,6 +40,7 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [showHelperText, setShowHelperText] = useState(false);
   const [showText, setShowText] = useState(false);
   const [loadedCards, setLoadedCards] = useState(0);
+  const [mode, setMode] = useState<'touch' | 'cursor'>('cursor');
 
   const initVal: ClientStateObj = {
     credentials,
@@ -110,6 +111,11 @@ const ClientContextProvider: React.FC<{ children: React.ReactNode }> = ({
     loadedCards: {
       val: loadedCards,
       set: setLoadedCards
+    },
+
+    mode: {
+      val: mode,
+      set: setMode
     }
   };
 

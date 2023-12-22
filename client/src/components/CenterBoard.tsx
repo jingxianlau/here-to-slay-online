@@ -18,7 +18,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
     state: { val: state },
     credentials,
     shownCard,
-    chosenCard
+    chosenCard,
+    mode
   } = useClientContext();
 
   function drawTwo() {
@@ -61,7 +62,8 @@ const CenterBoard: React.FC<CenterBoardProps> = ({
       state.turn.player === state.playerNum &&
       !state.turn.pause &&
       meetsRequirements(card, state) &&
-      state.turn.movesLeft >= 2
+      state.turn.movesLeft >= 2 &&
+      (mode.val !== 'touch' || shownCard.val?.id === card.id)
     ) {
       chosenCard.set(card);
       chosenCard.setShow(true);

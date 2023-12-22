@@ -109,7 +109,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                   state.turn.effect.action === 'choose-other-hand-show' ||
                   state.turn.effect.action === 'choose-two' ||
                   state.turn.effect.action === 'choose-cards' ||
-                  state.turn.effect.action === 'reveal')) ||
+                  state.turn.effect.action === 'reveal' ||
+                  state.turn.effect.action === 'choose-discard')) ||
               state.turn.phase === 'end-turn-discard'
             ) {
               if (showBoard) {
@@ -119,7 +120,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                     state.turn.effect.action !== 'choose-other-hand-show' &&
                     state.turn.effect.action !== 'choose-two' &&
                     state.turn.effect.action !== 'choose-cards' &&
-                    state.turn.effect.action !== 'reveal')
+                    state.turn.effect.action !== 'reveal' &&
+                    state.turn.effect.action !== 'choose-discard')
                 ) {
                   // show hand when popup active
                   showHand.set(true);
@@ -132,7 +134,8 @@ const MenuButtons: React.FC<MenuButtonsProps> = ({
                     state.turn.effect.action !== 'choose-other-hand-show' &&
                     state.turn.effect.action !== 'choose-two' &&
                     state.turn.effect.action !== 'choose-cards' &&
-                    state.turn.effect.action !== 'reveal')
+                    state.turn.effect.action !== 'reveal' &&
+                    state.turn.effect.action !== 'choose-discard')
                 ) {
                   showHand.set(false);
                 }

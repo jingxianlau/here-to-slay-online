@@ -18,7 +18,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
     state: { val: state },
     credentials: { roomId, userId },
     shownCard,
-    chosenCard
+    chosenCard,
+    mode
   } = useClientContext();
 
   const [revealActiveCard, setRevealActiveCard] = useState(0);
@@ -186,7 +187,9 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                             state.turn.effect?.players.some(
                               val => val === state.playerNum
                             ) &&
-                            state.turn.effect.val.max
+                            state.turn.effect.val.max &&
+                            (mode.val !== 'touch' ||
+                              shownCard.val?.id === val.id)
                           ) {
                             socket.emit(
                               'use-effect',
@@ -284,7 +287,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                       onClick={
                         state.turn.effect?.players.some(
                           val => val === state.playerNum
-                        )
+                        ) &&
+                        (mode.val !== 'touch' || shownCard.val?.id === val.id)
                           ? () => {
                               chosenCard.set(val);
                               chosenCard.setShow(true);
@@ -340,11 +344,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
               </div>
             ) : (
               state.turn.player === state.playerNum && (
-                <div
-                  className='left inactive'
-                  onClick={() => {}}
-                  style={{ opacity: 0 }}
-                ></div>
+                <div className='left inactive' style={{ opacity: 0 }}></div>
               )
             )}
 
@@ -574,8 +574,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
             <div className='center'>
               <h1
                 style={{
-                  marginTop: '-10vh',
-                  marginBottom: '2vh',
+                  marginTop: '-9vh',
+                  marginBottom: '0.2vh',
                   marginRight: '0.8vh'
                 }}
               >
@@ -625,11 +625,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
             </div>
 
             {state.turn.player === state.playerNum && (
-              <div
-                className='right inactive'
-                onClick={() => {}}
-                style={{ opacity: 0 }}
-              ></div>
+              <div className='right inactive' style={{ opacity: 0 }}></div>
             )}
           </div>
         ) : (

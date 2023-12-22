@@ -353,6 +353,11 @@ export interface ClientStateObj {
     val: number;
     set: React.Dispatch<React.SetStateAction<number>>;
   };
+
+  mode: {
+    val: 'touch' | 'cursor';
+    set: React.Dispatch<React.SetStateAction<'touch' | 'cursor'>>;
+  };
 }
 
 export const monsterRequirements: {

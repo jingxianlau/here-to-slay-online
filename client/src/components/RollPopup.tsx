@@ -123,7 +123,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
                 : 'hide'
             }`}
             style={{
-              top: showBoard ? '-79vh' : '9.5vh'
+              top: showBoard ? '-79vh' : '7.5vh'
             }}
           >
             {(state.turn.phase === 'use-effect-roll' ||
@@ -318,12 +318,7 @@ const RollPopup: React.FC<RollPopupProps> = ({ socket, showBoard }) => {
                       </h3>
                     </div>
 
-                    <div
-                      className='side-modifier'
-                      style={{
-                        marginLeft: '1.2vh'
-                      }}
-                    >
+                    <div className='side-modifier'>
                       {state.turn.phase === 'modify' && modifiers.length ? (
                         <div className='has-modifier'>
                           <h3>

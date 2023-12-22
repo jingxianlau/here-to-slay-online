@@ -153,7 +153,7 @@ const ChallengePopup: React.FC<{
       }`}
       style={{
         opacity: showPopup.val ? 1 : 0,
-        top: showBoard ? '-79vh' : '9.5vh'
+        top: showBoard ? '-79vh' : '7.5vh'
       }}
     >
       {preppedCard &&

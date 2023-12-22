@@ -40,7 +40,8 @@ const Game: React.FC = () => {
     showHand,
     shownCard,
     showHelperText,
-    loadedCards
+    loadedCards,
+    mode
   } = useClientContext();
 
   // variables
@@ -54,6 +55,30 @@ const Game: React.FC = () => {
   const [showDiscardPile, setShowDiscardPile] = useState(false);
   const [showEffectPopup, setShowEffectPopup] = useState(false);
   const [showDiscardPopup, setShowDiscardPopup] = useState(false);
+
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const onTouchStart: React.TouchEventHandler<HTMLDivElement> = e => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+  const onTouchMove: React.TouchEventHandler<HTMLDivElement> = e =>
+    setTouchEnd(e.targetTouches[0].clientY);
+  const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = e => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isTopSwipe = distance > 80;
+    const isBottomSwipe = distance < -80;
+    if (isTopSwipe) {
+      if (!showHand.locked) {
+        showHand.set(true);
+      }
+    } else if (isBottomSwipe) {
+      if (!showHand.locked) {
+        showHand.set(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!credentials) {
@@ -539,6 +564,10 @@ const Game: React.FC = () => {
 
       socket.emit('start-match', credentials.roomId, credentials.userId);
 
+      mode.set(
+        !window.matchMedia('(pointer: none)').matches ? 'touch' : 'cursor'
+      );
+
       return () => {
         if (socket) {
           socket.disconnect();
@@ -550,7 +579,6 @@ const Game: React.FC = () => {
 
   useEffect(() => {
     if (!loadedCards.val) {
-      console.log('hi');
       let images: HTMLImageElement[] = [];
       loadedCards.set(0);
       for (var i = loadedCards.val; i < everyCard.length; i++) {
@@ -587,7 +615,12 @@ const Game: React.FC = () => {
           }
         >
           {loadedCards.val === everyCard.length ? (
-            <div className='game'>
+            <div
+              className='game'
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+              onTouchMove={onTouchMove}
+            >
               {state.turn.phase === 'start-roll' ? (
                 <StartRoll rollSummary={rollSummary} />
               ) : (

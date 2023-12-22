@@ -19,7 +19,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
     state: { val: state },
     shownCard,
     chosenCard,
-    credentials: { roomId, userId }
+    credentials: { roomId, userId },
+    mode
   } = useClientContext();
 
   return state.board[playerNum].largeCards.length > 0 ? (
@@ -82,7 +83,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                   }
                 }}
                 onClick={() => {
-                  if (state.turn.player === state.playerNum) {
+                  if (
+                    state.turn.player === state.playerNum &&
+                    (mode.val !== 'touch' || shownCard.val?.id === card.id)
+                  ) {
                     if (
                       (state.turn.movesLeft || card.freeUse) &&
                       !state.turn.pause &&

@@ -98,7 +98,7 @@ function App() {
 
   // DEV
   useEffect(() => {
-    // joinRoom('999999');
+    joinRoom('999999');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // DEV
@@ -109,6 +109,7 @@ function App() {
         src='https://jingxianlau.github.io/here-to-slay/HTS_title.png'
         rel='preload'
         alt='Here to Slay'
+        id='hts-logo'
         width='300px'
       />
       <br />
