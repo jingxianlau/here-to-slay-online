@@ -30,7 +30,10 @@ const restOfCards = (
       usedCards += num > requirements[i].req ? requirements[i].req : num;
     }
   }
-  return state.board[state.turn.player].heroCards.length - usedCards;
+  return (
+    state.board[state.turn.player].heroCards.filter(val => val !== null)
+      .length - usedCards
+  );
 };
 const meetsRequirements = (monster: LargeCard, state: GameState) => {
   for (const requirement of monsterRequirements[

@@ -404,7 +404,7 @@ header img {
   margin: 0 0.3vh;
 }
 .hand.cover .img-container img.small-md {
-  margin: 0 0 0 -6.5vh;
+  margin: 0 0 0 -8.6vh;
 }
 .hand.list .img-container:hover img.small-md {
   margin: 3.75vh 1.2vh;
@@ -713,6 +713,59 @@ img.small-card.hero {
   user-select: none;
 }
 
+.player-board .mat .passives {
+  position: absolute;
+  bottom: -1.8vw;
+  display: flex;
+  align-items: center;
+}
+.player-board .mat .passive {
+  height: 3vw;
+  width: 3vw;
+  background-color: #444;
+  border: white solid 0.15vw;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.4vw;
+  user-select: none;
+}
+.player-board .mat .passive img {
+  width: 3.1vw;
+  height: 3.1vw;
+}
+.player-board .mat .passive span {
+  font-size: 2.5vw;
+}
+
+.own-board .mat .passives {
+  position: absolute;
+  bottom: -2.2vw;
+  display: flex;
+  align-items: center;
+}
+.own-board .mat .passive {
+  height: 3.8vw;
+  width: 3.8vw;
+  background-color: #444;
+  border: white solid 0.15vw;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.4vw;
+  user-select: none;
+}
+.own-board .mat .passive img {
+  width: 3.9vw;
+  height: 3.9vw;
+}
+.own-board .mat .passive span {
+  font-size: 2.5vw;
+}
+
+/* CENTER BOARD */
 .center-board .mat {
   padding: 1.5vw 0 1.5vw 1.74vw;
   height: 8.7936vw;
@@ -792,8 +845,8 @@ img.small-card.hero {
   transition: border 0.25s;
 }
 img.large-lg {
-  width: 43.7vh;
-  height: 74.575vh;
+  width: 26.52vw;
+  height: 45.3vw;
   border-radius: 2vh;
   user-select: none;
 }
@@ -1511,14 +1564,14 @@ div.cross {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 100%;
+  width: 95%;
   height: 100%;
 }
 .effect-cover .choose-cover .arrow {
-  width: 8vh;
+  width: 6vh;
   border: 1vh solid transparent;
-  height: 62vh;
-  border-radius: 4vh;
+  height: 36.35vw;
+  border-radius: 3.3vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1577,7 +1630,7 @@ div.cross {
 .effect-cover .choose-cover .right.active:hover {
   background-color: #f95151aa;
   cursor: pointer;
-  font-size: 15vh;
+  font-size: 12vh;
   font-weight: 1000;
 }
 .effect-cover .choose-cover .right.inactive:hover {

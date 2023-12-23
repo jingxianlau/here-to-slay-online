@@ -206,9 +206,9 @@ const DiscardPopup: React.FC<DiscardPopupProps> = ({ show, showBoard }) => {
                 )}
               </div>
 
-              <h1 style={{ marginRight: '9vh' }}>
-                {state.turn.effect.purpose}
-              </h1>
+              <div style={{ width: '57vw' }}>
+                <h1>{state.turn.effect.purpose}</h1>
+              </div>
             </div>
           </div>
         )

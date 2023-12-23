@@ -325,7 +325,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 : ''
             }`}
             onClick={() => {
-              if (state.turn.player === state.playerNum) {
+              if (
+                state.turn.effect?.players.some(val => val === state.playerNum)
+              ) {
                 socket.emit(
                   'use-effect',
                   roomId,
@@ -339,6 +341,57 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             {state.turn.effect.purpose.split(' ')[0]}
           </div>
         )}
+      <div className='passives'>
+        {state.players[playerNum].protection.map(val => (
+          <div
+            key={val.card.id}
+            className='passive'
+            onMouseEnter={() => {
+              if (!shownCard.locked) {
+                shownCard.set(val.card);
+                shownCard.setPos(col === 0 ? 'right' : 'left');
+              }
+            }}
+            onMouseLeave={() => {
+              if (!shownCard.locked) {
+                shownCard.set(null);
+                shownCard.setPos(null);
+              }
+            }}
+          >
+            <img
+              src='https://jingxianlau.github.io/here-to-slay/assets/icons/guardian.png'
+              alt='Shield'
+            />
+          </div>
+        ))}
+        {state.players[playerNum].passives.map(val =>
+          val.type === 'roll' ? (
+            <div
+              key={val.card.id}
+              className='passive'
+              onMouseEnter={() => {
+                if (!shownCard.locked) {
+                  shownCard.set(val.card);
+                  shownCard.setPos(col === 0 ? 'right' : 'left');
+                }
+              }}
+              onMouseLeave={() => {
+                if (!shownCard.locked) {
+                  shownCard.set(null);
+                  shownCard.setPos(null);
+                }
+              }}
+            >
+              <span className='material-symbols-outlined'>
+                {val.mod <= 3 ? 'ifl' : 'casino'}
+              </span>
+            </div>
+          ) : (
+            <></>
+          )
+        )}
+      </div>
     </div>
   ) : (
     <></>

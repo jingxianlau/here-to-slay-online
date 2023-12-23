@@ -65,15 +65,6 @@ export function addCards(roomId: string, cards: AnyCard[], playerNum: number) {
   rooms[roomId].state.players[playerNum].numCards += length;
 }
 
-export function swapHands(state: GameState, player1: number, player2: number) {
-  const hand = state.players[player2].hand;
-  const numCards = state.players[player2].numCards;
-  state.players[player2].hand = state.players[player1].hand;
-  state.players[player2].numCards = state.players[player1].numCards;
-  state.players[player1].hand = hand;
-  state.players[player1].numCards = numCards;
-}
-
 export function playCard(
   roomId: string,
   playerNum: number,
@@ -90,21 +81,24 @@ export function playCard(
     c => c.id !== card.id
   );
   state.players[playerNum].numCards--;
+  if (!free) {
+    state.turn.movesLeft--;
+  }
 
   // CHALLENGE PROTECTION
   if (
-    state.players[state.turn.player].protection.some(
-      val => val.type === 'challenge'
-    )
+    // state.players[state.turn.player].protection.some(
+    //   val => val.type === 'challenge'
+    // )
+
+    // DEV
+    true
   ) {
     if (card.type === CardType.hero) {
       card.freeUse = true;
     } else if (card.type === CardType.magic) {
       useEffect(roomId, state.secret.playerIds[playerNum], card);
       return;
-    }
-    if (!free) {
-      state.turn.movesLeft--;
     }
 
     if (state.turn.movesLeft > 0) {
@@ -121,6 +115,11 @@ export function playCard(
       sendGameState(roomId);
     } else {
       endTurnDiscard(roomId, state.secret.playerIds[state.turn.player]);
+    }
+
+    state.match.isReady = [];
+    for (let i = 0; i < state.match.players.length; i++) {
+      state.match.isReady.push(null);
     }
     return;
   }

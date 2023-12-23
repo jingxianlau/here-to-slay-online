@@ -103,7 +103,7 @@ export const receivePlayer = (
   effect: Effect,
   returnVal?: returnType
 ) => {
-  if (!state.turn.effect || !returnVal || !returnVal.num) return;
+  if (!state.turn.effect || !returnVal || returnVal.num === undefined) return;
   effect.choice = [returnVal.num];
   effect.val.curr++;
   sendGameState(roomId);
@@ -118,6 +118,10 @@ export const pickCard =
   (num = 1) =>
   (roomId: string, state: GameState, effect: Effect) => {
     if (!effect.choice || typeof effect.choice[0] !== 'number') return;
+    if (!rooms[roomId].state.players[effect.choice[0]].numCards) {
+      endEffect(roomId, state, effect);
+      return;
+    }
 
     effect.action = 'choose-other-hand-hide';
     effect.actionChanged = true;
@@ -279,7 +283,7 @@ export const playFromHand = (
     effect.action = 'choose-hand';
     effect.actionChanged = true;
     effect.allowedCards = [type];
-    effect.val = { min: 1, max: 1, curr: 0 };
+    effect.val = { min: 0, max: 1, curr: 0 };
     effect.players = [state.turn.player];
     effect.purpose = `Play ${type.charAt(0).toUpperCase() + type.slice(1)}`;
     sendGameState(roomId);
@@ -310,10 +314,11 @@ export const chooseStealHero = (
 ) => {
   effect.action = 'choose-other-boards';
   effect.actionChanged = true;
-  effect.val = { min: 1, max: 1, curr: 0 };
+  effect.val = { min: 0, max: 1, curr: 0 };
   effect.allowedCards = [];
   effect.players = [state.turn.player];
   effect.purpose = 'Steal Hero';
+  effect.active = { num: [state.turn.player] };
   sendGameState(roomId);
 };
 export const receiveStealHero = (
@@ -328,6 +333,9 @@ export const receiveStealHero = (
     returnVal.card.player === undefined ||
     returnVal.card.type !== CardType.hero ||
     returnVal.card.player === state.turn.player ||
+    !effect.active ||
+    !effect.active.num ||
+    returnVal.card.player === effect.active.num[0] ||
     state.players[returnVal.card.player].protection.some(
       val => val.type === 'steal'
     )
@@ -352,10 +360,11 @@ export const chooseDestroyHero = (
 ) => {
   effect.action = 'choose-other-boards';
   effect.actionChanged = true;
-  effect.val = { min: 1, max: 1, curr: 0 };
+  effect.val = { min: 0, max: 1, curr: 0 };
   effect.allowedCards = [];
   effect.players = [state.turn.player];
   effect.purpose = 'Destroy Hero';
+  effect.active = { num: [state.turn.player] };
   sendGameState(roomId);
 };
 export const receiveDestroyHero = (
@@ -396,7 +405,15 @@ export const chooseSacrificeHero = (
 ) => {
   effect.action = 'choose-own-board';
   effect.actionChanged = true;
-  effect.val = { min: 1, max: 1, curr: 0 };
+  effect.val = {
+    min: rooms[roomId].state.board[state.turn.player].heroCards.every(
+      val => val === null
+    )
+      ? 0
+      : 1,
+    max: 1,
+    curr: 0
+  };
   effect.allowedCards = [];
   effect.players = [state.turn.player];
   effect.purpose = 'Sacrifice Hero';
@@ -417,8 +434,10 @@ export const receiveSacrificeHero = (
     !effect.active ||
     !effect.active.num ||
     returnVal.card.player !== effect.active.num[0]
-  )
+  ) {
+    endEffect(roomId, state, effect);
     return;
+  }
 
   effect.choice = [returnVal.card];
   effect.val.curr++;
@@ -662,7 +681,8 @@ export const eachOtherWithHeroInBoardDiscard = (heroClass: HeroClass) => [
     for (let i = 0; i < rooms[roomId].numPlayers; i++) {
       if (
         state.board[i].heroCards.some(val => val?.class === heroClass) &&
-        i !== state.turn.player
+        i !== state.turn.player &&
+        state.players[i].numCards
       ) {
         effect.active.num.push(i);
       }
@@ -697,11 +717,6 @@ export const eachOtherWithHeroInBoardDiscard = (heroClass: HeroClass) => [
 
     sendGameState(roomId);
 
-    console.log(
-      effect.active.num[2] - 2 < effect.active.num.length - 3,
-      effect.active.num[2] - 3,
-      effect.active.num.length - 3
-    );
     if (effect.active.num[2] - 2 < effect.active.num.length - 3) {
       const next = effect.active.num[++effect.active.num[2]];
       effect.players = [next];
@@ -728,9 +743,14 @@ export const eachOtherWithHeroInBoardDiscard = (heroClass: HeroClass) => [
 
 export const searchDiscard = (type: CardType) => [
   (roomId: string, state: GameState, effect: Effect) => {
+    if (rooms[roomId].state.mainDeck.discardPile.length === 0) {
+      endEffect(roomId, state, effect);
+      return;
+    }
+
     effect.action = 'choose-discard';
     effect.actionChanged = true;
-    effect.val = { min: 1, max: 1, curr: 0 };
+    effect.val = { min: 0, max: 1, curr: 0 };
     effect.allowedCards = [type];
     effect.players = [state.turn.player];
     effect.purpose = 'Add Card';
@@ -743,7 +763,10 @@ export const searchDiscard = (type: CardType) => [
     effect: Effect,
     returnVal?: returnType
   ) => {
-    if (!returnVal || !returnVal.card || returnVal.card.type !== type) return;
+    if (!returnVal || !returnVal.card || returnVal.card.type !== type) {
+      endEffect(roomId, state, effect);
+      return;
+    }
     effect.val.curr++;
     effect.choice = [returnVal.card];
     state.mainDeck.discardPile = state.mainDeck.discardPile.filter(

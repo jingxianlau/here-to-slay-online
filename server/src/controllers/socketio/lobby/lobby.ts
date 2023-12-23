@@ -46,10 +46,7 @@ export const enterLobby = (socket: Socket) => {
       socket.join(roomId);
 
       /* DEV V */
-      if (!rooms[roomId].state.match.gameStarted) {
-        rooms[roomId].state.match.isReady =
-          rooms[roomId].state.match.isReady.fill(true);
-      }
+      ready(socket)(roomId, userId, true, () => {});
       /* DEV ^ */
 
       sendState(roomId);
@@ -112,7 +109,7 @@ export const ready = (socket: Socket) => {
     ) {
       setTimeout(() => {
         emit(roomId, 'start-match');
-      }, 500);
+      }, 1200);
     }
   };
 };
@@ -165,11 +162,11 @@ export const startMatch = (socket: Socket) => {
       state.dice.main.roll[0] = 1;
       state.dice.main.roll[1] = 1;
       state.turn.movesLeft = 3;
-      sendGameState(roomId);
       /* DEV ^ */
 
       // distributeCards(rooms[roomId].state, rooms[roomId].numPlayers);
-      // sendGameState(roomId);
+
+      sendGameState(roomId);
     }
   };
 };

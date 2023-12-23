@@ -490,6 +490,7 @@ const Game: React.FC = () => {
                   setShowEffectPopup(false);
                   showHand.setLocked(false);
                   showHand.set(false);
+                  shownCard.setLocked(false);
                   if (
                     newState.turn.effect &&
                     newState.turn.effect.actionChanged

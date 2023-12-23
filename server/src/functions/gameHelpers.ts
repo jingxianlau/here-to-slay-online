@@ -8,7 +8,6 @@ import {
   MonsterCard
 } from '../types';
 import shuffle from 'lodash.shuffle';
-import random from 'lodash.random';
 import { heroCards, initialState } from '../cards';
 import { sendGameState } from '../server';
 import cloneDeep from 'lodash.clonedeep';
@@ -44,10 +43,12 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
       state.players[i].hand.push(card);
     }
 
-    let card2 = cloneDeep(heroCards[26]);
+    // DEV
+    let card2 = cloneDeep(heroCards[17]);
     card2.player = i;
     state.players[i].hand.push(card2);
     state.players[i].numCards = 6;
+    // DEV
 
     let leader = state.secret.leaderPile.pop() as LeaderCard;
     leader.player = i;
@@ -66,22 +67,38 @@ export function nextPlayer(roomId: string) {
   rooms[roomId].state.turn.movesLeft = 3;
   rooms[roomId].state.turn.phase = 'draw';
   rooms[roomId].state.turn.phaseChanged = true;
+
+  for (
+    let i = 0;
+    i < rooms[roomId].state.players[player].passives.length;
+    i++
+  ) {
+    if (rooms[roomId].state.players[player].passives[i].turns === 0) {
+      rooms[roomId].state.players[player].passives.splice(i--, 1);
+    }
+  }
+
   for (
     let i = 0;
     i < rooms[roomId].state.players[newPlayer].passives.length;
     i++
   ) {
     if (rooms[roomId].state.players[newPlayer].passives[i].turns === 1) {
-      rooms[roomId].state.players[newPlayer].passives.splice(i, 1);
+      rooms[roomId].state.players[newPlayer].passives.splice(i--, 1);
+    } else {
+      rooms[roomId].state.players[newPlayer].passives[i].turns--;
     }
   }
+
   for (
     let i = 0;
     i < rooms[roomId].state.players[newPlayer].protection.length;
     i++
   ) {
     if (rooms[roomId].state.players[newPlayer].protection[i].turns === 1) {
-      rooms[roomId].state.players[newPlayer].protection.splice(i, 1);
+      rooms[roomId].state.players[newPlayer].protection.splice(i--, 1);
+    } else {
+      rooms[roomId].state.players[newPlayer].protection[i].turns--;
     }
   }
 
@@ -99,7 +116,8 @@ export function nextPlayer(roomId: string) {
 
 export function rollDice(roomId: string) {
   const state = rooms[roomId].state;
-  const roll: [number, number] = [random(1, 6), random(1, 6)];
+  // const roll: [number, number] = [random(1, 6), random(1, 6)];
+  const roll: [number, number] = [6, 6];
   const val = roll[0] + roll[1];
   state.dice.main.roll = roll;
   state.dice.main.total = val;

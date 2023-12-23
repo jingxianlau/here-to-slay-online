@@ -67,9 +67,9 @@ const Lobby: React.FC = () => {
         }
 
         /* DEV V */
-        if (state.players.length >= 3) {
-          navigate('/game');
-        }
+        // if (state.players.length >= 3) {
+        //   navigate('/game');
+        // }
         /* DEV ^ */
       });
 
@@ -155,7 +155,7 @@ const Lobby: React.FC = () => {
           {Array.from(
             Array(Math.min(2, 3 - matchState.players.length)),
             (_, i) => (
-              <div className='player blank'>
+              <div className='player blank' key={i}>
                 <span className='material-symbols-outlined rotate'>
                   progress_activity
                 </span>

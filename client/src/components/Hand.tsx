@@ -37,8 +37,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
     setTimeout(() => {
       if (prevHand) {
         if (currHand.length > prevHand.length) {
-          const prevShowHand = showHand.val;
-          const prevHandLock = showHand.locked;
+          let prevShowHand = showHand.val;
+          let prevHandLock = showHand.locked;
+          if (
+            state.turn.effect &&
+            state.turn.effect.action === 'choose-player' &&
+            state.turn.effect.purpose === 'Swap Hand'
+          ) {
+            prevShowHand = false;
+          }
           showHand.set(true);
           showHand.setLocked(true);
           showHand.setAnimation(true);
@@ -65,8 +72,15 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
             } else i++;
           }, 250);
         } else if (currHand < prevHand) {
-          const prevShowHand = showHand.val;
-          const prevHandLock = showHand.locked;
+          let prevShowHand = showHand.val;
+          let prevHandLock = showHand.locked;
+          if (
+            state.turn.effect &&
+            state.turn.effect.action === 'choose-player' &&
+            state.turn.effect.purpose === 'Swap Hand'
+          ) {
+            prevShowHand = true;
+          }
           showHand.set(true);
           showHand.setLocked(true);
           showHand.setAnimation(true);

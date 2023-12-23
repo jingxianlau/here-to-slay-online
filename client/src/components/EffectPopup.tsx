@@ -478,12 +478,12 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   )
                     ? {
                         marginTop: '-10vh',
-                        marginBottom: '2vh',
+                        marginBottom: '0.6vh',
                         marginRight: '0.8vh'
                       }
                     : {
                         marginTop: '-10vh',
-                        marginBottom: '2vh',
+                        marginBottom: '0.6vh',
                         marginRight: 0
                       }
                 }

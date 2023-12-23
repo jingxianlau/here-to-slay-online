@@ -21,8 +21,7 @@ import {
   playCard,
   removeCard,
   removeCardIndex,
-  swapCard,
-  swapHands
+  swapCard
 } from './game';
 import {
   Effect,
@@ -38,7 +37,6 @@ import {
   eachOtherWithHeroInBoardDiscard,
   endEffect,
   ifMayPlay,
-  pickCard,
   pickFromHand,
   pickPlayer,
   playFromHand,
@@ -72,21 +70,44 @@ export const heroAbilities: {
       (roomId, state, effect) =>
         choosePlayer(roomId, state, effect, 'Swap Hand'),
       (roomId, state, effect, returnVal) => {
-        if (!state.turn.effect || !returnVal || !returnVal.num) return;
-        const userNum = returnVal.num;
+        if (!state.turn.effect || !returnVal || returnVal.num === undefined)
+          return;
+        const player1 = state.turn.player;
+        const player2 = returnVal.num;
 
-        effect.choice = [userNum];
+        effect.choice = [player2];
+
+        const hand1 = state.players[player1].hand;
+        const numCards1 = state.players[player1].numCards;
+        const hand2 = state.players[player2].hand;
+        const numCards2 = state.players[player2].numCards;
+
+        state.players[player1].hand = [];
+        state.players[player2].hand = [];
+        state.players[player2].numCards = 0;
+        state.players[player2].numCards = 0;
 
         sendGameState(roomId);
 
-        swapHands(state, state.turn.player, userNum);
-        effect.val.curr++;
+        state.players[player1].hand = hand2;
+        state.players[player1].numCards = numCards2;
+        state.players[player2].hand = hand1;
+        state.players[player2].numCards = numCards1;
 
         setTimeout(() => {
           sendGameState(roomId);
-        }, 600);
+        }, Math.max(numCards1, numCards2) * 320);
+
+        effect.val.curr++;
+        effect.active = { num: [Math.max(numCards1, numCards2) * 640] };
       },
-      (roomId, state, effect) => endEffect(roomId, state, effect)
+      (roomId, state, effect) => {
+        if (!effect.active || !effect.active.num || !effect.active.num[0])
+          return;
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, effect.active.num[0]);
+      }
     ],
     'fuzzy-cheeks': [
       ...drawCard(),
@@ -101,7 +122,7 @@ export const heroAbilities: {
         effect.purpose = 'Give Card';
         let players = [];
         for (let i = 0; i < rooms[roomId].numPlayers; i++) {
-          if (i !== state.turn.player) {
+          if (i !== state.turn.player && state.players[i].numCards > 0) {
             players.push(i);
           }
         }
@@ -172,7 +193,7 @@ export const heroAbilities: {
             val => val.type === 'steal'
           )
         ) {
-          console.log(returnVal, state.turn.effect);
+          endEffect(roomId, state, effect);
           return;
         }
 
@@ -240,22 +261,28 @@ export const heroAbilities: {
 
         sendGameState(roomId);
 
-        if (effect.active.num[2] < rooms[roomId].numPlayers) {
-          const next =
+        effect.choice = null;
+        effect.active.card.push(returnVal.card);
+        let next: number;
+        do {
+          next =
             (state.turn.player + effect.active.num[2]++) %
             rooms[roomId].numPlayers;
-          effect.players = [next];
-          effect.active.num[0] = next;
-          effect.val = {
-            min: 1,
-            max: 1,
-            curr: 0
-          };
-          effect.choice = null;
-        } else {
-          effect.val.curr++;
-        }
-        effect.active.card.push(returnVal.card);
+
+          console.log(state.turn.player + effect.active.num[2]);
+
+          if (next === state.turn.player) {
+            effect.val.curr++;
+            return;
+          }
+        } while (rooms[roomId].state.players[next].numCards === 0);
+        effect.players = [next];
+        effect.active.num[0] = next;
+        effect.val = {
+          min: 1,
+          max: 1,
+          curr: 0
+        };
 
         setTimeout(() => {
           sendGameState(roomId);
@@ -276,7 +303,14 @@ export const heroAbilities: {
 
         effect.action = 'choose-hand';
         effect.actionChanged = true;
-        effect.val = { min: 2, max: 2, curr: 0 };
+        effect.val = {
+          min: Math.min(
+            rooms[roomId].state.players[effect.choice[0]].numCards,
+            2
+          ),
+          max: 2,
+          curr: 0
+        };
         effect.allowedCards = allCards;
         effect.players = [effect.choice[0]];
         effect.purpose = 'Discard Cards';
@@ -306,7 +340,7 @@ export const heroAbilities: {
       (roomId, state, effect) => {
         effect.action = 'choose-hand';
         effect.actionChanged = true;
-        effect.val = { min: 1, max: 3, curr: 0 };
+        effect.val = { min: 0, max: 3, curr: 0 };
         effect.allowedCards = allCards;
         effect.players = [state.turn.player];
         effect.purpose = 'Discard Cards';
@@ -323,7 +357,7 @@ export const heroAbilities: {
           !effect.active.num ||
           ((!returnVal.card ||
             returnVal.card.player !== effect.active.num[0]) &&
-            (!returnVal.num || returnVal.num !== -2)) ||
+            (returnVal.num === undefined || returnVal.num !== -2)) ||
           !effect.choice
         )
           return;
@@ -343,11 +377,15 @@ export const heroAbilities: {
       },
       (roomId, state, effect) => {
         if (!state.turn.effect || !effect.choice) return;
+        if (effect.choice.length === 0) {
+          endEffect(roomId, state, effect);
+          return;
+        }
 
         effect.action = 'choose-other-boards';
         effect.actionChanged = true;
         effect.val = {
-          min: effect.choice.length,
+          min: 0,
           max: effect.choice.length,
           curr: 0
         };
@@ -360,7 +398,33 @@ export const heroAbilities: {
           sendGameState(roomId);
         }, 1200);
       },
-      receiveDestroyHero,
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.card ||
+          returnVal.card.player === undefined ||
+          returnVal.card.type !== CardType.hero ||
+          !effect.active ||
+          !effect.active.num ||
+          returnVal.card.player === effect.active.num[0] ||
+          state.players[returnVal.card.player].protection.some(
+            val => val.type === 'destroy'
+          )
+        ) {
+          endEffect(roomId, state, effect);
+          return;
+        }
+
+        effect.choice = [returnVal.card];
+        effect.players = [state.turn.player];
+        effect.val.curr++;
+        sendGameState(roomId);
+
+        destroyCard(roomId, returnVal.card.player, returnVal.card);
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
       (roomId, state, effect) =>
         setTimeout(() => {
           endEffect(roomId, state, effect);
@@ -477,7 +541,7 @@ export const heroAbilities: {
         if (
           !returnVal ||
           ((!returnVal.card || returnVal.card.type !== CardType.item) &&
-            !returnVal.num)
+            returnVal.num === undefined)
         )
           return;
 
@@ -625,7 +689,13 @@ export const heroAbilities: {
 
   // THIEF
   ...{
-    'kit-napper': stealHero,
+    'kit-napper': [
+      ...stealHero,
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 2000)
+    ],
     // TEST
     meowzio: [
       ...stealHero,
@@ -777,7 +847,7 @@ export const heroAbilities: {
       (roomId, state, effect, returnVal) => {
         if (
           !returnVal ||
-          !returnVal.num ||
+          returnVal.num === undefined ||
           !effect.active ||
           !effect.active.num
         )
@@ -998,7 +1068,7 @@ export const heroAbilities: {
         if (
           !returnVal ||
           ((!returnVal.card || returnVal.card.type !== CardType.magic) &&
-            !returnVal.num)
+            returnVal.num === undefined)
         )
           return;
 
@@ -1235,7 +1305,7 @@ export const heroAbilities: {
         state.players[state.turn.player].passives.push({
           type: 'roll',
           mod: 5,
-          turns: 1,
+          turns: 0,
           card: effect.card as HeroCard
         });
         endEffect(roomId, state, effect);
@@ -1247,7 +1317,7 @@ export const heroAbilities: {
         state.players[state.turn.player].passives.push({
           type: 'roll',
           mod: 3,
-          turns: 1,
+          turns: 0,
           card: effect.card as HeroCard
         });
         endEffect(roomId, state, effect);
@@ -1266,7 +1336,7 @@ export const heroAbilities: {
         state.players[state.turn.player].passives.push({
           type: 'roll',
           mod: 2,
-          turns: 1,
+          turns: 0,
           card: effect.card as MagicCard
         });
         endEffect(roomId, state, effect);
