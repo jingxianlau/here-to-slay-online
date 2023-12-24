@@ -8,7 +8,7 @@ import {
   MonsterCard
 } from '../types';
 import shuffle from 'lodash.shuffle';
-import { heroCards, initialState } from '../cards';
+import { heroCards, initialState, magicCards } from '../cards';
 import { sendGameState } from '../server';
 import cloneDeep from 'lodash.clonedeep';
 
@@ -44,7 +44,7 @@ export const distributeCards = (state: GameState, numPlayers: number) => {
     }
 
     // DEV
-    let card2 = cloneDeep(heroCards[47]);
+    let card2 = cloneDeep(magicCards[9]);
     card2.player = i;
     state.players[i].hand.push(card2);
     state.players[i].numCards = 6;

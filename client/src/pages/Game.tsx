@@ -420,7 +420,7 @@ const Game: React.FC = () => {
               } else if (newState.turn.effect.card.type === CardType.magic) {
                 showText(showHelperText, 'Magic Card');
               } else {
-                showText(showHelperText, 'Monster Punishment');
+                showText(showHelperText, 'Punishment');
               }
             }
 

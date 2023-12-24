@@ -858,7 +858,7 @@ const challengeCard: ChallengeCard[] = [
   }
 ];
 
-const magicCards: MagicCard[] = [
+export const magicCards: MagicCard[] = [
   {
     name: 'Call to the Fallen',
     type: CardType.magic,

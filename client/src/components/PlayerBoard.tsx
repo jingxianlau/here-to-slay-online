@@ -164,6 +164,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                         val => val.type === 'steal'
                       )) ||
                     (state.turn.effect &&
+                      state.turn.effect.purpose === 'Return Item' &&
+                      !card.item) ||
+                    (state.turn.effect &&
                       state.turn.effect.purpose === 'Return Curse' &&
                       (!card.item || card.item.category !== 'cursed'))
                       ? 'brightness(35%)'

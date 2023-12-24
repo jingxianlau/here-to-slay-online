@@ -174,6 +174,7 @@ export const modifyRoll = (
               state.dice.main.modValues = [];
               delete state.turn.challenger;
               state.match.isReady.fill(null);
+              state.mainDeck.discardPile.push(preppedCard);
               useEffect(roomId, cardUserId, preppedCard);
             }
           }

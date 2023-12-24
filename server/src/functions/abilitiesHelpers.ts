@@ -400,8 +400,10 @@ export const receiveDestroyHero = (
     state.players[returnVal.card.player].protection.some(
       val => val.type === 'destroy'
     )
-  )
+  ) {
+    endEffect(roomId, state, effect);
     return;
+  }
 
   effect.choice = [returnVal.card];
   effect.val.curr++;
