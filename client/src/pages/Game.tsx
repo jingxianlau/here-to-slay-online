@@ -40,7 +40,6 @@ const Game: React.FC = () => {
     showHand,
     shownCard,
     showHelperText,
-    loadedCards,
     mode
   } = useClientContext();
 
@@ -55,6 +54,8 @@ const Game: React.FC = () => {
   const [showDiscardPile, setShowDiscardPile] = useState(false);
   const [showEffectPopup, setShowEffectPopup] = useState(false);
   const [showDiscardPopup, setShowDiscardPopup] = useState(false);
+
+  const [loadedImages, setLoadedImages] = useState(0);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -569,6 +570,16 @@ const Game: React.FC = () => {
         !window.matchMedia('(pointer: none)').matches ? 'touch' : 'cursor'
       );
 
+      for (let i = 0; i < everyCard.length; i++) {
+        let img = new Image();
+        img.onload = () => {
+          img.onload = null;
+          setLoadedImages(val => ++val);
+        };
+        let card = everyCard[i];
+        img.src = typeof card === 'string' ? card : (getImage(card) as string);
+      }
+
       return () => {
         if (socket) {
           socket.disconnect();
@@ -577,18 +588,6 @@ const Game: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!loadedCards.val) {
-      let images: HTMLImageElement[] = [];
-      loadedCards.set(0);
-      for (var i = loadedCards.val; i < everyCard.length; i++) {
-        images[i] = new Image();
-        images[i].src = getImage(everyCard[i]) as string;
-        loadedCards.set(val => ++val);
-      }
-    }
-  }, [state]);
 
   return (
     <>
@@ -615,85 +614,85 @@ const Game: React.FC = () => {
               : () => {}
           }
         >
-          {loadedCards.val === everyCard.length ? (
-            <div
-              className='game'
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
-              onTouchMove={onTouchMove}
-            >
-              {state.turn.phase === 'start-roll' ? (
-                <StartRoll rollSummary={rollSummary} />
-              ) : (
-                <>
-                  <TopMenu />
+          <div
+            className='game'
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onTouchMove={onTouchMove}
+          >
+            {state.turn.phase === 'start-roll' ? (
+              <StartRoll rollSummary={rollSummary} />
+            ) : loadedImages === everyCard.length ? (
+              <>
+                <TopMenu />
 
-                  <MainBoard
-                    socket={socket}
-                    setShowDiscardPile={setShowDiscardPile}
-                  />
+                <MainBoard
+                  socket={socket}
+                  setShowDiscardPile={setShowDiscardPile}
+                />
 
-                  <DiscardPile
-                    showDiscardPile={showDiscardPile}
-                    setShowDiscardPile={setShowDiscardPile}
-                  />
-                  <EffectPopup
-                    socket={socket}
-                    show={showEffectPopup}
-                    showBoard={showBoard}
-                  />
-                  <DiscardPopup show={showDiscardPopup} showBoard={showBoard} />
-                  <ChallengePopup
-                    socket={socket}
-                    activeDice={activeDice}
-                    setActiveDice={setActiveDice}
-                    showBoard={showBoard}
-                  />
-                  <RollPopup socket={socket} showBoard={showBoard} />
+                <DiscardPile
+                  showDiscardPile={showDiscardPile}
+                  setShowDiscardPile={setShowDiscardPile}
+                />
+                <EffectPopup
+                  socket={socket}
+                  show={showEffectPopup}
+                  showBoard={showBoard}
+                />
+                <DiscardPopup show={showDiscardPopup} showBoard={showBoard} />
+                <ChallengePopup
+                  socket={socket}
+                  activeDice={activeDice}
+                  setActiveDice={setActiveDice}
+                  showBoard={showBoard}
+                />
+                <RollPopup socket={socket} showBoard={showBoard} />
 
-                  <ShownCard />
-                  <ShownCardTop />
+                <ShownCard />
+                <ShownCardTop />
 
-                  <Hand setShowBoard={setShowBoard} />
+                <Hand setShowBoard={setShowBoard} />
 
-                  <HelperText />
+                <HelperText />
 
-                  <MenuButtons
-                    showBoard={showBoard}
-                    setShowBoard={setShowBoard}
-                    setShowHelp={setShowHelp}
-                  />
+                <MenuButtons
+                  showBoard={showBoard}
+                  setShowBoard={setShowBoard}
+                  setShowHelp={setShowHelp}
+                />
 
-                  <EndPage showBoard={showBoard} />
+                <EndPage showBoard={showBoard} />
 
-                  <HelpCards showHelp={showHelp} />
+                <HelpCards showHelp={showHelp} />
 
-                  <ConfirmPopup socket={socket} />
-                </>
-              )}
-            </div>
-          ) : (
-            <div className='load'>
-              <div className='content'>
-                <span className='material-symbols-outlined rotate'>
-                  progress_activity
-                </span>
-                <h6>
-                  Loading Assets{'.'.repeat((loadedCards.val % 3) + 1)}
-                  {'  '}
-                  {loadedCards.val} / {everyCard.length}
-                </h6>
-                <div className='loading'>
-                  <div
-                    className='inner'
-                    style={{
-                      width: `${(loadedCards.val / everyCard.length) * 25}vw`
-                    }}
-                  ></div>
+                <ConfirmPopup socket={socket} />
+              </>
+            ) : (
+              <div className='load'>
+                <div className='content'>
+                  <span className='material-symbols-outlined rotate'>
+                    progress_activity
+                  </span>
+                  <h6>
+                    Loading Assets
+                    {'.'.repeat((loadedImages % 3) + 1)}
+                    {'  '}
+                    {loadedImages} / {everyCard.length}
+                  </h6>
+                  <div className='loading'>
+                    <div
+                      className='inner'
+                      style={{
+                        width: `${(loadedImages / everyCard.length) * 25}vw`,
+                        transition: 'ease-in-out 0.15s'
+                      }}
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </>

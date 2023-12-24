@@ -11,17 +11,17 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <ClientContextProvider>
-      <HashRouter>
-        <Routes>
-          <Route path='/' element={<App />} />
-          <Route path='/lobby' element={<Lobby />} />
-          <Route path='/game' element={<Game />} />
-        </Routes>
-      </HashRouter>
-    </ClientContextProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <ClientContextProvider>
+    <HashRouter>
+      <Routes>
+        <Route path='/' element={<App />} />
+        <Route path='/lobby' element={<Lobby />} />
+        <Route path='/game' element={<Game />} />
+      </Routes>
+    </HashRouter>
+  </ClientContextProvider>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -7,7 +7,7 @@ import useClientContext from '../hooks/useClientContext';
 
 const Lobby: React.FC = () => {
   const navigate = useNavigate();
-  const { setCredentials, loadedCards } = useClientContext();
+  const { setCredentials } = useClientContext();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [matchState, setMatchState] = useState<GameState['match'] | null>(null);

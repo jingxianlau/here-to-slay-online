@@ -349,11 +349,6 @@ export interface ClientStateObj {
     setShowText: React.Dispatch<React.SetStateAction<boolean>>;
   };
 
-  loadedCards: {
-    val: number;
-    set: React.Dispatch<React.SetStateAction<number>>;
-  };
-
   mode: {
     val: 'touch' | 'cursor';
     set: React.Dispatch<React.SetStateAction<'touch' | 'cursor'>>;

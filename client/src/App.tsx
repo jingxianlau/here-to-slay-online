@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useClientContext from './hooks/useClientContext';
+import { everyCard } from './cards';
+import { getImage } from './helpers/getImage';
 
 function App() {
   const navigate = useNavigate();
-  const { loadedCards } = useClientContext();
 
   const [rooms, setRooms] = useState<{ [key: string]: number }>({});
   const [roomId, setRoomId] = useState('');
@@ -19,6 +19,12 @@ function App() {
     const credentials = localStorage.getItem('credentials');
     if (credentials) {
       navigate('/lobby');
+    }
+
+    for (let i = 0; i < everyCard.length; i++) {
+      let img = new Image();
+      let card = everyCard[i];
+      img.src = typeof card === 'string' ? card : (getImage(card) as string);
     }
 
     loadRooms();
@@ -98,7 +104,7 @@ function App() {
 
   // DEV
   useEffect(() => {
-    joinRoom('999999');
+    // joinRoom('999999');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // DEV

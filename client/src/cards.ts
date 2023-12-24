@@ -691,12 +691,26 @@ const magicCards: MagicCard[] = [
   }
 ];
 
-export const everyCard: AnyCard[] = [
+const others: string[] = [
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/bard.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/fighter.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/hero.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/ranger.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/guardian.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/wizard.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/icons/thief.png',
+  'https://jingxianlau.github.io/here-to-slay/assets/circle-star.svg',
+
+  'https://jingxianlau.github.io/here-to-slay/assets/back/back-creme.png'
+];
+
+export const everyCard: (AnyCard | string)[] = [
   ...heroCards,
   ...itemCards,
   ...magicCards,
   ...modifierCards,
   ...challengeCard,
   ...leaderCards,
-  ...monsterCards
+  ...monsterCards,
+  ...others
 ];
