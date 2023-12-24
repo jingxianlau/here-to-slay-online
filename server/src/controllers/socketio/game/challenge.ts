@@ -92,7 +92,12 @@ export const challenge = (
         state.mainDeck.preparedCard.card.freeUse = true;
       }
       if (state.mainDeck.preparedCard?.card.type === CardType.magic) {
-        useEffect(roomId, userId, state.mainDeck.preparedCard.card);
+        state.mainDeck.discardPile.push(state.mainDeck.preparedCard.card);
+        useEffect(
+          roomId,
+          state.secret.playerIds[state.turn.player],
+          state.mainDeck.preparedCard.card
+        );
         state.mainDeck.preparedCard = null;
         return;
       }

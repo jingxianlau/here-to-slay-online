@@ -133,15 +133,14 @@ export const useEffect = (
         (state.turn.effect.val.min !== state.turn.effect.val.max &&
           state.turn.effect.val.max === state.turn.effect.val.curr))
     ) {
+      state.turn.effect.goNext = false;
       heroAbilities[card.type !== CardType.large ? cardName : card.punishment][
         ++state.turn.effect.step
       ](roomId, state, state.turn.effect);
     } else {
       state.turn.effect.step--;
     }
-  } else if (
-    state.board[playerNum].heroCards.some(val => val?.id === card.id)
-  ) {
+  } else {
     // new effect
     let privateArr = [];
     for (let i = 0; i < rooms[roomId].numPlayers; i++) {

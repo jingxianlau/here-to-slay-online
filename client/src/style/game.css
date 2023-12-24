@@ -27,6 +27,7 @@ header img {
   height: 100vh;
   position: fixed;
   top: 0;
+  user-select: none;
 }
 
 .load {
@@ -937,6 +938,7 @@ img.deny:hover {
 
 .img-container {
   position: relative;
+  /* width: fit-content; */
 }
 .img-container.cross-lg::after {
   content: '';
@@ -1595,6 +1597,7 @@ div.cross {
   font-weight: 800;
   width: 28vw;
   height: 80vh;
+  margin-right: 1.6vw;
   background-color: #2eee9b77;
   display: flex;
   align-items: center;
@@ -1618,6 +1621,7 @@ div.cross {
   font-weight: 800;
   width: 28vw;
   height: 80vh;
+  margin-left: 1.6vw;
   background-color: #f9515177;
   display: flex;
   align-items: center;

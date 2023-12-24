@@ -51,10 +51,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
             state.turn.phase === 'use-effect' &&
             state.turn.effect?.action === 'choose-other-boards' &&
             playerNum === state.turn.player) ||
-          (state.turn.player === state.playerNum &&
-            state.turn.phase === 'use-effect' &&
+          (state.turn.phase === 'use-effect' &&
             state.turn.effect?.action === 'choose-own-board' &&
-            playerNum !== state.turn.player) ||
+            state.turn.effect.players.some(val => val === state.playerNum) &&
+            !state.turn.effect.players.some(val => val === playerNum)) ||
           (state.turn.effect && state.turn.effect.action === 'none')
             ? 'brightness(35%)'
             : 'none'
@@ -84,8 +84,12 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                 }}
                 onClick={() => {
                   if (
-                    state.turn.player === state.playerNum &&
-                    (mode.val !== 'touch' || shownCard.val?.id === card.id)
+                    state.turn.player === state.playerNum ||
+                    (state.turn.effect &&
+                      state.turn.effect.players.some(
+                        val => val === playerNum
+                      ) &&
+                      (mode.val !== 'touch' || shownCard.val?.id === card.id))
                   ) {
                     if (
                       (state.turn.movesLeft || card.freeUse) &&
@@ -111,7 +115,9 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       ((state.turn.effect.action === 'choose-other-boards' &&
                         playerNum !== state.turn.player) ||
                         (state.turn.effect.action === 'choose-own-board' &&
-                          playerNum === state.turn.player) ||
+                          state.turn.effect.players.some(
+                            val => val === playerNum
+                          )) ||
                         state.turn.effect.action === 'choose-boards') &&
                       (!state.turn.effect.purpose.includes('Destroy') ||
                         !state.players[playerNum].protection.some(
@@ -123,10 +129,16 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                         )) &&
                       (state.turn.effect.purpose !== 'Return Item' ||
                         card.item) &&
-                      (state.turn.effect.purpose !== 'Return Cursed Item' ||
+                      (state.turn.effect.purpose !== 'Return Curse' ||
                         (card.item && card.item.category === 'cursed'))
                     ) {
-                      chosenCard.set(card);
+                      chosenCard.set(
+                        (state.turn.effect.purpose === 'Return Item' ||
+                          state.turn.effect.purpose === 'Return Curse') &&
+                          card.item
+                          ? card.item
+                          : card
+                      );
                       chosenCard.setShow(true);
                       chosenCard.setCustomCenter(
                         state.turn.effect.purpose.split(' ')[0]
@@ -150,7 +162,10 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                       state.turn.effect.purpose.includes('Steal') &&
                       state.players[playerNum].protection.some(
                         val => val.type === 'steal'
-                      ))
+                      )) ||
+                    (state.turn.effect &&
+                      state.turn.effect.purpose === 'Return Curse' &&
+                      (!card.item || card.item.category !== 'cursed'))
                       ? 'brightness(35%)'
                       : 'none'
                 }}
@@ -197,6 +212,8 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                         state.turn.effect.players.some(
                           pn => pn === state.playerNum
                         ) &&
+                        state.turn.effect.purpose !== 'Return Item' &&
+                        state.turn.effect.purpose !== 'Return Curse' &&
                         (state.turn.effect.action === 'choose-boards' ||
                           (state.turn.effect.players.some(
                             pn => pn === playerNum
@@ -206,7 +223,14 @@ const PlayerBoard: React.FC<PlayerBoardProps> = ({
                             pn => pn === playerNum
                           ) &&
                             state.turn.effect.action ===
-                              'choose-other-boards'))))
+                              'choose-other-boards'))) ||
+                      (state.turn.phase === 'use-effect' &&
+                        state.turn.effect &&
+                        ((state.turn.effect.purpose === 'Return Item' &&
+                          card.item) ||
+                          (state.turn.effect.purpose === 'Return Curse' &&
+                            card.item &&
+                            card.item.category === 'cursed'))))
                       ? 'click'
                       : state.turn.phase !== 'end-game' &&
                         playerNum === state.playerNum

@@ -37,6 +37,7 @@ import {
   eachOtherWithHeroInBoardDiscard,
   endEffect,
   ifMayPlay,
+  pickCard,
   pickFromHand,
   pickPlayer,
   playFromHand,
@@ -610,7 +611,11 @@ export const heroAbilities: {
       ...ifMayPlay(2, CardType.item),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
-    'serious-grey': [...destroyHero, ...drawCard(1)],
+    'serious-grey': [
+      ...destroyHero,
+      ...drawCard(1),
+      (roomId, state, effect) => endEffect(roomId, state, effect)
+    ],
     'sharp-fox': [
       ...pickPlayer('Peek Hand'),
       (roomId, state, effect) => {
@@ -696,14 +701,14 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2000)
     ],
-    // TEST
     meowzio: [
       ...stealHero,
       (roomId, state, effect) => {
         if (
           !effect.choice ||
           typeof effect.choice[0] === 'number' ||
-          !effect.choice[0].player
+          !effect.choice[0] ||
+          effect.choice[0].player === undefined
         )
           return;
 
@@ -728,30 +733,33 @@ export const heroAbilities: {
       (roomId, state, effect) =>
         setTimeout(() => {
           endEffect(roomId, state, effect);
-        }, 1200)
+        }, 2400)
     ],
-    // TEST
     'plundering-puma': [
       ...pickFromHand(2),
       (roomId, state, effect) => {
         if (
-          !effect.choice ||
-          typeof effect.choice[0] === 'number' ||
-          !effect.choice[0].player
+          !effect.active ||
+          !effect.active.num ||
+          effect.active.num.length === 0
         )
           return;
 
         effect.action = 'draw';
         effect.actionChanged = true;
         effect.allowedCards = [];
-        effect.val = { min: 1, max: 1, curr: 0 };
-        effect.players = [effect.choice[0].player];
+        effect.val = { min: 0, max: 1, curr: 0 };
+        effect.players = [effect.active.num[0]];
         effect.purpose = 'Draw Card';
         effect.choice = null;
         sendGameState(roomId);
       },
-      (roomId: string, state: GameState, effect: Effect) => {
-        drawCards(roomId, state.turn.player, 1);
+      (roomId, state, effect, returnVal, fromPlayer) => {
+        if (!fromPlayer) return;
+        if (returnVal && returnVal.num && returnVal.num === -2)
+          endEffect(roomId, state, effect);
+
+        drawCards(roomId, fromPlayer, 1);
         effect.val.curr++;
         sendGameState(roomId);
       },
@@ -760,7 +768,6 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 1200)
     ],
-    // TEST
     shurikitty: [
       chooseDestroyHero,
       (roomId, state, effect, returnVal) => {
@@ -874,7 +881,6 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 1200)
     ],
-    // TEST
     'slippery-paws': [
       ...pickFromHand(2),
       (roomId, state, effect) => {
@@ -944,23 +950,98 @@ export const heroAbilities: {
       ...ifMayPlay(1, CardType.item),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
-    'smooth-mimimeow': eachOtherWithHeroInBoardDiscard(HeroClass.thief)
+    'smooth-mimimeow': [
+      (roomId: string, state: GameState, effect: Effect) => {
+        effect.action = 'choose-other-hand-hide';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = allCards;
+        effect.purpose = 'Choose Card';
+
+        effect.active = {};
+        effect.active.num = [state.turn.player, 1, 3];
+
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          if (
+            state.board[i].heroCards.some(
+              val => val?.class === HeroClass.thief
+            ) &&
+            i !== state.turn.player &&
+            state.players[i].numCards
+          ) {
+            effect.active.num.push(i);
+          }
+        }
+
+        if (effect.active.num.length - 3 > 0) {
+          effect.active.num[0] = effect.active.num[effect.active.num[2]];
+          effect.active.num[1] = state.players[effect.active.num[0]].numCards;
+          effect.players = [state.turn.player];
+          effect.choice = [];
+        } else {
+          endEffect(roomId, state, effect);
+        }
+        sendGameState(roomId);
+      },
+      (roomId, state, effect, returnVal) => {
+        if (
+          !returnVal ||
+          !returnVal.num ||
+          !effect.active ||
+          !effect.active.num
+        )
+          return;
+
+        effect.choice = [returnVal.num];
+
+        sendGameState(roomId);
+        const card = removeCardIndex(
+          roomId,
+          effect.active.num[0],
+          returnVal.num
+        );
+        if (card === -1) return;
+        addCards(roomId, [card], state.turn.player);
+
+        if (effect.active.num[2] - 2 < effect.active.num.length - 3) {
+          const next = effect.active.num[++effect.active.num[2]];
+          effect.players = [state.turn.player];
+          effect.active.num[0] = next;
+          effect.active.num[1] = state.players[next].numCards;
+          effect.val = {
+            min: 1,
+            max: 1,
+            curr: 0
+          };
+          effect.choice = null;
+        } else {
+          effect.val.curr++;
+        }
+
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
+      },
+      (roomId: string, state: GameState, effect: Effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1500)
+    ]
   },
 
   // WIZARD
   ...{
     'bun-bun': searchDiscard(CardType.magic),
     buttons: [
-      ...pickFromHand(),
+      ...pickFromHand(1),
       ...ifMayPlay(1, CardType.magic),
       (roomId, state, effect) => endEffect(roomId, state, effect, false)
     ],
-    // TEST
     fluffy: [
       (roomId, state, effect) => {
         effect.action = 'choose-other-boards';
         effect.actionChanged = true;
-        effect.val = { min: 2, max: 2, curr: 0 };
+        effect.val = { min: 0, max: 2, curr: 0 };
         effect.allowedCards = [];
         effect.players = [state.turn.player];
         effect.purpose = 'Destroy Hero';
@@ -979,8 +1060,10 @@ export const heroAbilities: {
           state.players[returnVal.card.player].protection.some(
             val => val.type === 'destroy'
           )
-        )
+        ) {
+          endEffect(roomId, state, effect);
           return;
+        }
 
         effect.choice = [returnVal.card];
         if (++effect.val.curr < effect.val.max) {
@@ -998,29 +1081,39 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2400)
     ],
-    // TEST
     hopper: [
       ...pickPlayer(),
       (roomId, state, effect) => {
         if (
           !effect.choice ||
-          !effect.choice[0] ||
+          effect.choice.length < 1 ||
           typeof effect.choice[0] !== 'number'
         )
           return;
         effect.action = 'choose-own-board';
         effect.actionChanged = true;
-        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.val = {
+          min: state.board[effect.choice[0]].heroCards.some(val => val !== null)
+            ? 1
+            : 0,
+          max: 1,
+          curr: 0
+        };
         effect.allowedCards = [];
         effect.players = [effect.choice[0]];
         effect.purpose = 'Sacrifice Hero';
         effect.active = { num: [effect.choice[0]] };
         effect.choice = null;
-        sendGameState(roomId);
+        setTimeout(() => {
+          sendGameState(roomId);
+        }, 1200);
       },
-      receiveSacrificeHero
+      receiveSacrificeHero,
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 2400)
     ],
-    // TEST
     snowball: [
       ...drawCard(1),
       (roomId: string, state: GameState, effect: Effect) => {
@@ -1065,21 +1158,15 @@ export const heroAbilities: {
         }, 800);
       },
       (roomId, state, effect, returnVal) => {
+        if (!effect.active || !effect.active.card || !effect.active.num) return;
+
+        effect.val.curr++;
         if (
-          !returnVal ||
-          ((!returnVal.card || returnVal.card.type !== CardType.magic) &&
-            returnVal.num === undefined)
-        )
-          return;
-
-        if (returnVal.card) {
-          effect.choice = [returnVal.card];
-        } else {
-          effect.choice = [0];
-        }
-        sendGameState(roomId);
-
-        if (returnVal.card && returnVal.card.type === CardType.magic) {
+          effect.active.num.some(val => val) &&
+          returnVal &&
+          returnVal.num !== undefined &&
+          effect.active.card[returnVal.num].type === CardType.magic
+        ) {
           let privateArr = [];
           for (let i = 0; i < rooms[roomId].numPlayers; i++) {
             privateArr.push(true);
@@ -1097,17 +1184,22 @@ export const heroAbilities: {
               activeCardVisible: cloneDeep(privateArr),
               activeNumVisible: cloneDeep(privateArr),
               goNext: false,
-              step: 3,
+              step: 5,
               choice: null
             }
           });
           state.turn.effect = null;
-          setTimeout(() => {
-            if (returnVal.card?.type === CardType.magic)
-              playCard(roomId, state.turn.player, returnVal.card, true);
-          }, 1200);
-        } else if (returnVal.num && returnVal.num === -2) {
-          effect.goNext = true;
+          playCard(
+            roomId,
+            state.turn.player,
+            effect.active.card[returnVal.num] as MagicCard,
+            true
+          );
+        } else if (
+          effect.active.num.every(val => !val) ||
+          (returnVal && returnVal.num === -1)
+        ) {
+          endEffect(roomId, state, effect);
         }
       },
       (roomId, state, effect) => {
@@ -1131,41 +1223,54 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 800)
     ],
-    // TODO
     spooky: [
-      (roomId, state, effect) => {
+      (roomId: string, state: GameState, effect: Effect) => {
         effect.action = 'choose-own-board';
         effect.actionChanged = true;
         effect.val = { min: 1, max: 1, curr: 0 };
         effect.allowedCards = allCards;
-        effect.players = [(state.turn.player + 1) % rooms[roomId].numPlayers];
         effect.purpose = 'Sacrifice Hero';
-        effect.active = {
-          num: [(state.turn.player + 1) % rooms[roomId].numPlayers, 1, 2] // player, cards, iteration
-        };
-        effect.choice = [];
+
+        effect.active = {};
+        effect.active.num = [state.turn.player, 1, 3];
+
+        for (let i = 0; i < rooms[roomId].numPlayers; i++) {
+          if (
+            i !== state.turn.player &&
+            state.board[i].heroCards.some(val => val !== null)
+          ) {
+            effect.active.num.push(i);
+          }
+        }
+
+        if (effect.active.num.length - 3 > 0) {
+          effect.active.num[0] = effect.active.num[3];
+          effect.players = [effect.active.num[effect.active.num[2]]];
+          effect.choice = [];
+        } else {
+          endEffect(roomId, state, effect);
+        }
         sendGameState(roomId);
       },
-      (roomId, state, effect, returnVal) => {
+      (roomId, state, effect, returnVal, fromPlayer) => {
         if (
           !returnVal ||
           !returnVal.card ||
           returnVal.card.type !== CardType.hero ||
           !effect.active ||
           !effect.active.num ||
-          returnVal.card.player !== effect.active.num[0]
+          returnVal.card.player !== effect.active.num[0] ||
+          fromPlayer === undefined
         )
           return;
 
         effect.choice = [returnVal.card];
         effect.val.curr++;
         sendGameState(roomId);
+        destroyCard(roomId, fromPlayer, returnVal.card);
 
-        destroyCard(roomId, effect.active.num[0], returnVal.card);
-        if (effect.active.num[2] < rooms[roomId].numPlayers) {
-          const next =
-            (state.turn.player + effect.active.num[2]++) %
-            rooms[roomId].numPlayers;
+        if (effect.active.num[2] - 2 < effect.active.num.length - 3) {
+          const next = effect.active.num[++effect.active.num[2]];
           effect.players = [next];
           effect.active.num[0] = next;
           effect.val = {
@@ -1174,20 +1279,17 @@ export const heroAbilities: {
             curr: 0
           };
           effect.choice = null;
-        } else {
-          effect.val.curr++;
         }
 
         setTimeout(() => {
           sendGameState(roomId);
         }, 1200);
       },
-      (roomId, state, effect) =>
+      (roomId: string, state: GameState, effect: Effect) =>
         setTimeout(() => {
           endEffect(roomId, state, effect);
         }, 2400)
     ],
-    // TEST
     whiskers: [
       ...stealHero,
       ...destroyHero,
@@ -1197,7 +1299,6 @@ export const heroAbilities: {
         }, 2400);
       }
     ],
-    // TEST
     wiggles: [
       ...stealHero,
       (roomId, state, effect) => {
@@ -1216,7 +1317,6 @@ export const heroAbilities: {
 
   // GUARDIAN
   ...{
-    // TEST
     'calming-voice': [
       (roomId, state, effect) => {
         state.players[state.turn.player].protection.push({
@@ -1228,15 +1328,14 @@ export const heroAbilities: {
       }
     ],
     'guiding-light': searchDiscard(CardType.hero),
-    // TEST & CLIENT TODO: CHOOSE ITEM,
     'holy-curselifter': [
       (roomId, state, effect) => {
         effect.action = 'choose-own-board';
         effect.actionChanged = true;
-        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.val = { min: 0, max: 1, curr: 0 };
         effect.allowedCards = [CardType.item];
         effect.players = [state.turn.player];
-        effect.purpose = 'Return Cursed Item';
+        effect.purpose = 'Return Curse';
         effect.active = {
           num: [state.turn.player]
         };
@@ -1247,25 +1346,36 @@ export const heroAbilities: {
           !returnVal ||
           !returnVal.card ||
           returnVal.card.player === undefined ||
-          returnVal.card.type !== CardType.hero ||
-          !returnVal.card.item ||
+          returnVal.card.type !== CardType.item ||
           !effect.active ||
           !effect.active.num ||
           !effect.active.num.length ||
           returnVal.card.player !== effect.active.num[0] ||
-          returnVal.card.item.category !== 'cursed'
-        )
+          returnVal.card.category !== 'cursed' ||
+          returnVal.card.heroPlayer === undefined
+        ) {
+          endEffect(roomId, state, effect);
           return;
+        }
+
+        const heroCard = state.board[returnVal.card.heroPlayer].heroCards.find(
+          val =>
+            val &&
+            val.item &&
+            returnVal.card &&
+            val.item.id === returnVal.card.id
+        );
+        if (!heroCard || !heroCard.item) return;
 
         effect.choice = [returnVal.card];
         effect.val.curr++;
         sendGameState(roomId);
 
-        delete returnVal.card.item.heroId;
-        delete returnVal.card.item.heroPlayer;
-        returnVal.card.item.heroPlayer = state.turn.player;
-        addCards(roomId, [returnVal.card.item], state.turn.player);
-        delete returnVal.card.item;
+        delete heroCard.item.heroId;
+        delete heroCard.item.heroPlayer;
+        heroCard.item.heroPlayer = state.turn.player;
+        addCards(roomId, [heroCard.item], state.turn.player);
+        delete heroCard.item;
 
         setTimeout(() => {
           sendGameState(roomId);
@@ -1276,7 +1386,6 @@ export const heroAbilities: {
           endEffect(roomId, state, effect);
         }, 2400)
     ],
-    // TEST
     'iron-resolve': [
       (roomId, state, effect) => {
         state.players[state.turn.player].protection.push({
@@ -1287,7 +1396,6 @@ export const heroAbilities: {
         endEffect(roomId, state, effect);
       }
     ],
-    // TEST
     'mighty-blade': [
       (roomId, state, effect) => {
         state.players[state.turn.player].protection.push({
@@ -1299,7 +1407,6 @@ export const heroAbilities: {
       }
     ],
     'radiant-horn': searchDiscard(CardType.modifier),
-    // TEST
     'vibrant-glow': [
       (roomId, state, effect) => {
         state.players[state.turn.player].passives.push({
@@ -1311,7 +1418,6 @@ export const heroAbilities: {
         endEffect(roomId, state, effect);
       }
     ],
-    // TEST
     'wise-shield': [
       (roomId, state, effect) => {
         state.players[state.turn.player].passives.push({
@@ -1328,9 +1434,69 @@ export const heroAbilities: {
   // MAGIC
   ...{
     'call-to-the-fallen': searchDiscard(CardType.hero),
-    'critical-boost': [...drawCard(3), ...discardCards(1)],
-    'destructive-spell': [...discardCards(1), ...destroyHero],
-    // TODO: ROLL PASSIVE
+    // TEST
+    'critical-boost': [
+      ...drawCard(3),
+      ...discardCards(1),
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1200)
+    ],
+    // TEST
+    'destructive-spell': [
+      (roomId: string, state: GameState, effect: Effect) => {
+        if (state.players[state.turn.player].numCards < 1) {
+          endEffect(roomId, state, effect);
+          return;
+        }
+
+        effect.action = 'choose-hand';
+        effect.actionChanged = true;
+        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.allowedCards = allCards;
+        effect.players = [state.turn.player];
+        effect.purpose = 'Discard Card';
+        effect.active = {
+          num: [state.turn.player, 1]
+        };
+        effect.choice = [];
+        sendGameState(roomId);
+      },
+      receiveDiscardCard,
+      ...destroyHero,
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 2400)
+    ],
+    // TEST
+    'entangling-trap': [
+      (roomId: string, state: GameState, effect: Effect) => {
+        if (state.players[state.turn.player].numCards < 2) {
+          endEffect(roomId, state, effect);
+          return;
+        }
+
+        effect.action = 'choose-hand';
+        effect.actionChanged = true;
+        effect.val = { min: 2, max: 2, curr: 0 };
+        effect.allowedCards = allCards;
+        effect.players = [state.turn.player];
+        effect.purpose = 'Discard Cards';
+        effect.active = {
+          num: [state.turn.player, 1]
+        };
+        effect.choice = [];
+        sendGameState(roomId);
+      },
+      receiveDiscardCard,
+      ...stealHero,
+      (roomId, state, effect) =>
+        setTimeout(() => {
+          endEffect(roomId, state, effect);
+        }, 1200)
+    ],
     'enchanted-spell': [
       (roomId, state, effect) => {
         state.players[state.turn.player].passives.push({
@@ -1408,7 +1574,6 @@ export const heroAbilities: {
         }, 2400)
     ],
     // TEST
-    /* CURRENT VERSION: RETURNS ITEM CARD TO PLAYER OF THE BOARD INSTEAD OF ORIGINAL PLAYER */
     'forceful-winds': [
       (roomId, state, _) => {
         for (let i = 0; i < rooms[roomId].numPlayers; i++) {
@@ -1425,12 +1590,12 @@ export const heroAbilities: {
         sendGameState(roomId);
       }
     ],
-    // TEST & CLIENT TODO: CHOOSE ITEMS
+    // TEST
     'winds-of-change': [
       (roomId, state, effect) => {
         effect.action = 'choose-boards';
         effect.actionChanged = true;
-        effect.val = { min: 1, max: 1, curr: 0 };
+        effect.val = { min: 0, max: 1, curr: 0 };
         effect.allowedCards = [CardType.item];
         effect.players = [state.turn.player];
         effect.purpose = 'Return Item';
@@ -1443,8 +1608,10 @@ export const heroAbilities: {
           returnVal.card.player === undefined ||
           returnVal.card.type !== CardType.hero ||
           !returnVal.card.item
-        )
+        ) {
+          endEffect(roomId, state, effect);
           return;
+        }
 
         effect.choice = [returnVal.card];
         effect.val.curr++;

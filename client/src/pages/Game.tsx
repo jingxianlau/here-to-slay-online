@@ -677,8 +677,6 @@ const Game: React.FC = () => {
                   <h6>
                     Loading Assets
                     {'.'.repeat((loadedImages % 3) + 1)}
-                    {'  '}
-                    {loadedImages} / {everyCard.length}
                   </h6>
                   <div className='loading'>
                     <div

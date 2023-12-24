@@ -255,6 +255,10 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                 onClick={() => {
                   if (
                     allowedCard(allowedCards.val, card.type) &&
+                    (!state.turn.effect ||
+                      (state.turn.effect.action !== 'choose-own-board' &&
+                        state.turn.effect.action !== 'choose-other-boards' &&
+                        state.turn.effect.action !== 'choose-boards')) &&
                     ((card.type === CardType.hero &&
                       state.board[state.playerNum].heroCards.some(
                         val => val === null
@@ -276,6 +280,10 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                   alt={card.name}
                   className={`small-md ${
                     allowedCard(allowedCards.val, card.type) &&
+                    (!state.turn.effect ||
+                      (state.turn.effect.action !== 'choose-own-board' &&
+                        state.turn.effect.action !== 'choose-other-boards' &&
+                        state.turn.effect.action !== 'choose-boards')) &&
                     ((card.type === CardType.hero &&
                       state.board[state.playerNum].heroCards.some(
                         val => val === null
@@ -286,6 +294,11 @@ const Hand: React.FC<HandProps> = ({ setShowBoard }) => {
                       state.turn.phase === 'modify')
                       ? 'active glow'
                       : allowedCard(allowedCards.val, card.type) &&
+                        (!state.turn.effect ||
+                          (state.turn.effect.action !== 'choose-own-board' &&
+                            state.turn.effect.action !==
+                              'choose-other-boards' &&
+                            state.turn.effect.action !== 'choose-boards')) &&
                         (state.turn.phase !== 'play' ||
                           (card.type === CardType.hero &&
                             state.board[state.playerNum].heroCards.some(

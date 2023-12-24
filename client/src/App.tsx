@@ -104,7 +104,7 @@ function App() {
 
   // DEV
   useEffect(() => {
-    // joinRoom('999999');
+    joinRoom('999999');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // DEV

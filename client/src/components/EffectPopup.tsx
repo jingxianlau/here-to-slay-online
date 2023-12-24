@@ -25,10 +25,11 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
   const [revealActiveCard, setRevealActiveCard] = useState(0);
   useEffect(() => {
     if (state.turn.effect && state.turn.effect.actionChanged) {
-      if (state.turn.effect.action === 'choose-two') {
+      if (
+        state.turn.effect.action === 'choose-two' ||
+        state.turn.effect.action === 'choose-discard'
+      ) {
         setRevealActiveCard(0);
-      } else if (state.turn.effect.action === 'choose-discard') {
-        setRevealActiveCard(state.mainDeck.discardPile.length - 1);
       }
     }
   }, [state.turn.effect]);
@@ -61,7 +62,7 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
         ) : state.turn.effect.action === 'choose-other-hand-hide' &&
           state.turn.effect.active &&
           state.turn.effect.active.num &&
-          state.turn.effect.active.num.length === 2 ? (
+          state.turn.effect.active.num.length >= 2 ? (
           // PICK FROM HAND
           <div className='content'>
             <div className='top'>
@@ -528,8 +529,8 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
           <div className='choose-cover' style={{ justifyContent: 'center' }}>
             {state.turn.player === state.playerNum &&
             state.turn.effect.allowedCards &&
-            state.mainDeck.discardPile[revealActiveCard].type ===
-              state.turn.effect.allowedCards[0] ? (
+            state.mainDeck.discardPile.slice().reverse()[revealActiveCard]
+              .type === state.turn.effect.allowedCards[0] ? (
               <div
                 className='left active'
                 onClick={() => {
@@ -538,7 +539,9 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                     roomId,
                     userId,
                     state.turn.effect?.card,
-                    state.mainDeck.discardPile[revealActiveCard]
+                    state.mainDeck.discardPile.slice().reverse()[
+                      revealActiveCard
+                    ]
                   );
                 }}
               >
@@ -594,8 +597,16 @@ const EffectPopup: React.FC<EffectPopupProps> = ({
                   />
                 ) : (
                   <img
-                    src={getImage(state.mainDeck.discardPile[revealActiveCard])}
-                    alt={state.mainDeck.discardPile[revealActiveCard].name}
+                    src={getImage(
+                      state.mainDeck.discardPile.slice().reverse()[
+                        revealActiveCard
+                      ]
+                    )}
+                    alt={
+                      state.mainDeck.discardPile.slice().reverse()[
+                        revealActiveCard
+                      ].name
+                    }
                     className='small-xl'
                     draggable='false'
                   />

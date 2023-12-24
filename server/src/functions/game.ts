@@ -87,12 +87,12 @@ export function playCard(
 
   // CHALLENGE PROTECTION
   if (
-    // state.players[state.turn.player].protection.some(
-    //   val => val.type === 'challenge'
-    // )
+    state.players[state.turn.player].protection.some(
+      val => val.type === 'challenge'
+    )
 
     // DEV
-    true
+    // true
   ) {
     if (card.type === CardType.hero) {
       card.freeUse = true;

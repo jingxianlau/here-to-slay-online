@@ -125,7 +125,7 @@ export const pickCard =
 
     effect.action = 'choose-other-hand-hide';
     effect.actionChanged = true;
-    effect.val = { min: num, max: num, curr: 0 };
+    effect.val = { min: 0, max: num, curr: 0 };
     effect.allowedCards = [];
     effect.players = [state.turn.player];
     effect.purpose = 'Choose Card';
@@ -145,20 +145,26 @@ export const addCard = (
 ) => {
   if (!returnVal || !returnVal.num || !effect.active || !effect.active.num)
     return;
+  if (returnVal.num === -2) {
+    effect.goNext = true;
+    return;
+  }
 
   effect.choice = [returnVal.num];
+  sendGameState(roomId);
+
   if (++effect.val.curr < effect.val.max) {
     effect.players = [state.turn.player];
   }
-  sendGameState(roomId);
-
+  effect.active.num[1]--;
+  effect.choice = null;
   const card = removeCardIndex(roomId, effect.active.num[0], returnVal.num);
   if (card === -1) return;
   addCards(roomId, [card], state.turn.player);
 
   setTimeout(() => {
     sendGameState(roomId);
-    if (effect.active) {
+    if (effect.val.curr === effect.val.max && effect.active) {
       delete effect.active.num;
     }
   }, 400);
@@ -245,15 +251,23 @@ export const ifMayPlay = (
       if (!effect.active || !effect.active.card || !effect.active.num) return;
 
       effect.val.curr++;
-      if (effect.active.num[0] === 0 || (returnVal && returnVal.num === -1)) {
+      if (
+        effect.active.num.every(val => !val) ||
+        (returnVal && returnVal.num === -1)
+      ) {
         endEffect(roomId, state, effect);
       } else if (
-        effect.active.num[0] === 1 &&
+        effect.active.num.some(val => val) &&
         returnVal &&
-        returnVal.num === 0 &&
-        effect.active.card[0].type === type
+        returnVal.num !== undefined &&
+        effect.active.card[returnVal.num].type === type
       ) {
-        playCard(roomId, state.turn.player, effect.active.card[0], true);
+        playCard(
+          roomId,
+          state.turn.player,
+          effect.active.card[returnVal.num] as ItemCard,
+          true
+        );
       }
     }
   ];
@@ -339,8 +353,10 @@ export const receiveStealHero = (
     state.players[returnVal.card.player].protection.some(
       val => val.type === 'steal'
     )
-  )
+  ) {
+    endEffect(roomId, state, effect);
     return;
+  }
 
   effect.choice = [returnVal.card];
   effect.val.curr++;
@@ -769,11 +785,13 @@ export const searchDiscard = (type: CardType) => [
     }
     effect.val.curr++;
     effect.choice = [returnVal.card];
-    state.mainDeck.discardPile = state.mainDeck.discardPile.filter(
-      val => val.id !== returnVal.card?.id
-    );
     addCards(roomId, [returnVal.card], state.turn.player);
     sendGameState(roomId);
+    setTimeout(() => {
+      state.mainDeck.discardPile = state.mainDeck.discardPile.filter(
+        val => val.id !== returnVal.card?.id
+      );
+    }, 1100);
   },
   (roomId: string, state: GameState, effect: Effect) =>
     setTimeout(() => {
